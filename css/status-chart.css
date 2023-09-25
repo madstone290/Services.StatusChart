@@ -149,7 +149,6 @@
 }
 
 #ab-chart-content-timeline-header {
-    width: 5000px;
     height: var(--ab-chart-content-timeline-header-height);
     background-color: #00ff00;
     display: flex;
@@ -182,7 +181,6 @@
 
 #ab-chart-content-canvas {
     height: 100%;
-    width: 5000px;
     position: relative;
 }
 

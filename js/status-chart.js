@@ -15,7 +15,7 @@ const css = function () {
         return parseInt(this.getVariable("--ab-chart-cell-height"));
     }
 
-    function getCellContentHeight(){
+    function getCellContentHeight() {
         return parseInt(this.getVariable("--ab-chart-cell-content-height"));
     }
 
@@ -73,6 +73,7 @@ const timeline = function () {
     const timline_header_box_id = "ab-chart-content-timeline-header-box";
     const timeline_header_id = "ab-chart-content-timeline-header";
     const timeline_status_id = "ab-chart-content-timeline-status";
+    const canvas_id = "ab-chart-content-canvas";
 
     function setTitle(name) {
         const titleElement = document.getElementById(timeline_title_id);
@@ -86,12 +87,17 @@ const timeline = function () {
             div.classList.add("ab-chart-content-timeline-header-item");
             header.appendChild(div);
         }
+        const canvasWidth =  `${css.getCellWidth() * timelineHeaders.length + 20}px`; // 20 for padding
+        header.style.width = canvasWidth;
+
+        const canvas = document.getElementById(canvas_id);
+        canvas.style.width = canvasWidth;
 
         const canvasBox = document.getElementById(canvasBoxId);
-        const box = document.getElementById(timline_header_box_id);
+        const headerBox = document.getElementById(timline_header_box_id);
         canvasBox.addEventListener("scroll", (e) => {
             // todo; vertical only
-            box.scrollLeft = canvasBox.scrollLeft;
+            headerBox.scrollLeft = canvasBox.scrollLeft;
         });
     }
 
@@ -131,14 +137,12 @@ const list = function () {
             const div = document.createElement("div");
             div.innerText = item.value;
             div.classList.add("ab-chart-list-item");
-            div.setAttribute("data-key", item.key);
             box.appendChild(div);
 
-            // todo: get height from css variable
-            const rowHeight = css.getCellHeight();
             // grid line
             const line = document.createElement("div");
             line.classList.add("ab-chart-hline");
+            const rowHeight = css.getCellHeight();
             line.style.top = `${rowHeight * (i + 1) - 1}px`;
             line.style.width = canvas.scrollWidth;
             canvas.appendChild(line);
@@ -172,7 +176,7 @@ const canvas = function () {
 
     function drawEntityEvents(entity) {
         const entityIndex = _headers.findIndex(e => e.id === entity.id);
-        
+
         if (entityIndex < 0) {
             return;
         }
@@ -186,6 +190,7 @@ const canvas = function () {
             const top = (css.getCellHeight() * entityIndex) + (css.getCellHeight() - css.getCellContentHeight()) / 2 - 1;
             const width = css.getCellWidth() * (event.end - event.start) / 60;
             const color = event.type === 1 ? "red" : event.type === 2 ? "yellow" : "green";
+
             eventElement.style.left = `${left}px`;
             eventElement.style.top = `${top}px`;
             eventElement.style.width = `${width}px`;
@@ -209,10 +214,12 @@ const canvas = function () {
 window.addEventListener("load", () => {
     legend.init(leftLegendDatasource, rightLegendDatasource);
 
-    list.init("XXX H/L LH Line 03", "Serial No.", listDatasource);
+    
 
     timeline.setTitle("Time Line");
     timeline.drawHeaders();
+
+    list.init("XXX H/L LH Line 03", "Serial No.", listDatasource);
 
     canvas.init(listDatasource, entities);
 });
