@@ -11,7 +11,9 @@
     --ab-chart-content-box-scroll-width: 15px;
     --ab-chart-content-box-scroll-height: 15px;
 
-    --ab-chart-row-height: 30px;
+    --ab-chart-cell-width: 100px;
+    --ab-chart-cell-height: 40px;
+    --ab-chart-cell-content-height: 25px;
 
     --ab-chart-line-color: #999999;
 }
@@ -106,7 +108,7 @@
 }
 
 .ab-chart-list-item {
-    height: calc(var(--ab-chart-row-height) - 1px);
+    height: calc(var(--ab-chart-cell-height) - 1px);
     border-width: 0px 1px 1px 1px;
     border-style: solid;
     border-color: var(--ab-chart-line-color);
@@ -157,6 +159,7 @@
 
 .ab-chart-content-timeline-header-item {
     border-width: 0px 1px 1px 0px;
+    width: calc(var(--ab-chart-cell-width) - 8px - 8px - 1px);
     border-style: solid;
     border-color: var(--ab-chart-line-color);
     padding: 0px 8px;
@@ -190,32 +193,9 @@
     border-color: var(--ab-chart-line-color);
 }
 
-#d1 {
+.ab-chart-content-canvas-item{
     position: absolute;
-    width: 100px;
-    height: 100px;
-    background-color: #ff0000;
-    left: 100px;
-    top: 100px;
-    z-index: 1;
-}
-
-#d2 {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background-color: #ffff00;
-    left: 800px;
-    top: 200px;
-}
-
-#s1 {
-    position: absolute;
-    width: 100px;
-    height: 100%;
-    background-color: #00ff00;
-    left: 100px;
-    z-index: 0;
+    height:  var(--ab-chart-cell-content-height);
 }
 
 #ab-chart-content-canvas-box::-webkit-scrollbar {

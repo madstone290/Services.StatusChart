@@ -2,15 +2,30 @@ const listBoxId = "ab-chart-list-box";
 const canvasId = "ab-chart-content-canvas";
 const canvasBoxId = "ab-chart-content-canvas-box";
 
-const css = {
-    getVariable: function (name) {
+const css = function () {
+    function getVariable(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name);
-    },
-
-    getRowHeight: function () {
-        return parseInt(this.getVariable("--ab-chart-row-height"));
     }
-}
+
+    function getCellWidth() {
+        return parseInt(this.getVariable("--ab-chart-cell-width"));
+    }
+
+    function getCellHeight() {
+        return parseInt(this.getVariable("--ab-chart-cell-height"));
+    }
+
+    function getCellContentHeight(){
+        return parseInt(this.getVariable("--ab-chart-cell-content-height"));
+    }
+
+    return {
+        getVariable,
+        getCellWidth,
+        getCellHeight,
+        getCellContentHeight
+    }
+}();
 
 const legend = function () {
     const LEFT_LEGEND_ID = "ab-chart-legend-left";
@@ -75,7 +90,7 @@ const timeline = function () {
         const canvasBox = document.getElementById(canvasBoxId);
         const box = document.getElementById(timline_header_box_id);
         canvasBox.addEventListener("scroll", (e) => {
-            console.log(e);
+            // todo; vertical only
             box.scrollLeft = canvasBox.scrollLeft;
         });
     }
@@ -120,7 +135,7 @@ const list = function () {
             box.appendChild(div);
 
             // todo: get height from css variable
-            const rowHeight = css.getRowHeight();
+            const rowHeight = css.getCellHeight();
             // grid line
             const line = document.createElement("div");
             line.classList.add("ab-chart-hline");
@@ -135,7 +150,7 @@ const list = function () {
 
         const canvasBox = document.getElementById(canvasBoxId);
         canvasBox.addEventListener("scroll", (e) => {
-            console.log(e);
+            // todo; horizontal only
             box.scrollTop = canvasBox.scrollTop;
         });
     }
@@ -145,6 +160,50 @@ const list = function () {
     };
 }();
 
+const canvas = function () {
+    const CANVAS_ID = "ab-chart-content-canvas";
+    let _headers;
+    function init(headers, entities) {
+        _headers = headers;
+        for (const entity of entities) {
+            drawEntityEvents(entity);
+        }
+    }
+
+    function drawEntityEvents(entity) {
+        const entityIndex = _headers.findIndex(e => e.id === entity.id);
+        
+        if (entityIndex < 0) {
+            return;
+        }
+
+        const entityEvents = entity.events;
+        for (const event of entityEvents) {
+            const eventElement = document.createElement("div");
+            eventElement.classList.add("ab-chart-content-canvas-item");
+
+            const left = css.getCellWidth() * event.start / 60;
+            const top = (css.getCellHeight() * entityIndex) + (css.getCellHeight() - css.getCellContentHeight()) / 2 - 1;
+            const width = css.getCellWidth() * (event.end - event.start) / 60;
+            const color = event.type === 1 ? "red" : event.type === 2 ? "yellow" : "green";
+            eventElement.style.left = `${left}px`;
+            eventElement.style.top = `${top}px`;
+            eventElement.style.width = `${width}px`;
+            eventElement.style.backgroundColor = color;
+
+            eventElement.addEventListener("click", (e) => {
+                console.log(e);
+            });
+
+            const canvas = document.getElementById(CANVAS_ID);
+            canvas.appendChild(eventElement);
+        }
+    }
+
+    return {
+        init
+    }
+}();
 
 
 window.addEventListener("load", () => {
@@ -154,4 +213,6 @@ window.addEventListener("load", () => {
 
     timeline.setTitle("Time Line");
     timeline.drawHeaders();
+
+    canvas.init(listDatasource, entities);
 });

@@ -15,23 +15,22 @@ var rightLegendDatasource = [
 ];
 
 var listDatasource = [
-    { key: 1, value: "H34A2900001" },
-    { key: 2, value: "H34A2900002" },
-    { key: 3, value: "H34A2900003" },
-    { key: 4, value: "H34A2900004" },
-    { key: 5, value: "H34A2900005" },
-    { key: 6, value: "H34A2900006" },
-    { key: 7, value: "H34A2900007" },
-    { key: 8, value: "H34A2900008" },
-    { key: 9, value: "H34A2900009" },
-    { key: 10, value: "H34A2900010" },
-    { key: 11, value: "H34A2900011" },
-    { key: 12, value: "H34A2900012" },
-    { key: 13, value: "H34A2900013" },
-    { key: 14, value: "H34A2900014" },
-    { key: 15, value: "H34A2900015" },
-    { key: 16, value: "H34A2900016" },
-
+    { id: 1, value: "H34A2900001" },
+    { id: 2, value: "H34A2900002" },
+    { id: 3, value: "H34A2900003" },
+    { id: 4, value: "H34A2900004" },
+    { id: 5, value: "H34A2900005" },
+    { id: 6, value: "H34A2900006" },
+    { id: 7, value: "H34A2900007" },
+    { id: 8, value: "H34A2900008" },
+    { id: 9, value: "H34A2900009" },
+    { id: 10, value: "H34A2900010" },
+    { id: 11, value: "H34A2900011" },
+    { id: 12, value: "H34A2900012" },
+    { id: 13, value: "H34A2900013" },
+    { id: 14, value: "H34A2900014" },
+    { id: 15, value: "H34A2900015" },
+    { id: 16, value: "H34A2900016" },
 ];
 
 
@@ -60,4 +59,31 @@ var timelineHeaders = [
     "21:00",
     "22:00",
     "23:00",
+];
+
+var entities = [
+    {
+        id: 1,
+        events: [
+            { type: 1, start: 30, end: 60 },
+            { type: 2, start: 60, end: 120 },
+            { type: 3, start: 140, end: 160 },
+        ]
+    },
+    {
+        id: 3,
+        events: [
+            { type: 1, start: 60, end: 160 },
+        ]
+    },
+    {
+        id: 4,
+        events: [
+            { type: 2, start: 10, end: 60 },
+            { type: 3, start: 120, end: 240 },
+        ]
+    }
+
+
 ]
+
