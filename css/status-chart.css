@@ -3,10 +3,10 @@
     --ab-chart-legend-height: 50px;
 
     --ab-chart-list-width: 200px;
-    --ab-chart-list-title-height: 30px;
-    --ab-chart-list-head-height: 100px;
+    --ab-chart-list-head-height: 120px;
+    --ab-chart-list-head-title-height: 40px;
 
-    --ab-chart-content-timeline-header-height: 30px;
+    --ab-chart-content-timeline-header-height: 40px;
 
     --ab-chart-content-box-scroll-width: 15px;
     --ab-chart-content-box-scroll-height: 15px;
@@ -40,8 +40,26 @@
 
 #ab-chart-list-head {
     height: var(--ab-chart-list-head-height);
-    background-color: blue;
 }
+
+#ab-chart-list-head-title {
+    height: calc(var(--ab-chart-list-head-title-height) - 1px - 1px);
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
+    padding: 0px 8px;
+    line-height: calc(var(--ab-chart-list-head-title-height) - 1px - 1px);
+}
+
+#ab-chart-list-head-subtitle {
+    height: calc(var(--ab-chart-list-head-height) - var(--ab-chart-list-head-title-height) - 1px);
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
+    padding: 0px 8px;
+    line-height: calc(var(--ab-chart-list-head-height) - var(--ab-chart-list-head-title-height) - 1px);
+}
+
 
 #ab-chart-list-box {
     overflow: hidden;
@@ -77,15 +95,15 @@
 }
 
 #ab-chart-content-timeline-title {
-    height: calc(var(--ab-chart-list-title-height) - 1px - 1px);
+    height: calc(var(--ab-chart-list-head-title-height) - 1px - 1px);
     border-width: 1px 0px 1px 0px;
     border-style: solid;
     border-color: var(--ab-chart-line-color);
     text-align: center;
-    line-height: var(--ab-chart-list-title-height);
+    line-height: var(--ab-chart-list-head-title-height);
 }
 
-#ab-chart-content-timeline-header-box{
+#ab-chart-content-timeline-header-box {
     overflow: hidden;
 }
 
@@ -95,6 +113,7 @@
     background-color: #00ff00;
     display: flex;
     flex-direction: row;
+    line-height: var(--ab-chart-content-timeline-header-height);
 }
 
 .ab-chart-content-timeline-header-item {
@@ -106,7 +125,7 @@
 }
 
 #ab-chart-content-timeline-status {
-    height: calc(var(--ab-chart-list-head-height) - var(--ab-chart-list-title-height) - var(--ab-chart-content-timeline-header-height) - 1px);
+    height: calc(var(--ab-chart-list-head-height) - var(--ab-chart-list-head-title-height) - var(--ab-chart-content-timeline-header-height) - 1px);
     background-color: #ffff00;
     border-width: 0px 0px 1px 0px;
     border-style: solid;

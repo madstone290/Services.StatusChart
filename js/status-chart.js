@@ -45,46 +45,72 @@ const timeline = function () {
     }
 }();
 
+const list = function () {
+    const HEAD_TITLE_ID = "ab-chart-list-head-title";
+    const HEAD_SUBTITLE_ID = "ab-chart-list-head-subtitle";
 
-
-function createList() {
-    const box = document.getElementById(listBoxId);
-    const canvas = document.getElementById(canvasId);
-
-    let i = 0;
-    for (const data of listDatasource) {
-        // list item
-        const div = document.createElement("div");
-        div.innerText = data.value;
-        div.classList.add("ab-chart-list-item");
-        div.setAttribute("data-key", data.key);
-        box.appendChild(div);
-
-        // todo: get height from css variable
-        const rowHeight = css.getRowHeight();
-        // grid line
-        const line = document.createElement("div");
-        line.classList.add("ab-chart-hline");
-        line.style.top = `${rowHeight * (i + 1) - 1}px`;
-        line.style.width = canvas.scrollWidth;
-        canvas.appendChild(line);
-
-        i++;
+    function init(title, subTitle, items) {
+        setTitle(title);
+        setSubTitle(subTitle);
+        drawListItems(items);
     }
 
-    canvas.style.height = `${box.scrollHeight}px`;
+    function setTitle(title) {
+        const titleElement = document.getElementById(HEAD_TITLE_ID);
+        titleElement.innerText = title;
+    }
 
-    const canvasBox = document.getElementById(canvasBoxId);
-    canvasBox.addEventListener("scroll", (e) => {
-        console.log(e);
-        box.scrollTop = canvasBox.scrollTop;
-    });
-}
+    function setSubTitle(subTitle) {
+        const subTitleElement = document.getElementById(HEAD_SUBTITLE_ID);
+        subTitleElement.innerText = subTitle;
+    }
+
+    function drawListItems(items) {
+        const box = document.getElementById(listBoxId);
+        const canvas = document.getElementById(canvasId);
+
+        let i = 0;
+        for (const item of items) {
+            // list item
+            const div = document.createElement("div");
+            div.innerText = item.value;
+            div.classList.add("ab-chart-list-item");
+            div.setAttribute("data-key", item.key);
+            box.appendChild(div);
+
+            // todo: get height from css variable
+            const rowHeight = css.getRowHeight();
+            // grid line
+            const line = document.createElement("div");
+            line.classList.add("ab-chart-hline");
+            line.style.top = `${rowHeight * (i + 1) - 1}px`;
+            line.style.width = canvas.scrollWidth;
+            canvas.appendChild(line);
+
+            i++;
+        }
+
+        canvas.style.height = `${box.scrollHeight}px`;
+
+        const canvasBox = document.getElementById(canvasBoxId);
+        canvasBox.addEventListener("scroll", (e) => {
+            console.log(e);
+            box.scrollTop = canvasBox.scrollTop;
+        });
+    }
+
+    return {
+        init
+    };
+}();
+
+
 
 window.addEventListener("load", () => {
+    list.init("XXX H/L LH Line 03", "Serial No.", listDatasource);
 
     timeline.setTitle("Timeline");
     timeline.drawHeaders();
 
-    createList();
+
 });
