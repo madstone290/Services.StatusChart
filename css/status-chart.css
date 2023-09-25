@@ -1,11 +1,12 @@
 :root {
-
     --ab-chart-height: 615px;
     --ab-chart-legend-height: 50px;
 
     --ab-chart-list-width: 200px;
+    --ab-chart-list-title-height: 30px;
     --ab-chart-list-head-height: 100px;
 
+    --ab-chart-content-timeline-header-height: 30px;
 
     --ab-chart-content-box-scroll-width: 15px;
     --ab-chart-content-box-scroll-height: 15px;
@@ -35,7 +36,6 @@
 #ab-chart-list {
     width: var(--ab-chart-list-width);
     height: calc(100% - var(--ab-chart-content-box-scroll-height));
-    /* background-color: red; */
 }
 
 #ab-chart-list-head {
@@ -49,7 +49,7 @@
 }
 
 .ab-chart-list-item {
-    height: var(--ab-chart-row-height);
+    height: calc(var(--ab-chart-row-height) - 1px);
     border-width: 0px 1px 1px 1px;
     border-style: solid;
     border-color: var(--ab-chart-line-color);
@@ -59,7 +59,6 @@
 .ab-chart-list-item:nth-child(odd) {
     background-color: #dddddd;
 }
-
 
 #ab-chart-content-box {
     flex: 1;
@@ -74,8 +73,44 @@
 }
 
 #ab-chart-content-timeline {
-    background-color: bisque;
     height: var(--ab-chart-list-head-height);
+}
+
+#ab-chart-content-timeline-title {
+    height: calc(var(--ab-chart-list-title-height) - 1px - 1px);
+    border-width: 1px 0px 1px 0px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
+    text-align: center;
+    line-height: var(--ab-chart-list-title-height);
+}
+
+#ab-chart-content-timeline-header-box{
+    overflow: hidden;
+}
+
+#ab-chart-content-timeline-header {
+    width: 5000px;
+    height: var(--ab-chart-content-timeline-header-height);
+    background-color: #00ff00;
+    display: flex;
+    flex-direction: row;
+}
+
+.ab-chart-content-timeline-header-item {
+    border-width: 0px 1px 1px 0px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
+    padding: 0px 8px;
+    flex-direction: row;
+}
+
+#ab-chart-content-timeline-status {
+    height: calc(var(--ab-chart-list-head-height) - var(--ab-chart-list-title-height) - var(--ab-chart-content-timeline-header-height) - 1px);
+    background-color: #ffff00;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
 }
 
 #ab-chart-content-canvas-box {
@@ -86,6 +121,7 @@
 
 #ab-chart-content-canvas {
     height: 100%;
+    width: 5000px;
     position: relative;
 }
 
@@ -111,7 +147,7 @@
     width: 100px;
     height: 100px;
     background-color: #ffff00;
-    left: 4800px;
+    left: 800px;
     top: 200px;
 }
 
@@ -126,7 +162,6 @@
 
 #ab-chart-content-canvas-box::-webkit-scrollbar {
     width: var(--ab-chart-content-box-scroll-width);
-    ;
     height: var(--ab-chart-content-box-scroll-height);
 }
 
