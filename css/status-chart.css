@@ -11,6 +11,8 @@
     --ab-chart-content-box-scroll-height: 15px;
 
     --ab-chart-row-height: 30px;
+
+    --ab-chart-line-color: #999999;
 }
 
 #ab-chart {
@@ -33,7 +35,7 @@
 #ab-chart-list {
     width: var(--ab-chart-list-width);
     height: calc(100% - var(--ab-chart-content-box-scroll-height));
-    background-color: red;
+    /* background-color: red; */
 }
 
 #ab-chart-list-head {
@@ -48,6 +50,10 @@
 
 .ab-chart-list-item {
     height: var(--ab-chart-row-height);
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--ab-chart-line-color);
+    padding: 0px 8px;
 }
 
 .ab-chart-list-item:nth-child(odd) {
@@ -87,7 +93,7 @@
     position: absolute;
     border-width: 0px 0px 1px 0px;
     border-style: solid;
-    border-color: #999999;
+    border-color: var(--ab-chart-line-color);
 }
 
 #d1 {
