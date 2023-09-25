@@ -1,6 +1,6 @@
 :root {
     --ab-chart-height: 615px;
-    --ab-chart-legend-height: 50px;
+    --ab-chart-legend-height: 40px;
 
     --ab-chart-list-width: 200px;
     --ab-chart-list-head-height: 120px;
@@ -22,8 +22,47 @@
 }
 
 #ab-chart-legend {
-    height: var(--ab-chart-legend-height);
-    background-color: aqua;
+    height: calc(var(--ab-chart-legend-height) - 4px - 4px);
+    background-color: #eeeeee;
+    display: flex;
+    flex-direction: row;
+    padding: 4px;
+}
+
+#ab-chart-legend-left {
+    display: flex;
+    flex-direction: row;
+    padding: 4px;
+}
+
+#ab-chart-legend-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 4px;
+    flex: 1;
+}
+
+.ab-chart-legend-item {
+        display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.ab-chart-legend-item-color {
+    width: 20px;
+    height: 20px;
+}
+
+.ab-chart-legend-item-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.ab-chart-legend-item-label {
+    padding: 0px 4px;    
 }
 
 #ab-chart-main {

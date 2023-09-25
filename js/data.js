@@ -1,3 +1,19 @@
+var leftLegendDatasource = [
+    { color: "#92d050", value: "Op 10" },
+    { color: "#00b0f0", value: "Op 20" },
+    { color: "#ffc000", value: "Op 30" },
+    { color: "#7030a0", value: "Op 40" },
+    { color: "#5a6cf9", value: "Op 50" }
+];
+var rightLegendDatasource = [
+    { color: "#d9d9d9", value: "계획정지" },
+    { color: "#7f7f7f", value: "비가동" },
+    { color: "#cc00ff", value: "네트워크이상" },
+    { color: "#081fda", value: "바코드누락" },
+    { icon: "asset/image/warning.png", value: "설비이상" },
+    { icon: "asset/image/error.png", value: "품질이상" },
+];
+
 var listDatasource = [
     { key: 1, value: "H34A2900001" },
     { key: 2, value: "H34A2900002" },
