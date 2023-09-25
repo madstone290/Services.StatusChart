@@ -1,0 +1,133 @@
+:root {
+
+    --ab-chart-height: 615px;
+    --ab-chart-legend-height: 50px;
+
+    --ab-chart-list-width: 200px;
+    --ab-chart-list-head-height: 100px;
+
+
+    --ab-chart-content-box-scroll-width: 15px;
+    --ab-chart-content-box-scroll-height: 15px;
+
+    --ab-chart-row-height: 30px;
+}
+
+#ab-chart {
+    width: 100%;
+    height: var(--ab-chart-height);
+}
+
+#ab-chart-legend {
+    height: var(--ab-chart-legend-height);
+    background-color: aqua;
+}
+
+#ab-chart-main {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: calc(var(--ab-chart-height) - var(--ab-chart-legend-height));
+}
+
+#ab-chart-list {
+    width: var(--ab-chart-list-width);
+    height: calc(100% - var(--ab-chart-content-box-scroll-height));
+    background-color: red;
+}
+
+#ab-chart-list-head {
+    height: var(--ab-chart-list-head-height);
+    background-color: blue;
+}
+
+#ab-chart-list-box {
+    overflow: hidden;
+    height: calc(var(--ab-chart-height) - var(--ab-chart-legend-height) - var(--ab-chart-list-head-height) - var(--ab-chart-content-box-scroll-height));
+}
+
+.ab-chart-list-item {
+    height: var(--ab-chart-row-height);
+}
+
+.ab-chart-list-item:nth-child(odd) {
+    background-color: #dddddd;
+}
+
+
+#ab-chart-content-box {
+    flex: 1;
+    width: 500px;
+    height: 100%;
+}
+
+#ab-chart-content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+#ab-chart-content-timeline {
+    background-color: bisque;
+    height: var(--ab-chart-list-head-height);
+}
+
+#ab-chart-content-canvas-box {
+    overflow: auto;
+    width: 100%;
+    height: calc(var(--ab-chart-height) - var(--ab-chart-legend-height) - var(--ab-chart-list-head-height));
+}
+
+#ab-chart-content-canvas {
+    height: 100%;
+    position: relative;
+}
+
+.ab-chart-hline {
+    position: absolute;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    border-color: #999999;
+}
+
+#d1 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #ff0000;
+    left: 100px;
+    top: 100px;
+    z-index: 1;
+}
+
+#d2 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #ffff00;
+    left: 4800px;
+    top: 200px;
+}
+
+#s1 {
+    position: absolute;
+    width: 100px;
+    height: 100%;
+    background-color: #00ff00;
+    left: 100px;
+    z-index: 0;
+}
+
+#ab-chart-content-canvas-box::-webkit-scrollbar {
+    width: var(--ab-chart-content-box-scroll-width);
+    ;
+    height: var(--ab-chart-content-box-scroll-height);
+}
+
+#ab-chart-content-canvas-box::-webkit-scrollbar-thumb {
+    background-color: #999999;
+}
+
+#ab-chart-content-canvas-box::-webkit-scrollbar-track {
+    background-color: #cccccc;
+}
