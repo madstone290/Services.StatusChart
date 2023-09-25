@@ -65,9 +65,11 @@ var entities = [
     {
         id: 1,
         events: [
-            { type: 1, start: 30, end: 60 },
+            { type: 1, start: 0, end: 60 },
             { type: 2, start: 60, end: 120 },
             { type: 3, start: 140, end: 160 },
+            { type: 1, start: 60 * 22, end: 60 * 23 },
+            { type: 3, start: 60 * 23, end: 60 * 24 },
         ]
     },
     {

@@ -8,22 +8,27 @@ const css = function () {
     }
 
     function getCellWidth() {
-        return parseInt(this.getVariable("--ab-chart-cell-width"));
+        return parseInt(getVariable("--ab-chart-cell-width"));
     }
 
     function getCellHeight() {
-        return parseInt(this.getVariable("--ab-chart-cell-height"));
+        return parseInt(getVariable("--ab-chart-cell-height"));
     }
 
     function getCellContentHeight() {
-        return parseInt(this.getVariable("--ab-chart-cell-content-height"));
+        return parseInt(getVariable("--ab-chart-cell-content-height"));
+    }
+
+    function getScrollWidth() {
+        return parseInt(getVariable("--ab-chart-scroll-width"));
     }
 
     return {
         getVariable,
         getCellWidth,
         getCellHeight,
-        getCellContentHeight
+        getCellContentHeight,
+        getScrollWidth
     }
 }();
 
@@ -87,11 +92,11 @@ const timeline = function () {
             div.classList.add("ab-chart-content-timeline-header-item");
             header.appendChild(div);
         }
-        const canvasWidth =  `${css.getCellWidth() * timelineHeaders.length + 20}px`; // 20 for padding
-        header.style.width = canvasWidth;
+        const canvasWidth = css.getCellWidth() * timelineHeaders.length
+        header.style.width = `${canvasWidth + css.getScrollWidth()}px`;
 
         const canvas = document.getElementById(canvas_id);
-        canvas.style.width = canvasWidth;
+        canvas.style.width = `${canvasWidth}px`;
 
         const canvasBox = document.getElementById(canvasBoxId);
         const headerBox = document.getElementById(timline_header_box_id);
@@ -187,6 +192,7 @@ const canvas = function () {
             eventElement.classList.add("ab-chart-content-canvas-item");
 
             const left = css.getCellWidth() * event.start / 60;
+            console.log("left", left);
             const top = (css.getCellHeight() * entityIndex) + (css.getCellHeight() - css.getCellContentHeight()) / 2 - 1;
             const width = css.getCellWidth() * (event.end - event.start) / 60;
             const color = event.type === 1 ? "red" : event.type === 2 ? "yellow" : "green";
@@ -214,7 +220,7 @@ const canvas = function () {
 window.addEventListener("load", () => {
     legend.init(leftLegendDatasource, rightLegendDatasource);
 
-    
+
 
     timeline.setTitle("Time Line");
     timeline.drawHeaders();

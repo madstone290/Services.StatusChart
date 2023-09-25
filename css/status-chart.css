@@ -8,10 +8,10 @@
 
     --ab-chart-content-timeline-header-height: 40px;
 
-    --ab-chart-content-box-scroll-width: 15px;
-    --ab-chart-content-box-scroll-height: 15px;
+    --ab-chart-scroll-width: 15px;
+    --ab-chart-scroll-height: 15px;
 
-    --ab-chart-cell-width: 100px;
+    --ab-chart-cell-width: 200px;
     --ab-chart-cell-height: 40px;
     --ab-chart-cell-content-height: 25px;
 
@@ -76,7 +76,7 @@
 
 #ab-chart-list {
     width: var(--ab-chart-list-width);
-    height: calc(100% - var(--ab-chart-content-box-scroll-height));
+    height: calc(100% - var(--ab-chart-scroll-height));
 }
 
 #ab-chart-list-head {
@@ -104,7 +104,7 @@
 
 #ab-chart-list-box {
     overflow: hidden;
-    height: calc(var(--ab-chart-height) - var(--ab-chart-legend-height) - var(--ab-chart-list-head-height) - var(--ab-chart-content-box-scroll-height));
+    height: calc(var(--ab-chart-height) - var(--ab-chart-legend-height) - var(--ab-chart-list-head-height) - var(--ab-chart-scroll-height));
 }
 
 .ab-chart-list-item {
@@ -197,8 +197,8 @@
 }
 
 #ab-chart-content-canvas-box::-webkit-scrollbar {
-    width: var(--ab-chart-content-box-scroll-width);
-    height: var(--ab-chart-content-box-scroll-height);
+    width: var(--ab-chart-scroll-width);
+    height: var(--ab-chart-scroll-height);
 }
 
 #ab-chart-content-canvas-box::-webkit-scrollbar-thumb {
