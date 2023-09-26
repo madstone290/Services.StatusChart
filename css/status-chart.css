@@ -25,7 +25,6 @@
 
 #sc-legend {
     height: calc(var(--sc-legend-height) - 4px - 4px);
-    background-color: #eeeeee;
     display: flex;
     flex-direction: row;
     padding: 4px;

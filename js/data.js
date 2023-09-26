@@ -61,7 +61,7 @@ var timelineHeaders = [
     "23:00",
 ];
 
-var entities = [
+var entityLines = [
     {
         id: 1,
         events: [
