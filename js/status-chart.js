@@ -133,10 +133,10 @@ const listService = function () {
     const SC_LIST_ITEM = "sc-list-item";
     const SC_HLINE = "sc-hline";
 
-    function init(title, subTitle, items) {
+    function init(title, subTitle, entities) {
         setTitle(title);
         setSubTitle(subTitle);
-        drawListItems(items);
+        drawListItems(entities);
     }
 
     function setTitle(title) {
@@ -149,15 +149,15 @@ const listService = function () {
         subTitleElement.innerText = subTitle;
     }
 
-    function drawListItems(items) {
+    function drawListItems(entities) {
         const listBox = document.getElementById(LIST_BOX_ID);
         const canvas = document.getElementById(CANVAS_ID);
 
         let i = 0;
-        for (const item of items) {
+        for (const entity of entities) {
             // list item
             const div = document.createElement("div");
-            div.innerText = item.value;
+            div.innerText = entity.name;
             div.classList.add(SC_LIST_ITEM);
             listBox.appendChild(div);
 
@@ -188,18 +188,19 @@ const listService = function () {
 const canvasService = function () {
     const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
 
-    function init(entityList, entityLines) {
-        for (const entityLine of entityLines) {
-            const rowIndex = entityList.findIndex(e => e.id === entityLine.id);
-            drawEntityLine(entityLine, rowIndex);
+    function init(entities) {
+        let rowIndex = 0;
+        for (const entity of entities) {
+            drawEntityEvents(entity, rowIndex);
+            rowIndex++;
         }
     }
 
-    function drawEntityLine(entityLine, rowIndex) {
+    function drawEntityEvents(entity, rowIndex) {
         if (rowIndex == null || rowIndex < 0)
             return;
 
-        const entityEvents = entityLine.events;
+        const entityEvents = entity.events;
         for (const event of entityEvents) {
             const eventElement = document.createElement("div");
             eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
@@ -231,12 +232,12 @@ const canvasService = function () {
 
 
 const chartService = function () {
-    function init(title, subTitle, leftLegendDatasource, rightLegendDatasource, listDatasource, entities) {
+    function init(title, subTitle, leftLegendDatasource, rightLegendDatasource, entities) {
         legendService.init(leftLegendDatasource, rightLegendDatasource);
         timelineService.setTitle("Time Line");
         timelineService.drawHeaders();
-        listService.init(title, subTitle, listDatasource);
-        canvasService.init(listDatasource, entities);
+        listService.init(title, subTitle, entities);
+        canvasService.init(entities);
     }
 
     return {
@@ -250,6 +251,6 @@ window.addEventListener("load", () => {
         "Serial No.",
         leftLegendDatasource,
         rightLegendDatasource,
-        listDatasource,
-        entityLines);
+        entities);
+
 });

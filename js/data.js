@@ -14,24 +14,56 @@ var rightLegendDatasource = [
     { icon: "asset/image/error.png", value: "품질이상" },
 ];
 
-var listDatasource = [
-    { id: 1, value: "H34A2900001" },
-    { id: 2, value: "H34A2900002" },
-    { id: 3, value: "H34A2900003" },
-    { id: 4, value: "H34A2900004" },
-    { id: 5, value: "H34A2900005" },
-    { id: 6, value: "H34A2900006" },
-    { id: 7, value: "H34A2900007" },
-    { id: 8, value: "H34A2900008" },
-    { id: 9, value: "H34A2900009" },
-    { id: 10, value: "H34A2900010" },
-    { id: 11, value: "H34A2900011" },
-    { id: 12, value: "H34A2900012" },
-    { id: 13, value: "H34A2900013" },
-    { id: 14, value: "H34A2900014" },
-    { id: 15, value: "H34A2900015" },
-    { id: 16, value: "H34A2900016" },
-];
+var entities = [
+    {
+        id: 1,
+        name: "H34A2900001",
+        events: [
+            { type: 1, start: 0, end: 60 },
+            { type: 2, start: 60, end: 120 },
+            { type: 3, start: 140, end: 160 },
+            { type: 1, start: 60 * 22, end: 60 * 23 },
+            { type: 3, start: 60 * 23, end: 60 * 24 },
+        ]
+    },
+    {
+        id: 2,
+        name: "H34A2900002",
+        events: [
+            { type: 1, start: 60, end: 160 },
+        ]
+    },
+    {
+        id: 3,
+        name: "H34A2900003",
+        events: [
+            { type: 2, start: 10, end: 60 },
+            { type: 3, start: 120, end: 240 },
+        ]
+    },
+    {
+        id: 4,
+        name: "H34A2900004",
+        events: [
+            { type: 1, start: 60 * 22, end: 60 * 23 },
+            { type: 3, start: 60 * 23, end: 60 * 24 },
+        ]
+    },
+    { id: 5, name: "H34A2900005" },
+    { id: 6, name: "H34A2900006" },
+    { id: 7, name: "H34A2900007" },
+    { id: 8, name: "H34A2900008" },
+    { id: 9, name: "H34A2900009" },
+    { id: 10, name: "H34A2900010" },
+    { id: 11, name: "H34A2900011" },
+    { id: 12, name: "H34A2900012" },
+    { id: 13, name: "H34A2900013" },
+    { id: 14, name: "H34A2900014" },
+    { id: 15, name: "H34A2900015" },
+    { id: 16, name: "H34A2900016" },
+
+]
+
 
 
 var timelineHeaders = [
@@ -60,39 +92,3 @@ var timelineHeaders = [
     "22:00",
     "23:00",
 ];
-
-var entityLines = [
-    {
-        id: 1,
-        events: [
-            { type: 1, start: 0, end: 60 },
-            { type: 2, start: 60, end: 120 },
-            { type: 3, start: 140, end: 160 },
-            { type: 1, start: 60 * 22, end: 60 * 23 },
-            { type: 3, start: 60 * 23, end: 60 * 24 },
-        ]
-    },
-    {
-        id: 3,
-        events: [
-            { type: 1, start: 60, end: 160 },
-        ]
-    },
-    {
-        id: 4,
-        events: [
-            { type: 2, start: 10, end: 60 },
-            { type: 3, start: 120, end: 240 },
-        ]
-    },
-    {
-        id: 5,
-        events: [
-            { type: 1, start: 60 * 22, end: 60 * 23 },
-            { type: 3, start: 60 * 23, end: 60 * 24 },
-        ]
-    }
-
-
-]
-
