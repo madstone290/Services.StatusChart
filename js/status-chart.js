@@ -1,6 +1,6 @@
-const listBoxId = "ab-chart-list-box";
-const canvasId = "ab-chart-content-canvas";
-const canvasBoxId = "ab-chart-content-canvas-box";
+const listBoxId = "sc-list-box";
+const canvasId = "sc-content-canvas";
+const canvasBoxId = "sc-content-canvas-box";
 
 const css = function () {
     function getVariable(name) {
@@ -8,19 +8,19 @@ const css = function () {
     }
 
     function getCellWidth() {
-        return parseInt(getVariable("--ab-chart-cell-width"));
+        return parseInt(getVariable("--sc-cell-width"));
     }
 
     function getCellHeight() {
-        return parseInt(getVariable("--ab-chart-cell-height"));
+        return parseInt(getVariable("--sc-cell-height"));
     }
 
     function getCellContentHeight() {
-        return parseInt(getVariable("--ab-chart-cell-content-height"));
+        return parseInt(getVariable("--sc-cell-content-height"));
     }
 
     function getScrollWidth() {
-        return parseInt(getVariable("--ab-chart-scroll-width"));
+        return parseInt(getVariable("--sc-scroll-width"));
     }
 
     return {
@@ -33,8 +33,8 @@ const css = function () {
 }();
 
 const legend = function () {
-    const LEFT_LEGEND_ID = "ab-chart-legend-left";
-    const RIGHT_LEGEND_ID = "ab-chart-legend-right";
+    const LEFT_LEGEND_ID = "sc-legend-left";
+    const RIGHT_LEGEND_ID = "sc-legend-right";
     function init(leftItems, rightItems) {
         const left = document.getElementById(LEFT_LEGEND_ID);
         drawLegend(leftItems, left);
@@ -46,23 +46,23 @@ const legend = function () {
     function drawLegend(items, container) {
         for (const item of items) {
             const box = document.createElement("div");
-            box.classList.add("ab-chart-legend-item");
+            box.classList.add("sc-legend-item");
             container.appendChild(box);
 
             if (item.icon) {
                 const icon = document.createElement("img");
-                icon.classList.add("ab-chart-legend-item-icon");
+                icon.classList.add("sc-legend-item-icon");
                 icon.src = item.icon;
                 box.appendChild(icon);
             } else {
                 const color = document.createElement("div");
-                color.classList.add("ab-chart-legend-item-color");
+                color.classList.add("sc-legend-item-color");
                 color.style.backgroundColor = item.color;
                 box.appendChild(color);
             }
 
             const label = document.createElement("div");
-            label.classList.add("ab-chart-legend-item-label");
+            label.classList.add("sc-legend-item-label");
             label.innerText = item.value;
             box.appendChild(label);
         }
@@ -74,11 +74,11 @@ const legend = function () {
 }();
 
 const timeline = function () {
-    const timeline_title_id = "ab-chart-content-timeline-title";
-    const timline_header_box_id = "ab-chart-content-timeline-header-box";
-    const timeline_header_id = "ab-chart-content-timeline-header";
-    const timeline_status_id = "ab-chart-content-timeline-status";
-    const canvas_id = "ab-chart-content-canvas";
+    const timeline_title_id = "sc-content-timeline-title";
+    const timline_header_box_id = "sc-content-timeline-header-box";
+    const timeline_header_id = "sc-content-timeline-header";
+    const timeline_status_id = "sc-content-timeline-status";
+    const canvas_id = "sc-content-canvas";
 
     function setTitle(name) {
         const titleElement = document.getElementById(timeline_title_id);
@@ -89,7 +89,7 @@ const timeline = function () {
         for (const data of timelineHeaders) {
             const div = document.createElement("div");
             div.innerText = data;
-            div.classList.add("ab-chart-content-timeline-header-item");
+            div.classList.add("sc-content-timeline-header-item");
             header.appendChild(div);
         }
         const canvasWidth = css.getCellWidth() * timelineHeaders.length
@@ -113,8 +113,8 @@ const timeline = function () {
 }();
 
 const list = function () {
-    const HEAD_TITLE_ID = "ab-chart-list-head-title";
-    const HEAD_SUBTITLE_ID = "ab-chart-list-head-subtitle";
+    const HEAD_TITLE_ID = "sc-list-head-title";
+    const HEAD_SUBTITLE_ID = "sc-list-head-subtitle";
 
     function init(title, subTitle, items) {
         setTitle(title);
@@ -141,12 +141,12 @@ const list = function () {
             // list item
             const div = document.createElement("div");
             div.innerText = item.value;
-            div.classList.add("ab-chart-list-item");
+            div.classList.add("sc-list-item");
             box.appendChild(div);
 
             // grid line
             const line = document.createElement("div");
-            line.classList.add("ab-chart-hline");
+            line.classList.add("sc-hline");
             const rowHeight = css.getCellHeight();
             line.style.top = `${rowHeight * (i + 1) - 1}px`;
             line.style.width = canvas.scrollWidth;
@@ -170,7 +170,7 @@ const list = function () {
 }();
 
 const canvas = function () {
-    const CANVAS_ID = "ab-chart-content-canvas";
+    const CANVAS_ID = "sc-content-canvas";
     let _headers;
     function init(headers, entities) {
         _headers = headers;
@@ -189,7 +189,7 @@ const canvas = function () {
         const entityEvents = entity.events;
         for (const event of entityEvents) {
             const eventElement = document.createElement("div");
-            eventElement.classList.add("ab-chart-content-canvas-item");
+            eventElement.classList.add("sc-content-canvas-item");
 
             const left = css.getCellWidth() * event.start / 60;
             console.log("left", left);
