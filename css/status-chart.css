@@ -45,7 +45,7 @@
 }
 
 .sc-legend-item {
-        display: flex;
+    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
@@ -63,7 +63,7 @@
 }
 
 .sc-legend-item-label {
-    padding: 0px 4px;    
+    padding: 0px 4px;
 }
 
 #sc-main {
@@ -190,9 +190,16 @@
     border-color: var(--sc-line-color);
 }
 
-.sc-content-canvas-item{
+.sc-vline {
     position: absolute;
-    height:  var(--sc-cell-content-height);
+    border-width: 0px 1px 0px 0px;
+    border-style: solid;
+    border-color: var(--sc-line-color);
+}
+
+.sc-content-canvas-item {
+    position: absolute;
+    height: var(--sc-cell-content-height);
 }
 
 #sc-content-canvas-box::-webkit-scrollbar {

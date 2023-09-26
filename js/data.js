@@ -69,13 +69,13 @@ var entities = [
         events: [
             {
                 type: 3,
-                start: new Date(Date.parse("2020-01-01T03:00:00")),
-                end: new Date(Date.parse("2020-01-01T04:00:00")),
+                start: new Date(Date.parse("2020-01-01T22:00:00")),
+                end: new Date(Date.parse("2020-01-01T23:00:00")),
             },
             {
                 type: 1,
-                start: new Date(Date.parse("2020-01-01T04:30:00")),
-                end: new Date(Date.parse("2020-01-01T07:00:00")),
+                start: new Date(Date.parse("2020-01-01T23:00:00")),
+                end: new Date(Date.parse("2020-01-01T23:50:00")),
             },
         ]
     },

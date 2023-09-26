@@ -155,7 +155,6 @@ const timelineService = function () {
             }));
             time = new Date(time.getTime() + dateTimeService.toTime(cellMinutes));
         }
-        console.log(headers);
 
         for (const data of headers) {
             const div = document.createElement("div");
@@ -184,7 +183,6 @@ const timelineService = function () {
 
 const listService = function () {
     const SC_LIST_ITEM = "sc-list-item";
-    const SC_HLINE = "sc-hline";
 
     function init(title, subTitle, entities) {
         setTitle(title);
@@ -206,24 +204,12 @@ const listService = function () {
         const listBox = document.getElementById(LIST_BOX_ID);
         const canvas = document.getElementById(CANVAS_ID);
 
-        let i = 0;
         for (const entity of entities) {
             // list item
             const div = document.createElement("div");
             div.innerText = entity.name;
             div.classList.add(SC_LIST_ITEM);
             listBox.appendChild(div);
-
-            // grid line
-            const line = document.createElement("div");
-            line.classList.add(SC_HLINE);
-
-            const rowHeight = cssService.getCellHeight();
-            line.style.top = `${rowHeight * (i + 1) - 1}px`;
-            line.style.width = canvas.scrollWidth;
-            canvas.appendChild(line);
-
-            i++;
         }
         canvas.style.height = `${listBox.scrollHeight}px`;
 
@@ -240,12 +226,59 @@ const listService = function () {
 
 const canvasService = function () {
     const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
+    const SC_HLINE = "sc-hline";
+    const SC_VLINE = "sc-vline";
+    /**
+     * 
+     * @param {object} entities Entities to draw
+     * @param {Date} startTime Start time of chart
+     * @param {number} cellMinutes Minutes for each cell
+     * @param {boolean} horizontalLine Whether to draw horizontal line
+     * @param {boolean} vertialLine Whether to draw vertical line
+     */
+    function init(entities, startTime, cellMinutes,
+        horizontalLine = true, vertialLine = true) {
+        if (horizontalLine)
+            drawHorizontalLines();
+        if (vertialLine)
+            drawVertialLines();
 
-    function init(entities, startTime, cellMinutes) {
         let rowIndex = 0;
         for (const entity of entities) {
             drawEntityEvents(entity, rowIndex, startTime, cellMinutes);
             rowIndex++;
+        }
+    }
+
+    function drawVertialLines() {
+        const canvas = document.getElementById(CANVAS_ID);
+        const canvasWidth = canvas.scrollWidth;
+        const cellWidth = cssService.getCellWidth();
+        const lineCount = Math.floor(canvasWidth / cellWidth);
+        console.log(lineCount);
+        for (let i = 0; i < lineCount; i++) {
+            const line = document.createElement("div");
+            line.classList.add(SC_VLINE);
+
+            line.style.left = `${cellWidth * (i + 1) - 1}px`;
+            line.style.height = canvas.scrollHeight;
+            canvas.appendChild(line);
+        }
+
+    }
+
+    function drawHorizontalLines() {
+        const canvas = document.getElementById(CANVAS_ID);
+        const canvasHeight = canvas.scrollHeight;
+        const cellHeight = cssService.getCellHeight();
+        const lineCount = Math.floor(canvasHeight / cellHeight);
+        for(let i = 0; i < lineCount; i++) {
+            const line = document.createElement("div");
+            line.classList.add(SC_HLINE);
+
+            line.style.top = `${cellHeight * (i + 1) - 1}px`;
+            line.style.width = canvas.scrollWidth;
+            canvas.appendChild(line);
         }
     }
 
