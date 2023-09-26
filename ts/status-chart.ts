@@ -253,7 +253,9 @@ const StatusChart = function () {
                 rowIndex++;
             }
 
-            drawGlobalEvent(startTime, new Date(Date.parse("2020-01-01T03:30:00")), new Date(Date.parse("2020-01-01T07:00:00")), 1, cellMinutes);
+            for(const event  of globalEvents){
+                drawGlobalEvent(startTime, event.start, event.end, event.type, cellMinutes);
+            }
         }
 
         function drawVertialLines() {
@@ -328,7 +330,7 @@ const StatusChart = function () {
 
             const left = dateTimeService.toMinutes(eventStartTime.valueOf() - chartStartTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
             const width = cssService.getCellWidth() * dateTimeService.toMinutes(eventEndTime.valueOf() - eventStartTime.valueOf()) / cellMinutes;
-            const color = eventType === 1 ? "aqua" : eventType === 2 ? "beige" : "brown";
+            const color = eventType === 1 ? "aqua" : eventType === 2 ? "coral" : "brown";
 
             eventElement.style.left = `${left}px`;
             eventElement.style.width = `${width}px`;

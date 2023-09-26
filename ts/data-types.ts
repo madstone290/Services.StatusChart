@@ -19,7 +19,7 @@ interface GlobalEvent {
 interface Entity {
     id: number;
     name: string;
-    events: EntityEvent[];
+    events?: EntityEvent[];
 }
 
 interface StatusChartProps {

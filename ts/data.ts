@@ -13,7 +13,8 @@ var rightLegendDatasource = [
     { icon: "asset/image/warning.png", label: "설비이상" },
     { icon: "asset/image/error.png", label: "품질이상" },
 ];
-var entities = [
+
+var entities: Entity[] = [
     {
         id: 1,
         name: "H34A2900001",
@@ -90,8 +91,10 @@ var entities = [
     { id: 14, name: "H34A2900014" },
     { id: 15, name: "H34A2900015" },
     { id: 16, name: "H34A2900016" },
-];
-var globalEvents = [
+
+]
+
+var globalEvents : GlobalEvent[] = [
     {
         type: 1,
         start: new Date(Date.parse("2020-01-01T01:00:00")),
