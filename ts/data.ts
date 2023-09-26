@@ -111,3 +111,30 @@ var globalEvents : GlobalEvent[] = [
         end: new Date(Date.parse("2020-01-01T23:30:00")),
     }
 ];
+
+
+
+var machineErrors : MachineError[] = [
+    {
+        id: 1,
+        description: "서보모터 이상",
+        time: new Date(Date.parse("2020-01-01T01:30:00")),
+    },
+    {
+        id:2,
+        description: "냉각기 이상",
+        time: new Date(Date.parse("2020-01-01T02:30:00")),
+    },
+    {
+        id:3,
+        description: "온수기 이상",
+        time: new Date(Date.parse("2020-01-01T03:00:00")),
+    },
+    {
+        id:4,
+        description: "냉각기 이상",
+        time: new Date(Date.parse("2020-01-01T03:02:00")),
+    }
+
+
+];

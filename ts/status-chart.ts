@@ -228,6 +228,31 @@ const StatusChart = function () {
         };
     }();
 
+    function drawStatusItems(items: PointEvent[], render: (item: PointEvent) => HTMLElement, startTime: Date, cellMinutes: number) {
+        const statusElement = document.getElementById(TIMELINE_STATUS_ID) as HTMLElement;
+        for (const item of items) {
+            const eventElement = render(item);
+            eventElement.classList.add("sc-content-timeline-status-item");
+
+            const center = dateTimeService.toMinutes(item.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
+            // const left = cssService.getCellWidth() * event.start / cellMinutes;
+            const top = (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
+
+            const width = eventElement.clientWidth;
+            const mid = width / 2;
+            eventElement.style.left = `${center - mid}px`;
+            eventElement.style.top = `${top}px`;
+            eventElement.style.zIndex = "3";
+            eventElement.addEventListener("click", (e) => {
+                console.log(e);
+            });
+
+            statusElement.appendChild(eventElement);
+        }
+
+
+    }
+
     const canvasService = function () {
         const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
         const SC_HLINE = "sc-hline";
@@ -253,7 +278,7 @@ const StatusChart = function () {
                 rowIndex++;
             }
 
-            for(const event  of globalEvents){
+            for (const event of globalEvents) {
                 drawGlobalEvent(startTime, event.start, event.end, event.type, cellMinutes);
             }
         }
@@ -298,6 +323,7 @@ const StatusChart = function () {
                 return;
 
             const entityEvents = entity.events;
+            const canvas = document.getElementById(CANVAS_ID) as HTMLElement;
             for (const event of entityEvents) {
                 const eventElement = document.createElement("div");
                 eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
@@ -319,7 +345,6 @@ const StatusChart = function () {
                     console.log(e);
                 });
 
-                const canvas = document.getElementById(CANVAS_ID) as HTMLElement;
                 canvas.appendChild(eventElement);
             }
         }
@@ -371,21 +396,46 @@ const StatusChart = function () {
     }
 
     return {
-        init
+        init,
+        drawStatusItems
     }
 }();
 window.addEventListener("load", () => {
+
+    const cellMinutes = 60;
+    const cellWidth = 200;
+    const cellHeight = 40;
+
     StatusChart.init({
         title: "XXX H/L LH Line 03",
         subTitle: "Serial No.",
         startTime: new Date(Date.parse("2020-01-01T00:00:00")),
         endTime: new Date(Date.parse("2020-01-02T00:00:00")),
-        cellMinutes: 60,
-        cellWidth: 200,
-        cellHeight: 40,
+        cellMinutes: cellMinutes,
+        cellWidth: cellWidth,
+        cellHeight: cellHeight,
         leftLegends: (window as any).leftLegendDatasource,
         rightLegends: (window as any).rightLegendDatasource,
         entities: (window as any).entities
     });
+
+    const render = (error: MachineError) => {
+        const divElement = document.createElement("div");
+        divElement.classList.add("sc-tooltip");
+        
+        const eventElement = document.createElement("img");
+        eventElement.width = 20;
+        eventElement.height = 20;
+        eventElement.src = "asset/image/warning.png";
+        divElement.appendChild(eventElement);
+
+        const tooltipElement = document.createElement("div");
+        tooltipElement.classList.add("sc-tooltip-text");
+        tooltipElement.innerText = error.description;
+        divElement.appendChild(tooltipElement);
+
+        return divElement;
+    };
+    StatusChart.drawStatusItems((window as any).machineErrors, render, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes); 
 
 });

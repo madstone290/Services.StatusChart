@@ -4,6 +4,11 @@ interface LegendItem {
     icon?: string;
 }
 
+interface PointEvent {
+    time: Date;
+}
+
+
 interface EntityEvent {
     type: any;
     start: Date;
@@ -33,4 +38,11 @@ interface StatusChartProps {
     leftLegends: LegendItem[];
     rightLegends: LegendItem[];
     entities: Entity[];
+}
+
+
+/* Domain Specific Types */
+interface MachineError extends PointEvent {
+    id: number;
+    description: string;
 }

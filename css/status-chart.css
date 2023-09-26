@@ -100,7 +100,6 @@
     line-height: calc(var(--sc-list-head-height) - var(--sc-list-head-title-height) - 1px);
 }
 
-
 #sc-list-box {
     overflow: hidden;
     height: calc(var(--sc-height) - var(--sc-legend-height) - var(--sc-list-head-height) - var(--sc-scroll-height));
@@ -170,6 +169,12 @@
     border-width: 0px 0px 1px 0px;
     border-style: solid;
     border-color: var(--sc-line-color);
+
+    position: relative;
+}
+
+.sc-content-timeline-status-item {
+    position: absolute;
 }
 
 #sc-content-canvas-box {
@@ -181,6 +186,7 @@
 #sc-content-canvas {
     height: 100%;
     position: relative;
+    z-index: 0;
 }
 
 .sc-hline {
@@ -213,4 +219,28 @@
 
 #sc-content-canvas-box::-webkit-scrollbar-track {
     background-color: #cccccc;
+}
+
+
+.sc-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.sc-tooltip .sc-tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    height: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    /* border-radius: 6px; */
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 0;
+}
+
+.sc-tooltip:hover .sc-tooltip-text {
+    visibility: visible;
 }
