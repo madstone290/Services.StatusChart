@@ -1,21 +1,13 @@
-interface LegendItem {
-    color: string;
-    label: string;
-    icon?: string;
-}
-
 interface PointEvent {
     time: Date;
 }
 
-
-interface EntityEvent {
-    type: any;
+interface RangeEvent {
     start: Date;
     end: Date;
 }
 
-interface GlobalEvent {
+interface EntityEvent {
     type: any;
     start: Date;
     end: Date;
@@ -24,7 +16,8 @@ interface GlobalEvent {
 interface Entity {
     id: number;
     name: string;
-    events?: EntityEvent[];
+    pointEvents?: ProductError[];
+    rangeEvents?: EntityEvent[];
 }
 
 interface StatusChartProps {
@@ -42,7 +35,39 @@ interface StatusChartProps {
 
 
 /* Domain Specific Types */
+
+interface LegendItem {
+    color: string;
+    label: string;
+    icon?: string;
+}
+
 interface MachineError extends PointEvent {
+    id: number;
+    description: string;
+}
+
+interface ProductError extends PointEvent {
+    id: number;
+    description: string;
+}
+
+interface NetworkErrorEvent extends RangeEvent {
+    id: number;
+    description: string;
+}
+
+interface PauseEvent extends RangeEvent {
+    id: number;
+    description: string;
+}
+
+interface FaultEvent extends RangeEvent {
+    id: number;
+    description: string;
+}
+
+interface BarcodeMissingEvent extends RangeEvent {
     id: number;
     description: string;
 }
