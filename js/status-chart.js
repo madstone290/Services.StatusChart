@@ -14,6 +14,9 @@ const LEFT_LEGEND_ID = "sc-legend-left";
 const RIGHT_LEGEND_ID = "sc-legend-right";
 
 
+const DEFAULT_CELL_WIDTH = 200;
+const DEFAULT_CELL_HEIGHT = 40;
+
 const cssService = function () {
     const SC_CELL_WIDTH = "--sc-cell-width";
     const SC_CELL_HEIGHT = "--sc-cell-height";
@@ -24,12 +27,24 @@ const cssService = function () {
         return getComputedStyle(document.documentElement).getPropertyValue(name);
     }
 
+    function setVariable(name, value) {
+        document.documentElement.style.setProperty(name, value);
+    }
+
     function getCellWidth() {
         return parseInt(getVariable(SC_CELL_WIDTH));
     }
 
+    function setCellWidth(width) {
+        setVariable(SC_CELL_WIDTH, `${width}px`);
+    }
+
     function getCellHeight() {
         return parseInt(getVariable(SC_CELL_HEIGHT));
+    }
+
+    function setCellHeight(height) {
+        setVariable(SC_CELL_HEIGHT, `${height}px`);
     }
 
     function getCellContentHeight() {
@@ -43,7 +58,9 @@ const cssService = function () {
     return {
         getVariable,
         getCellWidth,
+        setCellWidth,
         getCellHeight,
+        setCellHeight,
         getCellContentHeight,
         getScrollWidth
     }
@@ -101,16 +118,38 @@ const timelineService = function () {
         titleElement.innerText = name;
     }
 
-    function drawHeaders() {
-        // TODO : 파라미터 적용
+    /**
+     * draw timeline headers
+     * @param {Date} start start time of header
+     * @param {Date} end end time of header
+     */
+    function drawHeaders(start, end, cellMinutes, cellWidth, cellHeight) {
+        cssService.setCellWidth(cellWidth);
+        cssService.setCellHeight(cellHeight);
+
         const header = document.getElementById(TIMELINE_HEADER_ID);
-        for (const data of timelineHeaders) {
+        const headers = [];
+        let time = start;
+
+        while (time < end) {
+            // TODO : add time format service
+            headers.push(time.toLocaleTimeString([], {
+                day: 'numeric', month: 'numeric', year: 'numeric',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            }));
+            time = new Date(time.getTime() + cellMinutes * 60 * 1000);
+        }
+        console.log(headers);
+
+        for (const data of headers) {
             const div = document.createElement("div");
             div.innerText = data;
             div.classList.add(SC_CONTENT_TIMELINE_HEADER_ITEM);
             header.appendChild(div);
         }
-        const canvasWidth = cssService.getCellWidth() * timelineHeaders.length
+        const canvasWidth = cssService.getCellWidth() * headers.length
         header.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
 
         const canvas = document.getElementById(CANVAS_ID);
@@ -188,16 +227,19 @@ const listService = function () {
 const canvasService = function () {
     const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
 
-    function init(entities) {
+    function init(entities, cellMinutes) {
         let rowIndex = 0;
         for (const entity of entities) {
-            drawEntityEvents(entity, rowIndex);
+            drawEntityEvents(entity, rowIndex, cellMinutes);
             rowIndex++;
         }
     }
 
-    function drawEntityEvents(entity, rowIndex) {
+    function drawEntityEvents(entity, rowIndex, cellMinutes = 60) {
         if (rowIndex == null || rowIndex < 0)
+            return;
+
+        if (entity.events == null)
             return;
 
         const entityEvents = entity.events;
@@ -205,17 +247,16 @@ const canvasService = function () {
             const eventElement = document.createElement("div");
             eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
 
-            const left = cssService.getCellWidth() * event.start / 60;
-            console.log("left", left);
+            const left = cssService.getCellWidth() * event.start / cellMinutes;
             const top = (cssService.getCellHeight() * rowIndex) + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
-            const width = cssService.getCellWidth() * (event.end - event.start) / 60;
+            const width = cssService.getCellWidth() * (event.end - event.start) / cellMinutes;
             const color = event.type === 1 ? "red" : event.type === 2 ? "yellow" : "green";
 
             eventElement.style.left = `${left}px`;
             eventElement.style.top = `${top}px`;
             eventElement.style.width = `${width}px`;
             eventElement.style.backgroundColor = color;
-
+            
             eventElement.addEventListener("click", (e) => {
                 console.log(e);
             });
@@ -232,12 +273,20 @@ const canvasService = function () {
 
 
 const chartService = function () {
-    function init(title, subTitle, leftLegendDatasource, rightLegendDatasource, entities) {
-        legendService.init(leftLegendDatasource, rightLegendDatasource);
+    function init({
+        title, subTitle, start, end,
+        cellMinutes,
+        cellWidth = DEFAULT_CELL_WIDTH,
+        cellHeight = DEFAULT_CELL_HEIGHT,
+        leftLegends,
+        rightLegends,
+        entities
+    }) {
+        legendService.init(leftLegends, rightLegends);
         timelineService.setTitle("Time Line");
-        timelineService.drawHeaders();
+        timelineService.drawHeaders(start, end, cellMinutes, cellWidth, cellHeight);
         listService.init(title, subTitle, entities);
-        canvasService.init(entities);
+        canvasService.init(entities, cellMinutes);
     }
 
     return {
@@ -247,10 +296,17 @@ const chartService = function () {
 
 
 window.addEventListener("load", () => {
-    chartService.init("XXX H/L LH Line 03",
-        "Serial No.",
-        leftLegendDatasource,
-        rightLegendDatasource,
-        entities);
+    chartService.init({
+        title: "XXX H/L LH Line 03",
+        subTitle: "Serial No.",
+        start: new Date(Date.parse("2020-01-01T00:00:00")),
+        end: new Date(Date.parse("2020-01-02T00:00:00")),
+        cellMinutes: 60,
+        cellWidth: 150,
+        cellHeight: 40,
+        leftLegends: leftLegendDatasource,
+        rightLegends: rightLegendDatasource,
+        entities: entities
+    });
 
 });
