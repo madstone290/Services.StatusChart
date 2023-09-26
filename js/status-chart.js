@@ -17,6 +17,20 @@ const RIGHT_LEGEND_ID = "sc-legend-right";
 const DEFAULT_CELL_WIDTH = 200;
 const DEFAULT_CELL_HEIGHT = 40;
 
+const dateTimeService = function () {
+
+    function toMinutes(time) {
+        return time / (60 * 1000);
+    }
+    function toTime(minutes) {
+        return minutes * 60 * 1000;
+    }
+    return {
+        toMinutes,
+        toTime
+    }
+}();
+
 const cssService = function () {
     const SC_CELL_WIDTH = "--sc-cell-width";
     const SC_CELL_HEIGHT = "--sc-cell-height";
@@ -139,7 +153,7 @@ const timelineService = function () {
                 hour: '2-digit',
                 minute: '2-digit'
             }));
-            time = new Date(time.getTime() + cellMinutes * 60 * 1000);
+            time = new Date(time.getTime() + dateTimeService.toTime(cellMinutes));
         }
         console.log(headers);
 
@@ -227,15 +241,15 @@ const listService = function () {
 const canvasService = function () {
     const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
 
-    function init(entities, cellMinutes) {
+    function init(entities, startTime, cellMinutes) {
         let rowIndex = 0;
         for (const entity of entities) {
-            drawEntityEvents(entity, rowIndex, cellMinutes);
+            drawEntityEvents(entity, rowIndex, startTime, cellMinutes);
             rowIndex++;
         }
     }
 
-    function drawEntityEvents(entity, rowIndex, cellMinutes = 60) {
+    function drawEntityEvents(entity, rowIndex, startTime, cellMinutes = 60) {
         if (rowIndex == null || rowIndex < 0)
             return;
 
@@ -247,16 +261,19 @@ const canvasService = function () {
             const eventElement = document.createElement("div");
             eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
 
-            const left = cssService.getCellWidth() * event.start / cellMinutes;
-            const top = (cssService.getCellHeight() * rowIndex) + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
-            const width = cssService.getCellWidth() * (event.end - event.start) / cellMinutes;
-            const color = event.type === 1 ? "red" : event.type === 2 ? "yellow" : "green";
+            const left = dateTimeService.toMinutes(event.start - startTime) * cssService.getCellWidth() / cellMinutes;
+            // const left = cssService.getCellWidth() * event.start / cellMinutes;
+            const top = (cssService.getCellHeight() * rowIndex)
+                + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
+                - 1;
+            const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end - event.start) / cellMinutes;
+            const color = event.type === 1 ? "red" : event.type === 2 ? "blue" : "green";
 
             eventElement.style.left = `${left}px`;
             eventElement.style.top = `${top}px`;
             eventElement.style.width = `${width}px`;
             eventElement.style.backgroundColor = color;
-            
+
             eventElement.addEventListener("click", (e) => {
                 console.log(e);
             });
@@ -274,7 +291,9 @@ const canvasService = function () {
 
 const chartService = function () {
     function init({
-        title, subTitle, start, end,
+        title, subTitle,
+        startTime,
+        endTime,
         cellMinutes,
         cellWidth = DEFAULT_CELL_WIDTH,
         cellHeight = DEFAULT_CELL_HEIGHT,
@@ -284,9 +303,9 @@ const chartService = function () {
     }) {
         legendService.init(leftLegends, rightLegends);
         timelineService.setTitle("Time Line");
-        timelineService.drawHeaders(start, end, cellMinutes, cellWidth, cellHeight);
+        timelineService.drawHeaders(startTime, endTime, cellMinutes, cellWidth, cellHeight);
         listService.init(title, subTitle, entities);
-        canvasService.init(entities, cellMinutes);
+        canvasService.init(entities, startTime, cellMinutes);
     }
 
     return {
@@ -299,8 +318,8 @@ window.addEventListener("load", () => {
     chartService.init({
         title: "XXX H/L LH Line 03",
         subTitle: "Serial No.",
-        start: new Date(Date.parse("2020-01-01T00:00:00")),
-        end: new Date(Date.parse("2020-01-02T00:00:00")),
+        startTime: new Date(Date.parse("2020-01-01T00:00:00")),
+        endTime: new Date(Date.parse("2020-01-02T00:00:00")),
         cellMinutes: 60,
         cellWidth: 150,
         cellHeight: 40,

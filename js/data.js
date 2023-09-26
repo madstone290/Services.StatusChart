@@ -19,34 +19,64 @@ var entities = [
         id: 1,
         name: "H34A2900001",
         events: [
-            { type: 1, start: 0, end: 60 },
-            { type: 2, start: 60, end: 120 },
-            { type: 3, start: 140, end: 160 },
-            { type: 1, start: 60 * 22, end: 60 * 23 },
-            { type: 3, start: 60 * 23, end: 60 * 24 },
+            {
+                type: 1,
+                start: new Date(Date.parse("2020-01-01T01:00:00")),
+                end: new Date(Date.parse("2020-01-01T03:00:00")),
+            },
+            {
+                type: 2,
+                start: new Date(Date.parse("2020-01-01T03:00:00")),
+                end: new Date(Date.parse("2020-01-01T04:00:00")),
+            },
+            {
+                type: 3,
+                start: new Date(Date.parse("2020-01-01T06:00:00")),
+                end: new Date(Date.parse("2020-01-01T07:00:00")),
+            },
         ]
     },
     {
         id: 2,
         name: "H34A2900002",
         events: [
-            { type: 1, start: 60, end: 160 },
+            {
+                type: 3,
+                start: new Date(Date.parse("2020-01-01T06:00:00")),
+                end: new Date(Date.parse("2020-01-01T07:00:00")),
+            },
         ]
     },
     {
         id: 3,
         name: "H34A2900003",
         events: [
-            { type: 2, start: 10, end: 60 },
-            { type: 3, start: 120, end: 240 },
+            {
+                type: 3,
+                start: new Date(Date.parse("2020-01-01T03:00:00")),
+                end: new Date(Date.parse("2020-01-01T04:00:00")),
+            },
+            {
+                type: 2,
+                start: new Date(Date.parse("2020-01-01T06:00:00")),
+                end: new Date(Date.parse("2020-01-01T07:00:00")),
+            },
         ]
     },
     {
         id: 4,
         name: "H34A2900004",
         events: [
-            { type: 1, start: 60 * 22, end: 60 * 23 },
-            { type: 3, start: 60 * 23, end: 60 * 24 },
+            {
+                type: 3,
+                start: new Date(Date.parse("2020-01-01T03:00:00")),
+                end: new Date(Date.parse("2020-01-01T04:00:00")),
+            },
+            {
+                type: 1,
+                start: new Date(Date.parse("2020-01-01T04:30:00")),
+                end: new Date(Date.parse("2020-01-01T07:00:00")),
+            },
         ]
     },
     { id: 5, name: "H34A2900005" },
