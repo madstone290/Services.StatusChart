@@ -284,12 +284,12 @@ const StatusChart = function () {
     }
 
 
-    function drawGlobalEvents(events: RangeEvent[], render: (event: RangeEvent) => HTMLElement, startTime: Date, cellMinutes: number) {
-        const canvas = document.getElementById(CANVAS_ID) as HTMLElement;
+    function drawGlobalEvents(events: RangeEvent[], render: (event: RangeEvent, canvasEl: HTMLElement) => HTMLElement, startTime: Date, cellMinutes: number) {
+        const canvasEl = document.getElementById(CANVAS_ID) as HTMLElement;
         for (const event of events) {
 
             const containerElement = document.createElement("div");
-            canvas.appendChild(containerElement);
+            canvasEl.appendChild(containerElement);
 
             const left = dateTimeService.toMinutes(event.start.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
             const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / cellMinutes;
@@ -300,7 +300,7 @@ const StatusChart = function () {
             containerElement.style.zIndex = "1";
             containerElement.classList.add("sc-content-timeline-status-item");
 
-            const eventElement = render(event);
+            const eventElement = render(event, canvasEl);
             eventElement.style.width = "100%";
             eventElement.style.height = "100%";
             containerElement.appendChild(eventElement);
@@ -523,21 +523,36 @@ window.addEventListener("load", () => {
     };
     StatusChart.drawGlobalEvents((window as any).pauseEvents, renderPause, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
 
-    const renderNetworkError = (error: PauseEvent) => {
-        const divElement = document.createElement("div");
-        divElement.classList.add("sc-tooltip");
-        divElement.style.width = "200px";
-        divElement.style.height = "200px";
-        divElement.style.backgroundColor = "pink";
+    const renderNetworkError = (error: PauseEvent, canvasEl: HTMLElement) => {
+        const tooltipEl = document.createElement("div");
+        tooltipEl.classList.add("sc-tooltip");
+        tooltipEl.style.width = "200px";
+        tooltipEl.style.height = "200px";
+        tooltipEl.style.backgroundColor = "pink";
         // divElement.style.border = "1px solid red";
-        divElement.style.opacity = "0.5";
+        tooltipEl.style.opacity = "0.5";
 
-        const tooltipElement = document.createElement("div");
-        tooltipElement.classList.add("sc-tooltip-text");
-        tooltipElement.innerText = error.description;
-        divElement.appendChild(tooltipElement);
+        const tooltipTextEl = document.createElement("div");
+        tooltipTextEl.classList.add("sc-tooltip-text");
+        tooltipTextEl.innerText = error.description;
+        tooltipEl.appendChild(tooltipTextEl);
 
-        return divElement;
+        tooltipEl.addEventListener("mousemove", (e) => {
+            if (e.target !== tooltipEl)
+                return;
+
+            const containerEl = tooltipEl.parentElement;
+            const tooltipOffset = 10;
+            const posY = Math.min(e.offsetY + tooltipOffset, canvasEl.offsetHeight - tooltipTextEl.offsetHeight - tooltipOffset);
+            const posX = Math.min(e.offsetX + tooltipOffset, canvasEl.offsetWidth - containerEl.offsetLeft - tooltipTextEl.offsetWidth - tooltipOffset);
+
+            tooltipTextEl.style.top = posY + "px";
+            tooltipTextEl.style.left = posX + "px";
+
+            // 부모 영역안에서만 위치하도록 제한
+        });
+
+        return tooltipEl;
     };
     StatusChart.drawGlobalEvents((window as any).networkErrorEvents, renderNetworkError, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
 });

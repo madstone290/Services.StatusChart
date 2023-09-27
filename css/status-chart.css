@@ -1,5 +1,5 @@
 :root {
-    --sc-height: 715px;
+    --sc-height: 615px;
     --sc-legend-height: 40px;
 
     --sc-list-width: 200px;
@@ -239,8 +239,10 @@
     /* Position the tooltip */
     position: absolute;
     z-index: 0;
+    opacity: 0;
 }
 
 .sc-tooltip:hover .sc-tooltip-text {
     visibility: visible;
+    opacity: 1;
 }
