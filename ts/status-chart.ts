@@ -3,7 +3,7 @@ const StatusChart = function () {
     const TIMELINE_TITLE_ID = "sc-content-timeline-title";
     const TIMELINE_HEADER_BOX_ID = "sc-content-timeline-header-box";
     const TIMELINE_HEADER_ID = "sc-content-timeline-header";
-    const TIMELINE_STATUS_ID = "sc-content-timeline-status";
+    const TIMELINE_CANVAS_ID = "sc-content-timeline-canvas";
 
     const LIST_BOX_ID = "sc-list-box";
     const LIST_HEAD_TITLE_ID = "sc-list-head-title";
@@ -191,8 +191,10 @@ const StatusChart = function () {
 
             const canvasBoxElement = document.getElementById(CANVAS_BOX_ID) as HTMLElement;
             const headerBoxElement = document.getElementById(TIMELINE_HEADER_BOX_ID) as HTMLElement;
+            const timelineCanvasBoxElement = document.getElementById(TIMELINE_CANVAS_ID + "-box") as HTMLElement;
             canvasBoxElement.addEventListener("scroll", (e) => {
                 headerBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
+                timelineCanvasBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
             });
         }
 
@@ -246,10 +248,10 @@ const StatusChart = function () {
     }();
 
     function drawStatusItems(items: PointEvent[], render: (item: PointEvent) => HTMLElement, startTime: Date, cellMinutes: number) {
-        const statusElement = document.getElementById(TIMELINE_STATUS_ID) as HTMLElement;
+        const statusElement = document.getElementById(TIMELINE_CANVAS_ID) as HTMLElement;
         for (const item of items) {
             const eventElement = render(item);
-            eventElement.classList.add("sc-content-timeline-status-item");
+            eventElement.classList.add("sc-content-timeline-canvas-item");
 
             const center = dateTimeService.toMinutes(item.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
             // const left = cssService.getCellWidth() * event.start / cellMinutes;
@@ -267,6 +269,10 @@ const StatusChart = function () {
             statusElement.appendChild(eventElement);
         }
     }
+    function setLabels(title: string, subtitle: string, timelineHeader: string) {
+
+    }
+
 
     function drawEntityPointEvents(entity: Entity, rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
         drawLocalPointEvents(entity.pointEvents, rowIndex, render);
@@ -294,7 +300,7 @@ const StatusChart = function () {
 
         const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const top = (cssService.getCellHeight() * rowIndex) + ((cssService.getCellHeight() - cssService.getCellContentHeight()) / 2) - 1;
-        const width =  cssService.getCellContentHeight();
+        const width = cssService.getCellContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
         containerElement.style.width = width + "px";

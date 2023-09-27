@@ -2,7 +2,7 @@ const StatusChart = function () {
     const TIMELINE_TITLE_ID = "sc-content-timeline-title";
     const TIMELINE_HEADER_BOX_ID = "sc-content-timeline-header-box";
     const TIMELINE_HEADER_ID = "sc-content-timeline-header";
-    const TIMELINE_STATUS_ID = "sc-content-timeline-status";
+    const TIMELINE_CANVAS_ID = "sc-content-timeline-canvas";
     const LIST_BOX_ID = "sc-list-box";
     const LIST_HEAD_TITLE_ID = "sc-list-head-title";
     const LIST_HEAD_SUBTITLE_ID = "sc-list-head-subtitle";
@@ -153,8 +153,10 @@ const StatusChart = function () {
             canvasElement.style.width = `${canvasWidth}px`;
             const canvasBoxElement = document.getElementById(CANVAS_BOX_ID);
             const headerBoxElement = document.getElementById(TIMELINE_HEADER_BOX_ID);
+            const timelineCanvasBoxElement = document.getElementById(TIMELINE_CANVAS_ID + "-box");
             canvasBoxElement.addEventListener("scroll", (e) => {
                 headerBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
+                timelineCanvasBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
             });
         }
         return {
@@ -198,10 +200,10 @@ const StatusChart = function () {
         };
     }();
     function drawStatusItems(items, render, startTime, cellMinutes) {
-        const statusElement = document.getElementById(TIMELINE_STATUS_ID);
+        const statusElement = document.getElementById(TIMELINE_CANVAS_ID);
         for (const item of items) {
             const eventElement = render(item);
-            eventElement.classList.add("sc-content-timeline-status-item");
+            eventElement.classList.add("sc-content-timeline-canvas-item");
             const center = dateTimeService.toMinutes(item.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
             // const left = cssService.getCellWidth() * event.start / cellMinutes;
             const top = (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
@@ -215,6 +217,8 @@ const StatusChart = function () {
             });
             statusElement.appendChild(eventElement);
         }
+    }
+    function setLabels(title, subtitle, timelineHeader) {
     }
     function drawEntityPointEvents(entity, rowIndex, render) {
         drawLocalPointEvents(entity.pointEvents, rowIndex, render);

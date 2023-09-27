@@ -163,7 +163,11 @@
     flex-direction: row;
 }
 
-#sc-content-timeline-status {
+#sc-content-timeline-canvas-box {
+    overflow: hidden;
+}
+
+#sc-content-timeline-canvas {
     height: calc(var(--sc-list-head-height) - var(--sc-list-head-title-height) - var(--sc-content-timeline-header-height) - 1px);
     background-color: #ffff00;
     border-width: 0px 0px 1px 0px;
@@ -173,7 +177,7 @@
     position: relative;
 }
 
-.sc-content-timeline-status-item {
+.sc-content-timeline-canvas-item {
     position: absolute;
 }
 
