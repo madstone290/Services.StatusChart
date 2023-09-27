@@ -24,6 +24,13 @@ const StatusChart = function () {
     const SC_VLINE = "sc-vline";
 
 
+
+    let _chartStartTime: Date;
+    let _chartEndTime: Date;
+    let _cellMinutes: number;
+
+    let _canvasElement: HTMLElement;
+
     const dateTimeService = function () {
 
         function toMinutes(time: number) {
@@ -145,6 +152,11 @@ const StatusChart = function () {
          * @param {Date} end end time of header
          */
         function drawHeaders(start: Date, end: Date, cellMinutes: number, cellWidth: number, cellHeight: number) {
+            _canvasElement = document.getElementById(CANVAS_ID) as HTMLElement,
+                _chartStartTime = start,
+                _chartEndTime = end,
+                _cellMinutes = cellMinutes;
+
             cssService.setCellWidth(cellWidth);
             cssService.setCellHeight(cellHeight);
 
@@ -283,29 +295,31 @@ const StatusChart = function () {
         }
     }
 
-
-    function drawGlobalEvents(events: RangeEvent[], render: (event: RangeEvent, canvasEl: HTMLElement) => HTMLElement, startTime: Date, cellMinutes: number) {
-        const canvasEl = document.getElementById(CANVAS_ID) as HTMLElement;
+    function drawGlobalEvents(events: RangeEvent[], render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
         for (const event of events) {
-
-            const containerElement = document.createElement("div");
-            canvasEl.appendChild(containerElement);
-
-            const left = dateTimeService.toMinutes(event.start.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-            const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / cellMinutes;
-            containerElement.style.left = `${left}px`;
-            containerElement.style.top = "0px";
-            containerElement.style.width = `${width}px`;
-            containerElement.style.height = "100%";
-            containerElement.style.zIndex = "1";
-            containerElement.classList.add("sc-content-timeline-status-item");
-
-            const eventElement = render(event, canvasEl);
-            eventElement.style.width = "100%";
-            eventElement.style.height = "100%";
-            containerElement.appendChild(eventElement);
+            drawGlobalEvent(event, render);
         }
     }
+
+    function drawGlobalEvent(event: RangeEvent, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
+        const containerElement = document.createElement("div");
+        _canvasElement.appendChild(containerElement);
+
+        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
+        containerElement.style.left = `${left}px`;
+        containerElement.style.top = "0px";
+        containerElement.style.width = `${width}px`;
+        containerElement.style.height = "100%";
+        containerElement.style.zIndex = "1";
+        containerElement.classList.add(SC_CONTENT_CANVAS_ITEM);
+
+        const eventElement = render(event, _canvasElement, containerElement);
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
+        containerElement.appendChild(eventElement);
+    }
+
 
     const canvasService = function () {
 
@@ -318,6 +332,9 @@ const StatusChart = function () {
          * @param {boolean} vertialLine Whether to draw vertical line
          */
         function init(entities: Entity[], startTime: Date, cellMinutes: number,
+
+
+
             horizontalLine = true, vertialLine = true) {
             if (horizontalLine)
                 drawHorizontalLines();
@@ -450,14 +467,16 @@ const StatusChart = function () {
         drawEntityPointEvents,
         drawGlobalEvents,
     }
-}();
+};
 window.addEventListener("load", () => {
 
     const cellMinutes = 60;
     const cellWidth = 200;
     const cellHeight = 40;
 
-    StatusChart.init({
+    const sc = StatusChart();
+
+    sc.init({
         title: "XXX H/L LH Line 03",
         subTitle: "Serial No.",
         startTime: new Date(Date.parse("2020-01-01T00:00:00")),
@@ -487,7 +506,7 @@ window.addEventListener("load", () => {
 
         return divElement;
     };
-    StatusChart.drawStatusItems((window as any).machineErrors, renderMachineError, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawStatusItems((window as any).machineErrors, renderMachineError, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
 
     const renderProductError = (error: MachineError) => {
         const divElement = document.createElement("div");
@@ -506,7 +525,7 @@ window.addEventListener("load", () => {
 
         return divElement;
     };
-    StatusChart.drawEntityPointEvents((window as any).entities[0], renderProductError, 0, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawEntityPointEvents((window as any).entities[0], renderProductError, 0, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
 
     const renderPause = (error: PauseEvent) => {
         const divElement = document.createElement("div");
@@ -521,7 +540,7 @@ window.addEventListener("load", () => {
 
         return divElement;
     };
-    StatusChart.drawGlobalEvents((window as any).pauseEvents, renderPause, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawGlobalEvents((window as any).pauseEvents, renderPause);
 
     const renderNetworkError = (error: PauseEvent, canvasEl: HTMLElement) => {
         const tooltipEl = document.createElement("div");
@@ -554,5 +573,5 @@ window.addEventListener("load", () => {
 
         return tooltipEl;
     };
-    StatusChart.drawGlobalEvents((window as any).networkErrorEvents, renderNetworkError, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawGlobalEvents((window as any).networkErrorEvents, renderNetworkError);
 });
