@@ -268,31 +268,40 @@ const StatusChart = function () {
         }
     }
 
-    function drawEntityPointEvents(entity: Entity, render: (item: PointEvent) => HTMLElement, rowIndex: number, startTime: Date, cellMinutes: number) {
+    function drawEntityPointEvents(entity: Entity, rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
+        drawLocalPointEvents(entity.pointEvents, rowIndex, render);
+    }
 
-        const canvas = document.getElementById(CANVAS_ID) as HTMLElement;
-
-        // draw point events
-        for (const event of entity.pointEvents) {
-            const eventElement = render(event);
-            eventElement.classList.add("sc-content-canvas-item");
-
-            const center = dateTimeService.toMinutes(event.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-            // const left = cssService.getCellWidth() * event.start / cellMinutes;
-            const top = (cssService.getCellHeight() * rowIndex)
-                + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
-                - 1;
-
-            const mid = eventElement.clientWidth / 2;
-            eventElement.style.left = `${center - mid}px`;
-            eventElement.style.top = `${top}px`;
-            eventElement.style.zIndex = "3";
-            eventElement.addEventListener("click", (e) => {
-                console.log(e);
-            });
-
-            canvas.appendChild(eventElement);
+    function drawLocalPointEvents(events: PointEvent[], rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
+        for (const event of events) {
+            drawLocalPointEvent(event, rowIndex, render);
         }
+    }
+
+    /**
+     * 포인트 이벤트를 그린다. 이벤트 시간을 중심으로 엘리먼트가 위치한다.
+     * @param event 
+     * @param rowIndex 
+     * @param render 
+     */
+    function drawLocalPointEvent(event: PointEvent, rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
+        const containerElement = document.createElement("div");
+        _canvasElement.appendChild(containerElement);
+
+        const eventElement = render(event, _canvasElement, containerElement);
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
+
+        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const top = (cssService.getCellHeight() * rowIndex) + ((cssService.getCellHeight() - cssService.getCellContentHeight()) / 2) - 1;
+        const width =  cssService.getCellContentHeight();
+        containerElement.style.left = `${center - (width / 2)}px`;
+        containerElement.style.top = `${top}px`;
+        containerElement.style.width = width + "px";
+        containerElement.style.zIndex = "3";
+        containerElement.classList.add(SC_CONTENT_CANVAS_ITEM);
+
+        containerElement.appendChild(eventElement);
     }
 
     function drawGlobalEvents(events: RangeEvent[], render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
@@ -513,8 +522,8 @@ window.addEventListener("load", () => {
         divElement.classList.add("sc-tooltip");
 
         const eventElement = document.createElement("img");
-        eventElement.width = 20;
-        eventElement.height = 20;
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
         eventElement.src = "asset/image/error.png";
         divElement.appendChild(eventElement);
 
@@ -525,7 +534,8 @@ window.addEventListener("load", () => {
 
         return divElement;
     };
-    sc.drawEntityPointEvents((window as any).entities[0], renderProductError, 0, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawEntityPointEvents((window as any).entities[0], 0, renderProductError);
+    sc.drawEntityPointEvents((window as any).entities[1], 1, renderProductError);
 
     const renderPause = (error: PauseEvent) => {
         const divElement = document.createElement("div");

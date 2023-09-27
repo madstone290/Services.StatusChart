@@ -216,26 +216,35 @@ const StatusChart = function () {
             statusElement.appendChild(eventElement);
         }
     }
-    function drawEntityPointEvents(entity, render, rowIndex, startTime, cellMinutes) {
-        const canvas = document.getElementById(CANVAS_ID);
-        // draw point events
-        for (const event of entity.pointEvents) {
-            const eventElement = render(event);
-            eventElement.classList.add("sc-content-canvas-item");
-            const center = dateTimeService.toMinutes(event.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-            // const left = cssService.getCellWidth() * event.start / cellMinutes;
-            const top = (cssService.getCellHeight() * rowIndex)
-                + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
-                - 1;
-            const mid = eventElement.clientWidth / 2;
-            eventElement.style.left = `${center - mid}px`;
-            eventElement.style.top = `${top}px`;
-            eventElement.style.zIndex = "3";
-            eventElement.addEventListener("click", (e) => {
-                console.log(e);
-            });
-            canvas.appendChild(eventElement);
+    function drawEntityPointEvents(entity, rowIndex, render) {
+        drawLocalPointEvents(entity.pointEvents, rowIndex, render);
+    }
+    function drawLocalPointEvents(events, rowIndex, render) {
+        for (const event of events) {
+            drawLocalPointEvent(event, rowIndex, render);
         }
+    }
+    /**
+     * 포인트 이벤트를 그린다. 이벤트 시간을 중심으로 엘리먼트가 위치한다.
+     * @param event
+     * @param rowIndex
+     * @param render
+     */
+    function drawLocalPointEvent(event, rowIndex, render) {
+        const containerElement = document.createElement("div");
+        _canvasElement.appendChild(containerElement);
+        const eventElement = render(event, _canvasElement, containerElement);
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
+        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const top = (cssService.getCellHeight() * rowIndex) + ((cssService.getCellHeight() - cssService.getCellContentHeight()) / 2) - 1;
+        const width = cssService.getCellContentHeight();
+        containerElement.style.left = `${center - (width / 2)}px`;
+        containerElement.style.top = `${top}px`;
+        containerElement.style.width = width + "px";
+        containerElement.style.zIndex = "3";
+        containerElement.classList.add(SC_CONTENT_CANVAS_ITEM);
+        containerElement.appendChild(eventElement);
     }
     function drawGlobalEvents(events, render) {
         for (const event of events) {
@@ -404,8 +413,8 @@ window.addEventListener("load", () => {
         const divElement = document.createElement("div");
         divElement.classList.add("sc-tooltip");
         const eventElement = document.createElement("img");
-        eventElement.width = 20;
-        eventElement.height = 20;
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
         eventElement.src = "asset/image/error.png";
         divElement.appendChild(eventElement);
         const tooltipElement = document.createElement("div");
@@ -414,7 +423,8 @@ window.addEventListener("load", () => {
         divElement.appendChild(tooltipElement);
         return divElement;
     };
-    sc.drawEntityPointEvents(window.entities[0], renderProductError, 0, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
+    sc.drawEntityPointEvents(window.entities[0], 0, renderProductError);
+    sc.drawEntityPointEvents(window.entities[1], 1, renderProductError);
     const renderPause = (error) => {
         const divElement = document.createElement("div");
         divElement.classList.add("sc-tooltip");

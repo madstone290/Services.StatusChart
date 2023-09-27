@@ -56,6 +56,18 @@ var entities = [
                 start: new Date(Date.parse("2020-01-01T06:00:00")),
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
             },
+        ],
+        pointEvents: [
+            {
+                id: 1,
+                description: "불량품 2시",
+                time: new Date(Date.parse("2020-01-01T02:00:00")),
+            },
+            {
+                id: 2,
+                description: "도색불량 3시",
+                time: new Date(Date.parse("2020-01-01T03:00:00")),
+            }
         ]
     },
     {
