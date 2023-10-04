@@ -52,12 +52,14 @@ window.addEventListener("load", () => {
         globalRangeEventRender,
         true,
         true,
-        false);
+        true);
 
     sc.setData((window as any).DEMO_ENTITIES,
         (window as any).TIMELINE_POINT_EVENTS,
         (window as any).GLOBAL_RANGE_EVENTS,
-        "XXX H/L LH Line 03", "Serial No.", "Time Line");
+        "Main title", 
+        "Sub title", 
+        "Timeline title");
 
     sc.initLayout();
     sc.drawTimelineCanvas();

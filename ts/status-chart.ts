@@ -52,6 +52,9 @@ const StatusChart = function () {
     let _hasHorizontalLine: boolean;
     let _hasVertialLine: boolean;
 
+    /**
+     * 캔버스 자동 맞춤 여부. true일 경우 캔버스의 빈 공간을 없앤다.
+     */
     let _canAutoFit: boolean;
 
     let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;

@@ -36,8 +36,8 @@ window.addEventListener("load", () => {
         divElement.style.opacity = "0.5";
         return divElement;
     };
-    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, true, true, false);
-    sc.setData(window.DEMO_ENTITIES, window.TIMELINE_POINT_EVENTS, window.GLOBAL_RANGE_EVENTS, "XXX H/L LH Line 03", "Serial No.", "Time Line");
+    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, true, true, true);
+    sc.setData(window.DEMO_ENTITIES, window.TIMELINE_POINT_EVENTS, window.GLOBAL_RANGE_EVENTS, "Main title", "Sub title", "Timeline title");
     sc.initLayout();
     sc.drawTimelineCanvas();
     sc.drawEntityList();
