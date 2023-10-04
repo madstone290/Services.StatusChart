@@ -37,12 +37,10 @@ window.addEventListener("load", () => {
             if (e.target !== imgElement)
                 return;
             const tooltipOffset = 10;
-            const posY = Math.min(e.offsetY + tooltipOffset, canvasEl.offsetHeight - tooltipElement.offsetHeight - tooltipOffset);
-            const posX = Math.min(e.offsetX + tooltipOffset, canvasEl.offsetWidth - containerEl.offsetLeft - tooltipElement.offsetWidth - tooltipOffset);
             tooltipElement.style.visibility = "visible";
             tooltipElement.style.opacity = "1";
-            tooltipElement.style.top = posY + "px";
-            tooltipElement.style.left = containerEl.offsetLeft + posX + "px";
+            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
+            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
         });
         imgElement.onmouseleave = (e) => {
             tooltipElement.style.visibility = "hidden";
@@ -52,7 +50,6 @@ window.addEventListener("load", () => {
     };
     const entityRangeEventRender = (event, canvasEl, containerEl) => {
         const boxElement = document.createElement("div");
-        //boxElement.classList.add(CLS_TOOLTIP_CANVAS);
         boxElement.style.backgroundColor = entityRangeEventColors.get(event.type);
         const textElement = document.createElement("div");
         textElement.style.zIndex = "100";
@@ -64,12 +61,10 @@ window.addEventListener("load", () => {
             if (e.target !== boxElement)
                 return;
             const tooltipOffset = 10;
-            const posY = Math.min(e.offsetY + tooltipOffset, canvasEl.offsetHeight - textElement.offsetHeight - tooltipOffset);
-            const posX = Math.min(e.offsetX + tooltipOffset, canvasEl.offsetWidth - containerEl.offsetLeft - textElement.offsetWidth - tooltipOffset);
             textElement.style.visibility = "visible";
             textElement.style.opacity = "1";
-            textElement.style.top = posY + "px";
-            textElement.style.left = containerEl.offsetLeft + posX + "px";
+            textElement.style.top = e.clientY + tooltipOffset + "px";
+            textElement.style.left = e.clientX + tooltipOffset + "px";
         });
         boxElement.onmouseleave = (e) => {
             textElement.style.visibility = "hidden";
@@ -96,8 +91,8 @@ window.addEventListener("load", () => {
             const posX = Math.min(e.offsetX + tooltipOffset, canvasEl.offsetWidth - containerEl.offsetLeft - tooltipElement.offsetWidth - tooltipOffset);
             tooltipElement.style.visibility = "visible";
             tooltipElement.style.opacity = "1";
-            tooltipElement.style.top = posY + "px";
-            tooltipElement.style.left = containerEl.offsetLeft + posX + "px";
+            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
+            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
         });
         imgElement.onmouseleave = (e) => {
             tooltipElement.style.visibility = "hidden";
@@ -107,30 +102,27 @@ window.addEventListener("load", () => {
     };
     const globalRangeEventRender = (event, canvasEl, containerEl) => {
         const boxElement = document.createElement("div");
-        //boxElement.classList.add(CLS_TOOLTIP_CANVAS);
         boxElement.style.width = "200px";
         boxElement.style.height = "200px";
         boxElement.style.backgroundColor = globalRangeEventColors.get(event.type);
         boxElement.style.opacity = "0.5";
-        const textElement = document.createElement("div");
-        textElement.classList.add(CLS_TOOLTIP);
-        textElement.innerText = event.description;
-        textElement.style.zIndex = "100";
-        canvasEl.appendChild(textElement);
+        const tooltipElement = document.createElement("div");
+        tooltipElement.classList.add(CLS_TOOLTIP);
+        tooltipElement.innerText = event.description;
+        tooltipElement.style.zIndex = "100";
+        canvasEl.appendChild(tooltipElement);
         boxElement.addEventListener("mousemove", (e) => {
             if (e.target !== boxElement)
                 return;
             const tooltipOffset = 10;
-            const posY = Math.min(e.offsetY + tooltipOffset, canvasEl.offsetHeight - textElement.offsetHeight - tooltipOffset);
-            const posX = Math.min(e.offsetX + tooltipOffset, canvasEl.offsetWidth - containerEl.offsetLeft - textElement.offsetWidth - tooltipOffset);
-            textElement.style.visibility = "visible";
-            textElement.style.opacity = "1";
-            textElement.style.top = posY + "px";
-            textElement.style.left = containerEl.offsetLeft + posX + "px";
+            tooltipElement.style.visibility = "visible";
+            tooltipElement.style.opacity = "1";
+            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
+            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
         });
         boxElement.onmouseleave = (e) => {
-            textElement.style.visibility = "hidden";
-            textElement.style.opacity = "0";
+            tooltipElement.style.visibility = "hidden";
+            tooltipElement.style.opacity = "0";
         };
         return boxElement;
     };

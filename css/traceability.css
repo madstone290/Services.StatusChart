@@ -54,7 +54,7 @@
     /* border-radius: 6px; */
 
     /* Position the tooltip */
-    position: absolute;
+    position: fixed;
     z-index: 0;
     opacity: 0;
 }
