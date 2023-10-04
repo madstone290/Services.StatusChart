@@ -7,34 +7,36 @@ interface RangeEvent {
     end: Date;
 }
 
-interface EntityEvent {
-    type: any;
-    start: Date;
-    end: Date;
-}
-
 interface Entity {
     id: number;
     name: string;
-    pointEvents?: ProductError[];
-    rangeEvents?: EntityEvent[];
+    pointEvents?: PointEvent[];
+    rangeEvents?: RangeEvent[];
 }
-
-interface StatusChartProps {
-    title: string;
-    subTitle: string;
-    startTime: Date;
-    endTime: Date;
-    cellMinutes: number;
-    cellWidth: number;
-    cellHeight: number;
-    leftLegends: LegendItem[];
-    rightLegends: LegendItem[];
-    entities: Entity[];
-}
-
 
 /* Domain Specific Types */
+
+interface BarcodeEntity extends Entity {
+    pointEvents?: BarcodePointEvent[];
+    rangeEvents?: BarcodeRangeEvent[];
+}
+
+interface BarcodePointEvent extends PointEvent {
+    type: any;
+    description?: string;
+}
+
+interface BarcodeRangeEvent extends RangeEvent {
+    type: any;
+    description?: string;
+}
+
+interface MachineGlobalRangeEvent extends RangeEvent {
+    type: "pause" | "fault" | "barcodeMissing" | "networkError";
+    description?: string;
+}
+
+
 
 interface LegendItem {
     color: string;
@@ -52,22 +54,3 @@ interface ProductError extends PointEvent {
     description: string;
 }
 
-interface NetworkErrorEvent extends RangeEvent {
-    id: number;
-    description: string;
-}
-
-interface PauseEvent extends RangeEvent {
-    id: number;
-    description: string;
-}
-
-interface FaultEvent extends RangeEvent {
-    id: number;
-    description: string;
-}
-
-interface BarcodeMissingEvent extends RangeEvent {
-    id: number;
-    description: string;
-}

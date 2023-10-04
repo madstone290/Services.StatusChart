@@ -2,23 +2,70 @@ const StatusChart = function () {
     const TIMELINE_TITLE_ID = "sc-content-timeline-title";
     const TIMELINE_HEADER_BOX_ID = "sc-content-timeline-header-box";
     const TIMELINE_HEADER_ID = "sc-content-timeline-header";
+    const TIMELINE_CANVAS_BOX_ID = "sc-content-timeline-canvas-box";
     const TIMELINE_CANVAS_ID = "sc-content-timeline-canvas";
+    const TIMELINE_HEADER_ITEM_CLS = "sc-content-timeline-header-item";
+    const MAIN_TITLE_ID = "sc-list-head-maintitle";
+    const SUBTITLE_ID = "sc-list-head-subtitle";
     const LIST_BOX_ID = "sc-list-box";
-    const LIST_HEAD_TITLE_ID = "sc-list-head-title";
-    const LIST_HEAD_SUBTITLE_ID = "sc-list-head-subtitle";
     const CANVAS_BOX_ID = "sc-content-canvas-box";
     const CANVAS_ID = "sc-content-canvas";
     const LEFT_LEGEND_ID = "sc-legend-left";
     const RIGHT_LEGEND_ID = "sc-legend-right";
     const DEFAULT_CELL_WIDTH = 200;
     const DEFAULT_CELL_HEIGHT = 40;
-    const SC_CONTENT_CANVAS_ITEM = "sc-content-canvas-item";
+    const SC_LIST_ITEM = "sc-list-item";
+    const TIMELINE_CANVAS_ITEM_CLS = "sc-content-timeline-canvas-item";
+    const MAIN_CANVAS_ITEM_CLS = "sc-content-canvas-item";
     const SC_HLINE = "sc-hline";
     const SC_VLINE = "sc-vline";
+    /* Layout
+    |---------------|-------------------|
+    | main title    | timeline title    |
+    |---------------|-------------------|
+    |               | timeline header   |
+    | sub title     |-------------------|
+    |               | timeline canvas   |
+    |---------------|-------------------|
+    |               |                   |
+    | entity list   | main canvas       |
+    |               |                   |
+    |---------------|-------------------|
+    */
+    /**
+     * Settings
+     */
     let _chartStartTime;
     let _chartEndTime;
+    /**
+     * minutes for each cell
+     */
     let _cellMinutes;
-    let _canvasElement;
+    let _hasHorizontalLine;
+    let _hasVertialLine;
+    let _timelinePointEventRender;
+    let _entityPointEventRender;
+    let _entityRangeEventRender;
+    let _globalRangeEventRender;
+    /**
+     * Data
+     */
+    let _entities;
+    let _timelinePointEvents;
+    let _globalRangeEvents;
+    /**
+     * Html Elements
+     */
+    let _mainTitleElement;
+    let _subTitleElement;
+    let _timelineTitleElement;
+    let _entityListBoxElement;
+    let _timelineHeaderBoxElement;
+    let _timelineHeaderElement;
+    let _timelineCanvasBoxElement;
+    let _timelineCanvasElement;
+    let _mainCanvasBoxElement;
+    let _mainCanvasElement;
     const dateTimeService = function () {
         function toMinutes(time) {
             return time / (60 * 1000);
@@ -108,140 +155,204 @@ const StatusChart = function () {
             init
         };
     }();
-    const timelineService = function () {
-        const SC_CONTENT_TIMELINE_HEADER_ITEM = "sc-content-timeline-header-item";
-        function setTitle(name) {
-            const titleElement = document.getElementById(TIMELINE_TITLE_ID);
-            titleElement.innerText = name;
+    function setSettings(chartStartTime, chartEndTime, cellMinutes, cellWidth, cellHeight, timelinePointEventRender = null, entityPointEventRender = null, entityRangeEventRender = null, globalRangeEventRender = null, hasHorizontalLine = true, hasVerticalLine = true) {
+        _chartStartTime = chartStartTime;
+        _chartEndTime = chartEndTime;
+        _cellMinutes = cellMinutes;
+        _hasHorizontalLine = hasHorizontalLine;
+        _hasVertialLine = hasVerticalLine;
+        cssService.setCellWidth(cellWidth);
+        cssService.setCellHeight(cellHeight);
+        _timelinePointEventRender = timelinePointEventRender;
+        _entityRangeEventRender = entityRangeEventRender;
+        _entityPointEventRender = entityPointEventRender;
+        _globalRangeEventRender = globalRangeEventRender;
+        _mainTitleElement = document.getElementById(MAIN_TITLE_ID);
+        _subTitleElement = document.getElementById(SUBTITLE_ID);
+        _timelineTitleElement = document.getElementById(TIMELINE_TITLE_ID);
+        _entityListBoxElement = document.getElementById(LIST_BOX_ID);
+        _timelineHeaderBoxElement = document.getElementById(TIMELINE_HEADER_BOX_ID);
+        _timelineHeaderElement = document.getElementById(TIMELINE_HEADER_ID);
+        _timelineCanvasBoxElement = document.getElementById(TIMELINE_CANVAS_BOX_ID);
+        _timelineCanvasElement = document.getElementById(TIMELINE_CANVAS_ID);
+        _mainCanvasBoxElement = document.getElementById(CANVAS_BOX_ID);
+        _mainCanvasElement = document.getElementById(CANVAS_ID);
+    }
+    function setData(entities, timelinePointEvents, globalRangeEvents, mainTitle, subtitle, timelineHeader) {
+        _entities = entities;
+        _timelinePointEvents = timelinePointEvents;
+        _globalRangeEvents = globalRangeEvents;
+        _mainTitleElement.innerText = mainTitle;
+        _subTitleElement.innerText = subtitle;
+        _timelineTitleElement.innerText = timelineHeader;
+    }
+    /**
+     * 설정값에 맞춰 레이아웃을 초기화한다.
+     */
+    function initLayout() {
+        const headers = [];
+        let time = _chartStartTime;
+        let end = _chartEndTime;
+        while (time < end) {
+            // TODO : add time format service
+            headers.push(time.toLocaleTimeString([], {
+                day: 'numeric',
+                month: 'numeric',
+                year: 'numeric',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+            }));
+            time = new Date(time.getTime() + dateTimeService.toTime(_cellMinutes));
+        }
+        for (const data of headers) {
+            const div = document.createElement("div");
+            div.innerText = data;
+            div.classList.add(TIMELINE_HEADER_ITEM_CLS);
+            _timelineHeaderElement.appendChild(div);
         }
         /**
-         * draw timeline headers
-         * @param {Date} start start time of header
-         * @param {Date} end end time of header
+         * main canvas에만 스크롤을 표시한다.
+         * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
+         * entity list는 main canvas 수직스크롤과 동기화한다.
          */
-        function drawHeaders(start, end, cellMinutes, cellWidth, cellHeight) {
-            _canvasElement = document.getElementById(CANVAS_ID),
-                _chartStartTime = start,
-                _chartEndTime = end,
-                _cellMinutes = cellMinutes;
-            cssService.setCellWidth(cellWidth);
-            cssService.setCellHeight(cellHeight);
-            const headerElement = document.getElementById(TIMELINE_HEADER_ID);
-            const headers = [];
-            let time = start;
-            while (time < end) {
-                // TODO : add time format service
-                headers.push(time.toLocaleTimeString([], {
-                    day: 'numeric',
-                    month: 'numeric',
-                    year: 'numeric',
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }));
-                time = new Date(time.getTime() + dateTimeService.toTime(cellMinutes));
-            }
-            for (const data of headers) {
-                const div = document.createElement("div");
-                div.innerText = data;
-                div.classList.add(SC_CONTENT_TIMELINE_HEADER_ITEM);
-                headerElement.appendChild(div);
-            }
-            const canvasWidth = cssService.getCellWidth() * headers.length;
-            headerElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
-            const timelineCanvas = document.getElementById(TIMELINE_CANVAS_ID);
-            timelineCanvas.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
-            const canvasElement = document.getElementById(CANVAS_ID);
-            canvasElement.style.width = `${canvasWidth}px`;
-            const canvasBoxElement = document.getElementById(CANVAS_BOX_ID);
-            const headerBoxElement = document.getElementById(TIMELINE_HEADER_BOX_ID);
-            const timelineCanvasBoxElement = document.getElementById(TIMELINE_CANVAS_ID + "-box");
-            canvasBoxElement.addEventListener("scroll", (e) => {
-                headerBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
-                timelineCanvasBoxElement.scrollLeft = canvasBoxElement.scrollLeft;
-            });
-        }
-        return {
-            setTitle,
-            drawHeaders
-        };
-    }();
-    const listService = function () {
-        const SC_LIST_ITEM = "sc-list-item";
-        function init(title, subTitle, entities) {
-            setTitle(title);
-            setSubTitle(subTitle);
-            drawListItems(entities);
-        }
-        function setTitle(title) {
-            const titleElement = document.getElementById(LIST_HEAD_TITLE_ID);
-            titleElement.innerText = title;
-        }
-        function setSubTitle(subTitle) {
-            const subTitleElement = document.getElementById(LIST_HEAD_SUBTITLE_ID);
-            subTitleElement.innerText = subTitle;
-        }
-        function drawListItems(entities) {
-            const listBox = document.getElementById(LIST_BOX_ID);
-            const canvas = document.getElementById(CANVAS_ID);
-            for (const entity of entities) {
-                // list item
-                const div = document.createElement("div");
-                div.innerText = entity.name;
-                div.classList.add(SC_LIST_ITEM);
-                listBox.appendChild(div);
-            }
-            canvas.style.height = `${listBox.scrollHeight}px`;
-            const canvasBox = document.getElementById(CANVAS_BOX_ID);
-            canvasBox.addEventListener("scroll", (e) => {
-                listBox.scrollTop = canvasBox.scrollTop;
-            });
-        }
-        return {
-            init
-        };
-    }();
-    function drawStatusItems(items, render, startTime, cellMinutes) {
-        const statusElement = document.getElementById(TIMELINE_CANVAS_ID);
-        for (const item of items) {
-            const eventElement = render(item);
-            eventElement.classList.add("sc-content-timeline-canvas-item");
-            const center = dateTimeService.toMinutes(item.time.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-            // const left = cssService.getCellWidth() * event.start / cellMinutes;
-            const top = (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
-            const width = eventElement.clientWidth;
-            const mid = width / 2;
-            eventElement.style.left = `${center - mid}px`;
-            eventElement.style.top = `${top}px`;
-            eventElement.style.zIndex = "3";
-            eventElement.addEventListener("click", (e) => {
-                console.log(e);
-            });
-            statusElement.appendChild(eventElement);
+        const canvasWidth = cssService.getCellWidth() * headers.length;
+        const canvasHeight = cssService.getCellHeight() * _entities.length;
+        _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+        _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+        _mainCanvasElement.style.width = `${canvasWidth}px`;
+        _mainCanvasElement.style.height = `${canvasHeight}px`;
+        _mainCanvasBoxElement.addEventListener("scroll", (e) => {
+            _timelineHeaderBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
+            _timelineCanvasBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
+        });
+        _mainCanvasBoxElement.addEventListener("scroll", (e) => {
+            _entityListBoxElement.scrollTop = _mainCanvasBoxElement.scrollTop;
+        });
+    }
+    /**
+     * 엔티티 리스트를 그린다.
+     */
+    function drawEntityList() {
+        for (const entity of _entities) {
+            // list item
+            const div = document.createElement("div");
+            div.innerText = entity.name;
+            div.classList.add(SC_LIST_ITEM);
+            _entityListBoxElement.appendChild(div);
         }
     }
-    function setLabels(title, subtitle, timelineHeader) {
+    /**
+     * 타임라인 캔버스를 그린다.
+     */
+    function drawTimelineCanvas() {
+        for (const event of _timelinePointEvents) {
+            drawTimelinePointEvent(event);
+        }
     }
-    function drawEntityPointEvents(entity, rowIndex, render) {
-        drawLocalPointEvents(entity.pointEvents, rowIndex, render);
+    function drawTimelinePointEvent(event) {
+        const containerElement = document.createElement("div");
+        _timelineCanvasElement.appendChild(containerElement);
+        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const top = (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
+        const width = cssService.getCellContentHeight();
+        containerElement.style.left = `${center - (width / 2)}px`;
+        containerElement.style.top = `${top}px`;
+        containerElement.style.width = width + "px";
+        containerElement.style.zIndex = "3";
+        containerElement.classList.add(TIMELINE_CANVAS_ITEM_CLS);
+        const eventElement = _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
+        containerElement.appendChild(eventElement);
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
     }
-    function drawLocalPointEvents(events, rowIndex, render) {
-        for (const event of events) {
-            drawLocalPointEvent(event, rowIndex, render);
+    /**
+     * 메인 캔버스를 그린다.
+     */
+    function drawMainCanvas() {
+        if (_hasHorizontalLine)
+            drawHorizontalLines();
+        if (_hasVertialLine)
+            drawVertialLines();
+        let rowIndex = 0;
+        for (const entity of _entities) {
+            drawEntityRangeEvents(entity, rowIndex);
+            drawEntityPointEvents(entity, rowIndex);
+            rowIndex++;
+        }
+        if (_globalRangeEvents != null && _globalRangeEvents.length > 0) {
+            for (const event of _globalRangeEvents) {
+                drawGlobalEvent(event, _globalRangeEventRender);
+            }
+        }
+    }
+    function drawVertialLines() {
+        const canvasWidth = _mainCanvasElement.scrollWidth;
+        const cellWidth = cssService.getCellWidth();
+        const lineCount = Math.floor(canvasWidth / cellWidth);
+        for (let i = 0; i < lineCount; i++) {
+            const line = document.createElement("div");
+            line.classList.add(SC_VLINE);
+            line.style.left = `${cellWidth * (i + 1) - 1}px`;
+            line.style.height = `${_mainCanvasElement.scrollHeight}px`;
+            _mainCanvasElement.appendChild(line);
+        }
+    }
+    function drawHorizontalLines() {
+        const canvasHeight = _mainCanvasElement.scrollHeight;
+        const cellHeight = cssService.getCellHeight();
+        const lineCount = Math.floor(canvasHeight / cellHeight);
+        for (let i = 0; i < lineCount; i++) {
+            const line = document.createElement("div");
+            line.classList.add(SC_HLINE);
+            line.style.top = `${cellHeight * (i + 1) - 1}px`;
+            line.style.width = `${_mainCanvasElement.scrollWidth}px`;
+            _mainCanvasElement.appendChild(line);
+        }
+    }
+    function drawEntityRangeEvents(entity, rowIndex) {
+        if (entity.rangeEvents == null || entity.rangeEvents.length == 0)
+            return;
+        for (const event of entity.rangeEvents) {
+            drawLocalRangeEvent(event, rowIndex, _entityRangeEventRender);
+        }
+    }
+    function drawLocalRangeEvent(event, rowIndex, render = null) {
+        const containerElement = document.createElement("div");
+        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        _mainCanvasElement.appendChild(containerElement);
+        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
+        const top = (cssService.getCellHeight() * rowIndex)
+            + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
+            - 1;
+        containerElement.style.left = `${left}px`;
+        containerElement.style.top = `${top}px`;
+        containerElement.style.width = `${width}px`;
+        containerElement.style.zIndex = "3";
+        containerElement.addEventListener("click", (e) => {
+            console.log(e);
+        });
+        const eventElement = render(event, _mainCanvasElement, containerElement);
+        containerElement.appendChild(eventElement);
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
+    }
+    function drawEntityPointEvents(entity, rowIndex) {
+        if (entity.pointEvents == null || entity.pointEvents.length == 0)
+            return;
+        for (const event of entity.pointEvents) {
+            drawLocalPointEvent(event, rowIndex, _entityPointEventRender);
         }
     }
     /**
      * 포인트 이벤트를 그린다. 이벤트 시간을 중심으로 엘리먼트가 위치한다.
      * @param event
      * @param rowIndex
-     * @param render
      */
-    function drawLocalPointEvent(event, rowIndex, render) {
+    function drawLocalPointEvent(event, rowIndex, render = null) {
         const containerElement = document.createElement("div");
-        _canvasElement.appendChild(containerElement);
-        const eventElement = render(event, _canvasElement, containerElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        _mainCanvasElement.appendChild(containerElement);
         const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const top = (cssService.getCellHeight() * rowIndex) + ((cssService.getCellHeight() - cssService.getCellContentHeight()) / 2) - 1;
         const width = cssService.getCellContentHeight();
@@ -249,17 +360,15 @@ const StatusChart = function () {
         containerElement.style.top = `${top}px`;
         containerElement.style.width = width + "px";
         containerElement.style.zIndex = "3";
-        containerElement.classList.add(SC_CONTENT_CANVAS_ITEM);
+        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        const eventElement = render(event, _mainCanvasElement, containerElement);
         containerElement.appendChild(eventElement);
-    }
-    function drawGlobalEvents(events, render) {
-        for (const event of events) {
-            drawGlobalEvent(event, render);
-        }
+        eventElement.style.width = "100%";
+        eventElement.style.height = "100%";
     }
     function drawGlobalEvent(event, render) {
         const containerElement = document.createElement("div");
-        _canvasElement.appendChild(containerElement);
+        _mainCanvasElement.appendChild(containerElement);
         const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
         containerElement.style.left = `${left}px`;
@@ -267,193 +376,89 @@ const StatusChart = function () {
         containerElement.style.width = `${width}px`;
         containerElement.style.height = "100%";
         containerElement.style.zIndex = "1";
-        containerElement.classList.add(SC_CONTENT_CANVAS_ITEM);
-        const eventElement = render(event, _canvasElement, containerElement);
+        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        const eventElement = render(event, _mainCanvasElement, containerElement);
         eventElement.style.width = "100%";
         eventElement.style.height = "100%";
         containerElement.appendChild(eventElement);
     }
-    const canvasService = function () {
-        /**
-         *
-         * @param {object} entities Entities to draw
-         * @param {Date} startTime Start time of chart
-         * @param {number} cellMinutes Minutes for each cell
-         * @param {boolean} horizontalLine Whether to draw horizontal line
-         * @param {boolean} vertialLine Whether to draw vertical line
-         */
-        function init(entities, startTime, cellMinutes, horizontalLine = true, vertialLine = true) {
-            if (horizontalLine)
-                drawHorizontalLines();
-            if (vertialLine)
-                drawVertialLines();
-            let rowIndex = 0;
-            for (const entity of entities) {
-                drawEntityEvents(entity, rowIndex, startTime, cellMinutes);
-                rowIndex++;
-            }
-        }
-        function drawVertialLines() {
-            const canvas = document.getElementById(CANVAS_ID);
-            const canvasWidth = canvas.scrollWidth;
-            const cellWidth = cssService.getCellWidth();
-            const lineCount = Math.floor(canvasWidth / cellWidth);
-            console.log(lineCount);
-            for (let i = 0; i < lineCount; i++) {
-                const line = document.createElement("div");
-                line.classList.add(SC_VLINE);
-                line.style.left = `${cellWidth * (i + 1) - 1}px`;
-                line.style.height = `${canvas.scrollHeight}px`;
-                canvas.appendChild(line);
-            }
-        }
-        function drawHorizontalLines() {
-            const canvas = document.getElementById(CANVAS_ID);
-            const canvasHeight = canvas.scrollHeight;
-            const cellHeight = cssService.getCellHeight();
-            const lineCount = Math.floor(canvasHeight / cellHeight);
-            for (let i = 0; i < lineCount; i++) {
-                const line = document.createElement("div");
-                line.classList.add(SC_HLINE);
-                line.style.top = `${cellHeight * (i + 1) - 1}px`;
-                line.style.width = `${canvas.scrollWidth}px`;
-                canvas.appendChild(line);
-            }
-        }
-        function drawEntityEvents(entity, rowIndex, startTime, cellMinutes = 60) {
-            if (rowIndex == null || rowIndex < 0)
-                return;
-            if (entity.rangeEvents == null)
-                return;
-            const entityEvents = entity.rangeEvents;
-            const canvas = document.getElementById(CANVAS_ID);
-            for (const event of entityEvents) {
-                const eventElement = document.createElement("div");
-                eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
-                const left = dateTimeService.toMinutes(event.start.valueOf() - startTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-                // const left = cssService.getCellWidth() * event.start / cellMinutes;
-                const top = (cssService.getCellHeight() * rowIndex)
-                    + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
-                    - 1;
-                const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / cellMinutes;
-                const color = event.type === 1 ? "orange" : event.type === 2 ? "blue" : "green";
-                eventElement.style.left = `${left}px`;
-                eventElement.style.top = `${top}px`;
-                eventElement.style.width = `${width}px`;
-                eventElement.style.backgroundColor = color;
-                eventElement.style.zIndex = "3";
-                eventElement.addEventListener("click", (e) => {
-                    console.log(e);
-                });
-                canvas.appendChild(eventElement);
-            }
-        }
-        function drawGlobalEvent(chartStartTime, eventStartTime, eventEndTime, eventType, cellMinutes) {
-            const eventElement = document.createElement("div");
-            eventElement.classList.add(SC_CONTENT_CANVAS_ITEM);
-            const left = dateTimeService.toMinutes(eventStartTime.valueOf() - chartStartTime.valueOf()) * cssService.getCellWidth() / cellMinutes;
-            const width = cssService.getCellWidth() * dateTimeService.toMinutes(eventEndTime.valueOf() - eventStartTime.valueOf()) / cellMinutes;
-            const color = eventType === 1 ? "aqua" : eventType === 2 ? "coral" : "brown";
-            eventElement.style.left = `${left}px`;
-            eventElement.style.width = `${width}px`;
-            eventElement.style.height = "100%";
-            eventElement.style.backgroundColor = color;
-            eventElement.style.opacity = "0.5";
-            eventElement.addEventListener("click", (e) => {
-                console.log(e);
-            });
-            const canvas = document.getElementById(CANVAS_ID);
-            canvas.appendChild(eventElement);
-        }
-        return {
-            init
-        };
-    }();
-    function init({ title, subTitle, startTime, endTime, cellMinutes, cellWidth = DEFAULT_CELL_WIDTH, cellHeight = DEFAULT_CELL_HEIGHT, leftLegends, rightLegends, entities }) {
-        legendService.init(leftLegends, rightLegends);
-        timelineService.setTitle("Time Line");
-        timelineService.drawHeaders(startTime, endTime, cellMinutes, cellWidth, cellHeight);
-        listService.init(title, subTitle, entities);
-        canvasService.init(entities, startTime, cellMinutes);
-    }
     return {
-        init,
-        drawStatusItems,
-        drawEntityPointEvents,
-        drawGlobalEvents,
+        legendService,
+        setSettings,
+        setData,
+        initLayout,
+        drawTimelineCanvas,
+        drawEntityList,
+        drawMainCanvas,
+        // custom render
+        drawLocalPointEvent,
+        drawGlobalEvent,
     };
 };
 window.addEventListener("load", () => {
     const cellMinutes = 60;
     const cellWidth = 200;
     const cellHeight = 40;
+    const TOOLTIP_BOX_CLS = "sc-tooltip";
+    const TOOLTIP_TEXT_CLS = "sc-tooltip-text";
     const sc = StatusChart();
-    sc.init({
-        title: "XXX H/L LH Line 03",
-        subTitle: "Serial No.",
-        startTime: new Date(Date.parse("2020-01-01T00:00:00")),
-        endTime: new Date(Date.parse("2020-01-02T00:00:00")),
-        cellMinutes: cellMinutes,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
-        leftLegends: window.leftLegendDatasource,
-        rightLegends: window.rightLegendDatasource,
-        entities: window.entities
-    });
-    const renderMachineError = (error) => {
+    sc.legendService.init(window.leftLegendDatasource, window.rightLegendDatasource);
+    const entityPointEventRender = (error) => {
         const divElement = document.createElement("div");
-        divElement.classList.add("sc-tooltip");
-        const eventElement = document.createElement("img");
-        eventElement.width = 20;
-        eventElement.height = 20;
-        eventElement.src = "asset/image/warning.png";
-        divElement.appendChild(eventElement);
-        const tooltipElement = document.createElement("div");
-        tooltipElement.classList.add("sc-tooltip-text");
-        tooltipElement.innerText = error.description;
-        divElement.appendChild(tooltipElement);
-        return divElement;
-    };
-    sc.drawStatusItems(window.machineErrors, renderMachineError, new Date(Date.parse("2020-01-01T00:00:00")), cellMinutes);
-    const renderProductError = (error) => {
-        const divElement = document.createElement("div");
-        divElement.classList.add("sc-tooltip");
+        divElement.classList.add(TOOLTIP_BOX_CLS);
         const eventElement = document.createElement("img");
         eventElement.style.width = "100%";
         eventElement.style.height = "100%";
         eventElement.src = "asset/image/error.png";
         divElement.appendChild(eventElement);
         const tooltipElement = document.createElement("div");
-        tooltipElement.classList.add("sc-tooltip-text");
+        tooltipElement.classList.add(TOOLTIP_TEXT_CLS);
         tooltipElement.innerText = error.description;
         divElement.appendChild(tooltipElement);
         return divElement;
     };
-    sc.drawEntityPointEvents(window.entities[0], 0, renderProductError);
-    sc.drawEntityPointEvents(window.entities[1], 1, renderProductError);
-    const renderPause = (error) => {
+    const entityRangeEventRender = (event, canvasEl, containerEl) => {
+        const tooltipBoxElement = document.createElement("div");
+        tooltipBoxElement.classList.add(TOOLTIP_BOX_CLS);
+        tooltipBoxElement.style.backgroundColor = event.type == 1 ? "orange" : event.type == 2 ? "green" : "blue";
+        const tooltipTextElement = document.createElement("div");
+        tooltipBoxElement.appendChild(tooltipTextElement);
+        tooltipTextElement.classList.add(TOOLTIP_TEXT_CLS);
+        // TODO: add time format service
+        tooltipTextElement.innerText = event.start.toString() + " ~ " + event.end.toString();
+        return tooltipBoxElement;
+    };
+    const timelineMachineErrorEventRender = (error) => {
         const divElement = document.createElement("div");
-        divElement.classList.add("sc-tooltip");
-        divElement.style.opacity = "0.5";
-        divElement.style.backgroundColor = "gray";
+        divElement.classList.add(TOOLTIP_BOX_CLS);
+        const eventElement = document.createElement("img");
+        eventElement.width = 20;
+        eventElement.height = 20;
+        eventElement.src = "asset/image/warning.png";
+        divElement.appendChild(eventElement);
         const tooltipElement = document.createElement("div");
-        tooltipElement.classList.add("sc-tooltip-text");
+        tooltipElement.classList.add(TOOLTIP_TEXT_CLS);
         tooltipElement.innerText = error.description;
         divElement.appendChild(tooltipElement);
         return divElement;
     };
-    sc.drawGlobalEvents(window.pauseEvents, renderPause);
-    const renderNetworkError = (error, canvasEl) => {
+    const globalRangeEventRender = (event, canvasEl, containerEl) => {
         const tooltipEl = document.createElement("div");
-        tooltipEl.classList.add("sc-tooltip");
+        tooltipEl.classList.add(TOOLTIP_BOX_CLS);
         tooltipEl.style.width = "200px";
         tooltipEl.style.height = "200px";
-        tooltipEl.style.backgroundColor = "pink";
-        // divElement.style.border = "1px solid red";
+        if (event.type == "pause")
+            tooltipEl.style.backgroundColor = "red";
+        else if (event.type == "fault")
+            tooltipEl.style.backgroundColor = "blue";
+        else if (event.type == "barcodeMissing")
+            tooltipEl.style.backgroundColor = "green";
+        else if (event.type == "networkError")
+            tooltipEl.style.backgroundColor = "pink";
         tooltipEl.style.opacity = "0.5";
         const tooltipTextEl = document.createElement("div");
-        tooltipTextEl.classList.add("sc-tooltip-text");
-        tooltipTextEl.innerText = error.description;
+        tooltipTextEl.classList.add(TOOLTIP_TEXT_CLS);
+        tooltipTextEl.innerText = event.description;
         tooltipEl.appendChild(tooltipTextEl);
         tooltipEl.addEventListener("mousemove", (e) => {
             if (e.target !== tooltipEl)
@@ -468,5 +473,10 @@ window.addEventListener("load", () => {
         });
         return tooltipEl;
     };
-    sc.drawGlobalEvents(window.networkErrorEvents, renderNetworkError);
+    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelineMachineErrorEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender);
+    sc.setData(window.entities, window.machineErrors, window.machineEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
+    sc.initLayout();
+    sc.drawTimelineCanvas();
+    sc.drawEntityList();
+    sc.drawMainCanvas();
 });

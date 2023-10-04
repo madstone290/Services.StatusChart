@@ -82,7 +82,7 @@
     height: var(--sc-list-head-height);
 }
 
-#sc-list-head-title {
+#sc-list-head-maintitle {
     height: calc(var(--sc-list-head-title-height) - 1px - 1px);
     border-width: 1px 1px 1px 1px;
     border-style: solid;
@@ -234,7 +234,6 @@
 .sc-tooltip .sc-tooltip-text {
     visibility: hidden;
     width: 120px;
-    height: 120px;
     background-color: black;
     color: #fff;
     text-align: center;

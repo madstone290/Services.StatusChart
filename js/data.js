@@ -19,12 +19,12 @@ var entities = [
         name: "H34A2900001",
         pointEvents: [
             {
-                id: 1,
+                type: 1,
                 description: "불량품",
                 time: new Date(Date.parse("2020-01-01T01:30:00")),
             },
             {
-                id: 2,
+                type: 2,
                 description: "도색불량",
                 time: new Date(Date.parse("2020-01-01T02:00:00")),
             }
@@ -59,12 +59,12 @@ var entities = [
         ],
         pointEvents: [
             {
-                id: 1,
+                type: 1,
                 description: "불량품 2시",
                 time: new Date(Date.parse("2020-01-01T02:00:00")),
             },
             {
-                id: 2,
+                type: 2,
                 description: "도색불량 3시",
                 time: new Date(Date.parse("2020-01-01T03:00:00")),
             }
@@ -76,6 +76,7 @@ var entities = [
         rangeEvents: [
             {
                 type: 3,
+                description: "네트워크 이상",
                 start: new Date(Date.parse("2020-01-01T03:00:00")),
                 end: new Date(Date.parse("2020-01-01T04:00:00")),
             },
@@ -142,29 +143,27 @@ var machineErrors = [
         time: new Date(Date.parse("2020-01-01T22:00:00")),
     }
 ];
-var pauseEvents = [
+var machineEvents = [
     {
-        id: 1,
+        type: "pause",
         description: "계획정지 00:30~03:30",
         start: new Date(Date.parse("2020-01-01T00:30:00")),
         end: new Date(Date.parse("2020-01-01T03:30:00")),
-    }
-];
-var networkErrorEvents = [
+    },
     {
-        id: 1,
-        description: "네트워크 이상 04:00~04:30",
+        type: "barcodeMissing",
+        description: "바코드 누락 04:00~04:30",
         start: new Date(Date.parse("2020-01-01T04:00:00")),
         end: new Date(Date.parse("2020-01-01T04:30:00")),
     },
     {
-        id: 1,
+        type: "networkError",
         description: "네트워크 이상 05:30~06:30",
         start: new Date(Date.parse("2020-01-01T05:30:00")),
         end: new Date(Date.parse("2020-01-01T06:30:00")),
     },
     {
-        id: 1,
+        type: "networkError",
         description: "네트워크 이상 22:30~23:30",
         start: new Date(Date.parse("2020-01-01T22:30:00")),
         end: new Date(Date.parse("2020-01-01T23:30:00")),
