@@ -135,6 +135,11 @@ var machineErrors = [
         id: 4,
         description: "냉각기 이상",
         time: new Date(Date.parse("2020-01-01T03:02:00")),
+    },
+    {
+        id: 5,
+        description: "Test Error",
+        time: new Date(Date.parse("2020-01-01T22:00:00")),
     }
 ];
 var pauseEvents = [

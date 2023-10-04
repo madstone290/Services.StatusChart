@@ -186,6 +186,9 @@ const StatusChart = function () {
             const canvasWidth = cssService.getCellWidth() * headers.length
             headerElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
 
+            const timelineCanvas = document.getElementById(TIMELINE_CANVAS_ID) as HTMLElement;
+            timelineCanvas.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+            
             const canvasElement = document.getElementById(CANVAS_ID) as HTMLElement;
             canvasElement.style.width = `${canvasWidth}px`;
 
