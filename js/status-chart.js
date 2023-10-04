@@ -125,6 +125,43 @@ const StatusChart = function () {
             getScrollWidth
         };
     }();
+    function create(container) {
+        const elementString = `
+        <div id="sc-main">
+            <div id="sc-list">
+                <div id="sc-list-head">
+                    <div id="sc-list-head-maintitle"></div>
+                    <div id="sc-list-head-subtitle"></div>
+                </div>
+                <div id="sc-list-box">
+                </div>
+            </div>
+            <div id="sc-content-box">
+                <div id="sc-content-timeline">
+                    <div id="sc-content-timeline-title"></div>
+                    <div id="sc-content-timeline-header-box">
+                        <div id="sc-content-timeline-header"></div>
+                    </div>
+                    <div id="sc-content-timeline-canvas-box">
+                        <div id="sc-content-timeline-canvas"></div>
+                    </div>
+
+                </div>
+                <div id="sc-content-canvas-box">
+                    <div id="sc-content-canvas">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        `;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(elementString, 'text/html');
+        const element = doc.body.firstChild;
+        container.appendChild(element);
+        cssService.setChartWidth(container.clientWidth);
+        cssService.setChartHeight(container.clientHeight);
+    }
     function setSettings(chartStartTime, chartEndTime, cellMinutes, cellWidth = DEFAULT_CELL_WIDTH, cellHeight = DEFAULT_CELL_HEIGHT, timelinePointEventRender = null, entityPointEventRender = null, entityRangeEventRender = null, globalRangeEventRender = null, hasHorizontalLine = true, hasVerticalLine = true) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
@@ -357,6 +394,9 @@ const StatusChart = function () {
         containerElement.appendChild(eventElement);
     }
     return {
+        cssService,
+        // public
+        create,
         setSettings,
         setData,
         initLayout,

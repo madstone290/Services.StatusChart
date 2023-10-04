@@ -1,6 +1,5 @@
 :root {
-    --sc-height: 815px;
-    --sc-width: 100%;
+    --sc-height: 500px;
 
     --sc-list-width: 200px;
     --sc-list-head-height: 120px;
@@ -18,17 +17,11 @@
     --sc-line-color: #999999;
 }
 
-#sc {
-    width: var(--sc-width);
-    height: var(--sc-height);
-}
-
-
 #sc-main {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: calc(var(--sc-height) - var(--sc-legend-height));
+    height: 100%;
 }
 
 #sc-list {
@@ -60,7 +53,7 @@
 
 #sc-list-box {
     overflow: hidden;
-    height: calc(var(--sc-height) - var(--sc-legend-height) - var(--sc-list-head-height) - var(--sc-scroll-height));
+    height: calc(var(--sc-height) - var(--sc-list-head-height) - var(--sc-scroll-height));
 }
 
 .sc-list-item {
@@ -77,7 +70,7 @@
 
 #sc-content-box {
     flex: 1;
-    width: 500px;
+    width: 100px;
     height: 100%;
 }
 
@@ -142,7 +135,7 @@
 #sc-content-canvas-box {
     overflow: auto;
     width: 100%;
-    height: calc(var(--sc-height) - var(--sc-legend-height) - var(--sc-list-head-height));
+    height: calc(var(--sc-height) - var(--sc-list-head-height));
 }
 
 #sc-content-canvas {

@@ -6,7 +6,10 @@ window.addEventListener("load", () => {
     const cellHeight = 40;
     const TOOLTIP_BOX_CLS = "sc-tooltip";
     const TOOLTIP_TEXT_CLS = "sc-tooltip-text";
+    const container = document.getElementById("sc-container");
     const sc = StatusChart();
+    sc.create(container);
+    // sc.cssService.setChartHeight(400);
     const entityPointEventRender = (error) => {
         const divElement = document.createElement("div");
         divElement.style.width = "45px";

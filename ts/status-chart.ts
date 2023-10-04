@@ -159,6 +159,46 @@ const StatusChart = function () {
         }
     }();
 
+    function create(container: HTMLElement) {
+        const elementString = `
+        <div id="sc-main">
+            <div id="sc-list">
+                <div id="sc-list-head">
+                    <div id="sc-list-head-maintitle"></div>
+                    <div id="sc-list-head-subtitle"></div>
+                </div>
+                <div id="sc-list-box">
+                </div>
+            </div>
+            <div id="sc-content-box">
+                <div id="sc-content-timeline">
+                    <div id="sc-content-timeline-title"></div>
+                    <div id="sc-content-timeline-header-box">
+                        <div id="sc-content-timeline-header"></div>
+                    </div>
+                    <div id="sc-content-timeline-canvas-box">
+                        <div id="sc-content-timeline-canvas"></div>
+                    </div>
+
+                </div>
+                <div id="sc-content-canvas-box">
+                    <div id="sc-content-canvas">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        `;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(elementString, 'text/html');
+        const element = doc.body.firstChild;
+        
+        container.appendChild(element);
+
+        cssService.setChartWidth(container.clientWidth);
+        cssService.setChartHeight(container.clientHeight);
+    }
+
     function setSettings(chartStartTime: Date, chartEndTime: Date, cellMinutes: number,
         cellWidth: number = DEFAULT_CELL_WIDTH,
         cellHeight: number = DEFAULT_CELL_HEIGHT,
@@ -199,7 +239,7 @@ const StatusChart = function () {
         _mainCanvasElement = document.getElementById(CANVAS_ID) as HTMLElement;
     }
 
-    function setData(entities: Entity[], 
+    function setData(entities: Entity[],
         timelinePointEvents: PointEvent[],
         globalRangeEvents: RangeEvent[],
         mainTitle: string, subtitle: string, timelineHeader: string) {
@@ -449,6 +489,11 @@ const StatusChart = function () {
     }
 
     return {
+        cssService,
+
+
+        // public
+        create,
         setSettings,
         setData,
         initLayout,
