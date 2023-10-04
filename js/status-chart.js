@@ -298,10 +298,7 @@ const StatusChart = function () {
         containerElement.style.height = width + "px";
         containerElement.style.zIndex = "3";
         containerElement.classList.add(TIMELINE_CANVAS_ITEM_CLS);
-        const eventElement = _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
-        containerElement.appendChild(eventElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
     }
     /**
      * 메인 캔버스를 그린다.
@@ -354,7 +351,7 @@ const StatusChart = function () {
             drawLocalRangeEvent(event, rowIndex, _entityRangeEventRender);
         }
     }
-    function drawLocalRangeEvent(event, rowIndex, render = null) {
+    function drawLocalRangeEvent(event, rowIndex, render) {
         const containerElement = document.createElement("div");
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
         _mainCanvasElement.appendChild(containerElement);
@@ -370,10 +367,7 @@ const StatusChart = function () {
         containerElement.addEventListener("click", (e) => {
             console.log(e);
         });
-        const eventElement = render(event, _mainCanvasElement, containerElement);
-        containerElement.appendChild(eventElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        render(event, _mainCanvasElement, containerElement);
     }
     function drawEntityPointEvents(entity, rowIndex) {
         if (entity.pointEvents == null || entity.pointEvents.length == 0)
@@ -387,7 +381,7 @@ const StatusChart = function () {
      * @param event
      * @param rowIndex
      */
-    function drawLocalPointEvent(event, rowIndex, render = null) {
+    function drawLocalPointEvent(event, rowIndex, render) {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
         const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
@@ -412,10 +406,7 @@ const StatusChart = function () {
         containerElement.style.height = "100%";
         containerElement.style.zIndex = "1";
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
-        const eventElement = render(event, _mainCanvasElement, containerElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
-        containerElement.appendChild(eventElement);
+        render(event, _mainCanvasElement, containerElement);
     }
     return {
         cssService,

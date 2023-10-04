@@ -57,10 +57,10 @@ const StatusChart = function () {
      */
     let _canAutoFit: boolean;
 
-    let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
-    let _entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
-    let _entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
-    let _globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
+    let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    let _entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    let _entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    let _globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
 
 
     /**
@@ -158,7 +158,7 @@ const StatusChart = function () {
         return {
             getVariable,
             setChartWidth,
-            
+
             getChartHeight,
             setChartHeight,
 
@@ -221,10 +221,10 @@ const StatusChart = function () {
     function setSettings(chartStartTime: Date, chartEndTime: Date, cellMinutes: number,
         cellWidth: number = DEFAULT_CELL_WIDTH,
         cellHeight: number = DEFAULT_CELL_HEIGHT,
-        timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
-        entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
-        entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
-        globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
+        timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
+        entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
+        entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
+        globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
         hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true
     ) {
         _chartStartTime = chartStartTime;
@@ -312,7 +312,7 @@ const StatusChart = function () {
         _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
         _mainCanvasElement.style.width = `${canvasWidth}px`;
 
-        const chartHeight =cssService.getChartHeight();
+        const chartHeight = cssService.getChartHeight();
         const headHeight = cssService.getHeadHeight();
         const scrollWidth = cssService.getScrollWidth();
 
@@ -379,10 +379,7 @@ const StatusChart = function () {
         containerElement.style.zIndex = "3";
         containerElement.classList.add(TIMELINE_CANVAS_ITEM_CLS);
 
-        const eventElement = _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
-        containerElement.appendChild(eventElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
     }
 
     /**
@@ -447,7 +444,7 @@ const StatusChart = function () {
         }
     }
 
-    function drawLocalRangeEvent(event: RangeEvent, rowIndex: number, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null) {
+    function drawLocalRangeEvent(event: RangeEvent, rowIndex: number, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
         _mainCanvasElement.appendChild(containerElement);
@@ -466,10 +463,7 @@ const StatusChart = function () {
             console.log(e);
         });
 
-        const eventElement = render(event, _mainCanvasElement, containerElement);
-        containerElement.appendChild(eventElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        render(event, _mainCanvasElement, containerElement);
     }
 
     function drawEntityPointEvents(entity: Entity, rowIndex: number) {
@@ -485,7 +479,7 @@ const StatusChart = function () {
      * @param event 
      * @param rowIndex 
      */
-    function drawLocalPointEvent(event: PointEvent, rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null) {
+    function drawLocalPointEvent(event: PointEvent, rowIndex: number, render: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
 
@@ -502,7 +496,7 @@ const StatusChart = function () {
         render(event, _mainCanvasElement, containerElement);
     }
 
-    function drawGlobalEvent(event: RangeEvent, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement) {
+    function drawGlobalEvent(event: RangeEvent, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
 
@@ -515,10 +509,7 @@ const StatusChart = function () {
         containerElement.style.zIndex = "1";
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
 
-        const eventElement = render(event, _mainCanvasElement, containerElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
-        containerElement.appendChild(eventElement);
+        render(event, _mainCanvasElement, containerElement);
     }
 
     return {

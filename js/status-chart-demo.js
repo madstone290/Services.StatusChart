@@ -9,32 +9,34 @@ window.addEventListener("load", () => {
     const container = document.getElementById("sc-container");
     const sc = StatusChart();
     sc.create(container);
-    const entityPointEventRender = (error) => {
+    const entityPointEventRender = function (error, canvasElement, containerElement) {
         const divElement = document.createElement("div");
-        divElement.style.width = "45px";
-        divElement.style.height = "45px";
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
         divElement.style.backgroundColor = "red";
-        return divElement;
+        containerElement.appendChild(divElement);
     };
-    const entityRangeEventRender = (event, canvasEl, containerEl) => {
+    const entityRangeEventRender = function (event, canvasElement, containerElement) {
         const divElement = document.createElement("div");
         divElement.style.backgroundColor = "orange";
-        return divElement;
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
+        containerElement.appendChild(divElement);
     };
-    const timelinePointEventRender = (error) => {
+    const timelinePointEventRender = function (event, canvasElement, containerElement) {
         const divElement = document.createElement("div");
         divElement.style.width = "20px";
         divElement.style.height = "20px";
         divElement.style.backgroundColor = "blue";
-        return divElement;
+        containerElement.appendChild(divElement);
     };
-    const globalRangeEventRender = (event, canvasEl, containerEl) => {
+    const globalRangeEventRender = (event, canvasElement, containerElement) => {
         const divElement = document.createElement("div");
-        divElement.style.width = "200px";
-        divElement.style.height = "200px";
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
         divElement.style.backgroundColor = "pink";
         divElement.style.opacity = "0.5";
-        return divElement;
+        containerElement.appendChild(divElement);
     };
     sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, true, true, true);
     sc.setData(window.DEMO_ENTITIES, window.TIMELINE_POINT_EVENTS, window.GLOBAL_RANGE_EVENTS, "Main title", "Sub title", "Timeline title");

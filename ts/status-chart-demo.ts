@@ -12,36 +12,41 @@ window.addEventListener("load", () => {
     const sc = StatusChart();
     sc.create(container);
 
-    const entityPointEventRender = (error: PointEvent) => {
+    const entityPointEventRender = function (error: PointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
-        divElement.style.width = "45px";
-        divElement.style.height = "45px";
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
         divElement.style.backgroundColor = "red";
-        return divElement;
+
+        containerElement.appendChild(divElement);
     };
 
-    const entityRangeEventRender: (event: BarcodeRangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement =
-        (event, canvasEl, containerEl) => {
-            const divElement = document.createElement("div");
-            divElement.style.backgroundColor = "orange";
-            return divElement;
-        };
+    const entityRangeEventRender = function (event: BarcodeRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+        const divElement = document.createElement("div");
+        divElement.style.backgroundColor = "orange";
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
 
-    const timelinePointEventRender = (error: MachineError) => {
+        containerElement.appendChild(divElement);
+    };
+
+    const timelinePointEventRender = function (event: MachineError, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
         divElement.style.width = "20px";
         divElement.style.height = "20px";
         divElement.style.backgroundColor = "blue";
-        return divElement;
+        
+        containerElement.appendChild(divElement);
     };
 
-    const globalRangeEventRender = (event: MachineGlobalRangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => {
+    const globalRangeEventRender = (event: MachineGlobalRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) => {
         const divElement = document.createElement("div");
-        divElement.style.width = "200px";
-        divElement.style.height = "200px";
+        divElement.style.width = "100%";
+        divElement.style.height = "100%";
         divElement.style.backgroundColor = "pink";
         divElement.style.opacity = "0.5";
-        return divElement;
+        
+        containerElement.appendChild(divElement);
     };
 
     sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")),
@@ -57,8 +62,8 @@ window.addEventListener("load", () => {
     sc.setData((window as any).DEMO_ENTITIES,
         (window as any).TIMELINE_POINT_EVENTS,
         (window as any).GLOBAL_RANGE_EVENTS,
-        "Main title", 
-        "Sub title", 
+        "Main title",
+        "Sub title",
         "Timeline title");
 
     sc.initLayout();

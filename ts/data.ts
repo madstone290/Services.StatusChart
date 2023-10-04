@@ -112,10 +112,10 @@ var TIMELINE_POINT_EVENTS: PointEvent[] = [
 var GLOBAL_RANGE_EVENTS: RangeEvent[] = [
     {
         start: new Date(Date.parse("2020-01-01T01:00:00")),
-        end: new Date(Date.parse("2020-01-01T02:30:00")),
+        end: new Date(Date.parse("2020-01-01T02:00:00")),
     },
     {
         start: new Date(Date.parse("2020-01-01T03:00:00")),
-        end: new Date(Date.parse("2020-01-01T04:30:00")),
+        end: new Date(Date.parse("2020-01-01T05:30:00")),
     }
 ];
