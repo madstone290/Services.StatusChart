@@ -54,6 +54,54 @@ var DEMO_ENTITIES: Entity[] = [
         id: 10,
         name: "Entity #10",
     },
+    {
+        id: 11,
+        name: "Entity #11",
+    },
+    {
+        id: 12,
+        name: "Entity #12",
+    },
+    {
+        id: 13,
+        name: "Entity #13",
+    },
+    {
+        id: 14,
+        name: "Entity #14",
+    },
+    {
+        id: 15,
+        name: "Entity #15",
+    },
+    {
+        id: 16,
+        name: "Entity #16",
+    },
+    {
+        id: 17,
+        name: "Entity #17",
+    },
+    {
+        id: 18,
+        name: "Entity #18",
+    },
+    {
+        id: 19,
+        name: "Entity #19",
+    },
+    {
+        id: 20,
+        name: "Entity #20",
+    },
+    {
+        id: 21,
+        name: "Entity #21",
+    },
+    {
+        id: 22,
+        name: "Entity #22",
+    },
 ]
 
 var TIMELINE_POINT_EVENTS: PointEvent[] = [

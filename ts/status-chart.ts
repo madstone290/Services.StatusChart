@@ -52,6 +52,8 @@ const StatusChart = function () {
     let _hasHorizontalLine: boolean;
     let _hasVertialLine: boolean;
 
+    let _canAutoFit: boolean;
+
     let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
     let _entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
     let _entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement;
@@ -99,12 +101,14 @@ const StatusChart = function () {
     }();
 
     const cssService = function () {
-        const CHART_HEIGHT = "--sc-height";
         const CHART_WIDTH = "--sc-width";
         const SC_CELL_WIDTH = "--sc-cell-width";
         const SC_CELL_HEIGHT = "--sc-cell-height";
         const SC_CELL_CONTENT_HEIGHT = "--sc-cell-content-height";
         const SC_SCROLL_WIDTH = "--sc-scroll-width";
+
+        const VAR_CHART_HEIGHT = "--sc-height";
+        const VAR_LIST_HEAD_HEIGHT = "--sc-list-head-height";
 
         function getVariable(name: string) {
             return getComputedStyle(document.documentElement).getPropertyValue(name);
@@ -118,9 +122,11 @@ const StatusChart = function () {
             setVariable(CHART_WIDTH, `${width}px`);
         }
 
-        function setChartHeight(height: number) {
-            setVariable(CHART_HEIGHT, `${height}px`);
-        }
+        function getChartHeight() { return parseInt(getVariable(VAR_CHART_HEIGHT)); }
+        function setChartHeight(height: number) { setVariable(VAR_CHART_HEIGHT, `${height}px`); }
+
+        function getHeadHeight() { return parseInt(getVariable(VAR_LIST_HEAD_HEIGHT)); }
+        function setHeadHeight(height: number) { setVariable(VAR_LIST_HEAD_HEIGHT, `${height}px`); }
 
         function getCellWidth() {
             return parseInt(getVariable(SC_CELL_WIDTH));
@@ -149,7 +155,13 @@ const StatusChart = function () {
         return {
             getVariable,
             setChartWidth,
+            
+            getChartHeight,
             setChartHeight,
+
+            getHeadHeight,
+            setHeadHeight,
+
             getCellWidth,
             setCellWidth,
             getCellHeight,
@@ -159,6 +171,10 @@ const StatusChart = function () {
         }
     }();
 
+    /**
+     * 차트 엘리먼트를 생성한다.
+     * @param container 
+     */
     function create(container: HTMLElement) {
         const elementString = `
         <div id="sc-main">
@@ -185,16 +201,16 @@ const StatusChart = function () {
                     <div id="sc-content-canvas">
                     </div>
                 </div>
-
             </div>
         </div>
         `;
         const parser = new DOMParser();
         const doc = parser.parseFromString(elementString, 'text/html');
         const element = doc.body.firstChild;
-        
+
         container.appendChild(element);
 
+        // 컨테이너 크기에 맞춰 차트 크기를 조정한다.
         cssService.setChartWidth(container.clientWidth);
         cssService.setChartHeight(container.clientHeight);
     }
@@ -206,13 +222,14 @@ const StatusChart = function () {
         entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
         entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
         globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => HTMLElement = null,
-        hasHorizontalLine = true, hasVerticalLine = true
+        hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true
     ) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
         _hasHorizontalLine = hasHorizontalLine;
         _hasVertialLine = hasVerticalLine;
+        _canAutoFit = canAutoFit;
 
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
@@ -287,10 +304,22 @@ const StatusChart = function () {
          * entity list는 main canvas 수직스크롤과 동기화한다.
          */
         const canvasWidth = cssService.getCellWidth() * headers.length
-        const canvasHeight = cssService.getCellHeight() * _entities.length;
+
         _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
         _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
         _mainCanvasElement.style.width = `${canvasWidth}px`;
+
+        const chartHeight =cssService.getChartHeight();
+        const headHeight = cssService.getHeadHeight();
+        const scrollWidth = cssService.getScrollWidth();
+
+        const providedCanvasHeight = chartHeight - headHeight - scrollWidth;
+        const requiredCanvasHeight = cssService.getCellHeight() * _entities.length;
+
+        let canvasHeight = requiredCanvasHeight;
+        if (_canAutoFit && requiredCanvasHeight < providedCanvasHeight) {
+            cssService.setChartHeight(headHeight + scrollWidth + canvasHeight);
+        }
         _mainCanvasElement.style.height = `${canvasHeight}px`;
 
         _mainCanvasBoxElement.addEventListener("scroll", (e) => {
@@ -307,15 +336,20 @@ const StatusChart = function () {
      * 엔티티 리스트를 그린다.
      */
     function drawEntityList() {
-        for (const entity of _entities) {
-            // list item
+        const canvasHeight = _mainCanvasElement.scrollHeight;
+        const cellHeight = cssService.getCellHeight();
+        const lineCount = Math.floor(canvasHeight / cellHeight);
+        for (let i = 0; i < lineCount; i++) {
             const div = document.createElement("div");
-            div.innerText = entity.name;
-            div.classList.add(SC_LIST_ITEM);
             _entityListBoxElement.appendChild(div);
+            div.classList.add(SC_LIST_ITEM);
+
+            const entity = _entities[i];
+            if (entity == null)
+                continue;
+            div.innerText = entity.name;
         }
     }
-
 
     /**
      * 타임라인 캔버스를 그린다.
@@ -326,7 +360,6 @@ const StatusChart = function () {
                 drawTimelinePointEvent(event);
             }
         }
-
     }
 
     function drawTimelinePointEvent(event: PointEvent) {

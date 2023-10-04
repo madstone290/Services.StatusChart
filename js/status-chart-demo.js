@@ -9,7 +9,6 @@ window.addEventListener("load", () => {
     const container = document.getElementById("sc-container");
     const sc = StatusChart();
     sc.create(container);
-    // sc.cssService.setChartHeight(400);
     const entityPointEventRender = (error) => {
         const divElement = document.createElement("div");
         divElement.style.width = "45px";
@@ -37,7 +36,7 @@ window.addEventListener("load", () => {
         divElement.style.opacity = "0.5";
         return divElement;
     };
-    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender);
+    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, true, true, false);
     sc.setData(window.DEMO_ENTITIES, window.TIMELINE_POINT_EVENTS, window.GLOBAL_RANGE_EVENTS, "XXX H/L LH Line 03", "Serial No.", "Time Line");
     sc.initLayout();
     sc.drawTimelineCanvas();

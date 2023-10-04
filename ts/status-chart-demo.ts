@@ -11,7 +11,7 @@ window.addEventListener("load", () => {
     const container = document.getElementById("sc-container");
     const sc = StatusChart();
     sc.create(container);
-    // sc.cssService.setChartHeight(400);
+
     const entityPointEventRender = (error: PointEvent) => {
         const divElement = document.createElement("div");
         divElement.style.width = "45px";
@@ -39,7 +39,7 @@ window.addEventListener("load", () => {
         const divElement = document.createElement("div");
         divElement.style.width = "200px";
         divElement.style.height = "200px";
-        divElement.style.backgroundColor =  "pink";
+        divElement.style.backgroundColor = "pink";
         divElement.style.opacity = "0.5";
         return divElement;
     };
@@ -49,7 +49,10 @@ window.addEventListener("load", () => {
         timelinePointEventRender,
         entityPointEventRender,
         entityRangeEventRender,
-        globalRangeEventRender);
+        globalRangeEventRender,
+        true,
+        true,
+        false);
 
     sc.setData((window as any).DEMO_ENTITIES,
         (window as any).TIMELINE_POINT_EVENTS,

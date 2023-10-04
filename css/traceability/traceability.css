@@ -1,0 +1,46 @@
+:root {
+    --sc-legend-height: 40px;
+}
+
+#sc-legend {
+    height: calc(var(--sc-legend-height) - 4px - 4px);
+    display: flex;
+    flex-direction: row;
+    padding: 4px;
+}
+
+#sc-legend-left {
+    display: flex;
+    flex-direction: row;
+    padding: 4px;
+}
+
+#sc-legend-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 4px;
+    flex: 1;
+}
+
+.sc-legend-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.sc-legend-item-color {
+    width: 20px;
+    height: 20px;
+}
+
+.sc-legend-item-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.sc-legend-item-label {
+    padding: 0px 4px;
+}
