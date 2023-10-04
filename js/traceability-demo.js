@@ -22,6 +22,21 @@ window.addEventListener("load", () => {
     tr.drawLegend();
     const sc = StatusChart();
     sc.create(document.getElementById("sc-container"));
+    const relocateTooltip = function (tooltipElement, e) {
+        const tooltipOffset = 10;
+        let top = e.clientY + tooltipOffset;
+        let left = e.clientX + tooltipOffset;
+        if (window.innerWidth < e.clientX + tooltipElement.offsetWidth + tooltipOffset) {
+            left = window.innerWidth - tooltipElement.offsetWidth - tooltipOffset;
+        }
+        if (window.innerHeight < e.clientY + tooltipElement.offsetHeight + tooltipOffset) {
+            top = window.innerHeight - tooltipElement.offsetHeight - tooltipOffset;
+        }
+        tooltipElement.style.visibility = "visible";
+        tooltipElement.style.opacity = "1";
+        tooltipElement.style.top = top + "px";
+        tooltipElement.style.left = left + "px";
+    };
     const entityPointEventRender = function (error, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "20px";
@@ -36,11 +51,7 @@ window.addEventListener("load", () => {
         imgElement.addEventListener("mousemove", (e) => {
             if (e.target !== imgElement)
                 return;
-            const tooltipOffset = 10;
-            tooltipElement.style.visibility = "visible";
-            tooltipElement.style.opacity = "1";
-            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
-            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
+            relocateTooltip(tooltipElement, e);
         });
         imgElement.onmouseleave = (e) => {
             tooltipElement.style.visibility = "hidden";
@@ -53,24 +64,28 @@ window.addEventListener("load", () => {
         boxElement.style.width = "100%";
         boxElement.style.height = "100%";
         boxElement.style.backgroundColor = entityRangeEventColors.get(event.type);
-        const textElement = document.createElement("div");
-        canvasElement.appendChild(textElement);
-        textElement.style.zIndex = "100";
-        textElement.classList.add(CLS_TOOLTIP);
+        const tooltipElement = document.createElement("div");
+        canvasElement.appendChild(tooltipElement);
+        tooltipElement.style.zIndex = "100";
+        tooltipElement.classList.add(CLS_TOOLTIP);
+        const typeElement = document.createElement("div");
+        typeElement.innerText = event.type;
+        tooltipElement.appendChild(typeElement);
+        const descElement = document.createElement("div");
+        descElement.innerText = event.description;
+        tooltipElement.appendChild(descElement);
         // TODO: add time format service
-        textElement.innerText = event.type + " : " + event.description + " : " + event.start.toString() + " ~ " + event.end.toString();
+        const timeElement = document.createElement("div");
+        timeElement.innerText = event.start.toString() + " ~ " + event.end.toString();
+        tooltipElement.appendChild(timeElement);
         boxElement.addEventListener("mousemove", (e) => {
             if (e.target !== boxElement)
                 return;
-            const tooltipOffset = 10;
-            textElement.style.visibility = "visible";
-            textElement.style.opacity = "1";
-            textElement.style.top = e.clientY + tooltipOffset + "px";
-            textElement.style.left = e.clientX + tooltipOffset + "px";
+            relocateTooltip(tooltipElement, e);
         });
         boxElement.onmouseleave = (e) => {
-            textElement.style.visibility = "hidden";
-            textElement.style.opacity = "0";
+            tooltipElement.style.visibility = "hidden";
+            tooltipElement.style.opacity = "0";
         };
     };
     const timelineMachineErrorEventRender = function (error, canvasElement, containerElement) {
@@ -87,13 +102,7 @@ window.addEventListener("load", () => {
         imgElement.addEventListener("mousemove", (e) => {
             if (e.target !== imgElement)
                 return;
-            const tooltipOffset = 10;
-            const posY = Math.min(e.offsetY + tooltipOffset, canvasElement.offsetHeight - tooltipElement.offsetHeight - tooltipOffset);
-            const posX = Math.min(e.offsetX + tooltipOffset, canvasElement.offsetWidth - containerElement.offsetLeft - tooltipElement.offsetWidth - tooltipOffset);
-            tooltipElement.style.visibility = "visible";
-            tooltipElement.style.opacity = "1";
-            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
-            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
+            relocateTooltip(tooltipElement, e);
         });
         imgElement.onmouseleave = (e) => {
             tooltipElement.style.visibility = "hidden";
@@ -106,7 +115,7 @@ window.addEventListener("load", () => {
         boxElement.style.width = "100%";
         boxElement.style.height = "100%";
         boxElement.style.backgroundColor = globalRangeEventColors.get(event.type);
-        boxElement.style.opacity = "0.5";
+        boxElement.style.opacity = "0.7";
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
         tooltipElement.innerText = event.description;
@@ -115,11 +124,7 @@ window.addEventListener("load", () => {
         boxElement.addEventListener("mousemove", (e) => {
             if (e.target !== boxElement)
                 return;
-            const tooltipOffset = 10;
-            tooltipElement.style.visibility = "visible";
-            tooltipElement.style.opacity = "1";
-            tooltipElement.style.top = e.clientY + tooltipOffset + "px";
-            tooltipElement.style.left = e.clientX + tooltipOffset + "px";
+            relocateTooltip(tooltipElement, e);
         });
         boxElement.onmouseleave = (e) => {
             tooltipElement.style.visibility = "hidden";
