@@ -1,21 +1,21 @@
 :root {
-    --sc-legend-height: 40px;
+    --tr-legend-height: 40px;
 }
 
-#sc-legend {
-    height: calc(var(--sc-legend-height) - 4px - 4px);
+#tr-legend {
+    height: calc(var(--tr-legend-height) - 4px - 4px);
     display: flex;
     flex-direction: row;
     padding: 4px;
 }
 
-#sc-legend-left {
+#tr-legend-left {
     display: flex;
     flex-direction: row;
     padding: 4px;
 }
 
-#sc-legend-right {
+#tr-legend-right {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -23,24 +23,38 @@
     flex: 1;
 }
 
-.sc-legend-item {
+.tr-legend-item {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.sc-legend-item-color {
+.tr-legend-item-color {
     width: 20px;
     height: 20px;
 }
 
-.sc-legend-item-icon {
+.tr-legend-item-icon {
     width: 20px;
     height: 20px;
     object-fit: contain;
 }
 
-.sc-legend-item-label {
+.tr-legend-item-label {
     padding: 0px 4px;
+}
+
+.tr-tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    /* border-radius: 6px; */
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 0;
+    opacity: 0;
 }

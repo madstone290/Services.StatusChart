@@ -175,28 +175,3 @@
 #sc-content-canvas-box::-webkit-scrollbar-track {
     background-color: #cccccc;
 }
-
-
-.sc-tooltip {
-    position: relative;
-    display: inline-block;
-}
-
-.sc-tooltip .sc-tooltip-text {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    /* border-radius: 6px; */
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 0;
-    opacity: 0;
-}
-
-.sc-tooltip:hover .sc-tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}

@@ -9,7 +9,7 @@ interface BarcodePointEvent extends PointEvent {
 }
 
 interface BarcodeRangeEvent extends RangeEvent {
-    type: any;
+    type: "op10" | "op20" | "op30" | "op40" | "op50";
     description?: string;
 }
 

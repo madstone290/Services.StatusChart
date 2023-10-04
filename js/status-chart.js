@@ -399,10 +399,7 @@ const StatusChart = function () {
         containerElement.style.height = width + "px";
         containerElement.style.zIndex = "3";
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
-        const eventElement = render(event, _mainCanvasElement, containerElement);
-        containerElement.appendChild(eventElement);
-        eventElement.style.width = "100%";
-        eventElement.style.height = "100%";
+        render(event, _mainCanvasElement, containerElement);
     }
     function drawGlobalEvent(event, render) {
         const containerElement = document.createElement("div");

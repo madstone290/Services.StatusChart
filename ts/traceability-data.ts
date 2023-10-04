@@ -13,7 +13,8 @@ var rightLegendDatasource = [
     { icon: "asset/image/warning.png", label: "설비이상" },
     { icon: "asset/image/error.png", label: "품질이상" },
 ];
-var entities = [
+
+var entities: BarcodeEntity[] = [
     {
         id: 1,
         name: "H34A2900001",
@@ -31,17 +32,17 @@ var entities = [
         ],
         rangeEvents: [
             {
-                type: 1,
+                type: "op10",
                 start: new Date(Date.parse("2020-01-01T01:00:00")),
                 end: new Date(Date.parse("2020-01-01T03:00:00")),
             },
             {
-                type: 2,
+                type: "op20",
                 start: new Date(Date.parse("2020-01-01T03:00:00")),
                 end: new Date(Date.parse("2020-01-01T04:00:00")),
             },
             {
-                type: 3,
+                type: "op30",
                 start: new Date(Date.parse("2020-01-01T06:00:00")),
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
             },
@@ -52,7 +53,7 @@ var entities = [
         name: "H34A2900002",
         rangeEvents: [
             {
-                type: 3,
+                type: "op10",
                 start: new Date(Date.parse("2020-01-01T06:00:00")),
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
             },
@@ -75,13 +76,12 @@ var entities = [
         name: "H34A2900003",
         rangeEvents: [
             {
-                type: 3,
-                description: "네트워크 이상",
+                type: "op10",
                 start: new Date(Date.parse("2020-01-01T03:00:00")),
                 end: new Date(Date.parse("2020-01-01T04:00:00")),
             },
             {
-                type: 2,
+                type: "op20",
                 start: new Date(Date.parse("2020-01-01T06:00:00")),
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
             },
@@ -92,12 +92,12 @@ var entities = [
         name: "H34A2900004",
         rangeEvents: [
             {
-                type: 3,
+                type: "op30",
                 start: new Date(Date.parse("2020-01-01T22:00:00")),
                 end: new Date(Date.parse("2020-01-01T23:00:00")),
             },
             {
-                type: 1,
+                type: "op40",
                 start: new Date(Date.parse("2020-01-01T23:00:00")),
                 end: new Date(Date.parse("2020-01-01T23:50:00")),
             },
@@ -115,8 +115,13 @@ var entities = [
     { id: 14, name: "H34A2900014" },
     { id: 15, name: "H34A2900015" },
     { id: 16, name: "H34A2900016" },
-];
-var machineErrors = [
+    { id: 17, name: "H34A2900017" },
+    { id: 18, name: "H34A2900018" },
+    { id: 19, name: "H34A2900019" },
+    { id: 20, name: "H34A2900020" },
+]
+
+var machineErrors: MachineError[] = [
     {
         id: 1,
         description: "서보모터 이상",
@@ -139,11 +144,12 @@ var machineErrors = [
     },
     {
         id: 5,
-        description: "Test Error",
+        description: "Test Error Test Error Test Error Test Error",
         time: new Date(Date.parse("2020-01-01T22:00:00")),
     }
 ];
-var machineEvents = [
+
+var machineEvents: MachineGlobalRangeEvent[] = [
     {
         type: "pause",
         description: "계획정지 00:30~03:30",
@@ -168,4 +174,5 @@ var machineEvents = [
         start: new Date(Date.parse("2020-01-01T22:30:00")),
         end: new Date(Date.parse("2020-01-01T23:30:00")),
     }
-];
+
+]
