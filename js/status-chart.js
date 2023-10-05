@@ -117,13 +117,15 @@ const StatusChart = function () {
         };
     }();
     const cssService = function () {
-        const CHART_WIDTH = "--sc-width";
-        const SC_CELL_WIDTH = "--sc-cell-width";
-        const SC_CELL_HEIGHT = "--sc-cell-height";
-        const SC_CELL_CONTENT_HEIGHT = "--sc-cell-content-height";
-        const SC_SCROLL_WIDTH = "--sc-scroll-width";
+        const VAR_CELL_WIDTH = "--sc-cell-width";
+        const VAR_CELL_HEIGHT = "--sc-cell-height";
+        const VAR_CELL_CONTENT_HEIGHT = "--sc-cell-content-height";
+        const VAR_SCROLL_WIDTH = "--sc-scroll-width";
         const VAR_CHART_HEIGHT = "--sc-height";
-        const VAR_LIST_HEAD_HEIGHT = "--sc-list-head-height";
+        const VAR_CHART_WIDTH = "--sc-width";
+        const VAR_TIMELINE_TITLE_HEIGHT = "--sc-timeline-title-height";
+        const VAR_TIMELINE_HEADER_HEIGHT = "--sc-timeline-header-height";
+        const VAR_TIMELINE_CANVAS_HEIGHT = "--sc-timeline-canvas-height";
         function getVariable(name) {
             return getComputedStyle(document.documentElement).getPropertyValue(name);
         }
@@ -131,42 +133,42 @@ const StatusChart = function () {
             document.documentElement.style.setProperty(name, value);
         }
         function setChartWidth(width) {
-            setVariable(CHART_WIDTH, `${width}px`);
+            setVariable(VAR_CHART_WIDTH, `${width}px`);
         }
         function getChartHeight() { return parseInt(getVariable(VAR_CHART_HEIGHT)); }
         function setChartHeight(height) { setVariable(VAR_CHART_HEIGHT, `${height}px`); }
-        function getHeadHeight() { return parseInt(getVariable(VAR_LIST_HEAD_HEIGHT)); }
-        function setHeadHeight(height) { setVariable(VAR_LIST_HEAD_HEIGHT, `${height}px`); }
-        function getCellWidth() {
-            return parseInt(getVariable(SC_CELL_WIDTH));
-        }
-        function setCellWidth(width) {
-            setVariable(SC_CELL_WIDTH, `${width}px`);
-        }
-        function getCellHeight() {
-            return parseInt(getVariable(SC_CELL_HEIGHT));
-        }
-        function setCellHeight(height) {
-            setVariable(SC_CELL_HEIGHT, `${height}px`);
-        }
-        function getCellContentHeight() {
-            return parseInt(getVariable(SC_CELL_CONTENT_HEIGHT));
-        }
-        function getScrollWidth() {
-            return parseInt(getVariable(SC_SCROLL_WIDTH));
-        }
+        function getTimelineTitleHeight() { return parseInt(getVariable(VAR_TIMELINE_TITLE_HEIGHT)); }
+        function setTimeLineTitleHeight(height) { setVariable(VAR_TIMELINE_TITLE_HEIGHT, `${height}px`); }
+        function getTimelineHeaderHeight() { return parseInt(getVariable(VAR_TIMELINE_HEADER_HEIGHT)); }
+        function setTimelineHeaderHeight(height) { setVariable(VAR_TIMELINE_HEADER_HEIGHT, `${height}px`); }
+        function getTimelineCanvasHeight() { return parseInt(getVariable(VAR_TIMELINE_CANVAS_HEIGHT)); }
+        function setTimelineCanvasHeight(height) { setVariable(VAR_TIMELINE_CANVAS_HEIGHT, `${height}px`); }
+        function getTimelineHeight() { return getTimelineTitleHeight() + getTimelineHeaderHeight() + getTimelineCanvasHeight(); }
+        function getCellWidth() { return parseInt(getVariable(VAR_CELL_WIDTH)); }
+        function setCellWidth(width) { setVariable(VAR_CELL_WIDTH, `${width}px`); }
+        function getCellHeight() { return parseInt(getVariable(VAR_CELL_HEIGHT)); }
+        function setCellHeight(height) { setVariable(VAR_CELL_HEIGHT, `${height}px`); }
+        function getCellContentHeight() { return parseInt(getVariable(VAR_CELL_CONTENT_HEIGHT)); }
+        function setCellContentHeight(height) { setVariable(VAR_CELL_CONTENT_HEIGHT, `${height}px`); }
+        function getScrollWidth() { return parseInt(getVariable(VAR_SCROLL_WIDTH)); }
         return {
             getVariable,
             setChartWidth,
             getChartHeight,
             setChartHeight,
-            getHeadHeight,
-            setHeadHeight,
+            getTimelineTitleHeight,
+            setTimeLineTitleHeight,
+            getTimelineHeaderHeight,
+            setTimelineHeaderHeight,
+            getTimelineCanvasHeight,
+            setTimelineCanvasHeight,
+            getTimelineHeight,
             getCellWidth,
             setCellWidth,
             getCellHeight,
             setCellHeight,
             getCellContentHeight,
+            setCellContentHeight,
             getScrollWidth
         };
     }();
@@ -279,13 +281,13 @@ const StatusChart = function () {
         _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
         _mainCanvasElement.style.width = `${canvasWidth}px`;
         const chartHeight = cssService.getChartHeight();
-        const headHeight = cssService.getHeadHeight();
+        const timelineHeight = cssService.getTimelineHeight();
         const scrollWidth = cssService.getScrollWidth();
-        const providedCanvasHeight = chartHeight - headHeight - scrollWidth;
+        const providedCanvasHeight = chartHeight - timelineHeight - scrollWidth;
         const requiredCanvasHeight = cssService.getCellHeight() * _entities.length;
         let canvasHeight = requiredCanvasHeight;
         if (_canAutoFit && requiredCanvasHeight < providedCanvasHeight) {
-            cssService.setChartHeight(headHeight + scrollWidth + canvasHeight);
+            cssService.setChartHeight(timelineHeight + scrollWidth + canvasHeight);
         }
         _mainCanvasElement.style.height = `${canvasHeight}px`;
         _mainCanvasBoxElement.addEventListener("scroll", (e) => {

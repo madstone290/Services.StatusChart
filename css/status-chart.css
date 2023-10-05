@@ -1,9 +1,11 @@
 :root {
     --sc-height: 500px;
 
+    --sc-timeline-title-height: 40px;
+    --sc-timeline-header-height: 40px;
+    --sc-timeline-canvas-height: 40px;
+
     --sc-list-width: 200px;
-    --sc-list-head-height: 120px;
-    --sc-list-head-title-height: 40px;
 
     --sc-content-timeline-header-height: 40px;
 
@@ -30,30 +32,30 @@
 }
 
 #sc-list-head {
-    height: var(--sc-list-head-height);
+    height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
 }
 
 #sc-list-head-maintitle {
-    height: calc(var(--sc-list-head-title-height) - 1px - 1px);
+    height: calc(var(--sc-timeline-title-height) - 1px - 1px);
     border-width: 1px 1px 1px 1px;
     border-style: solid;
     border-color: var(--sc-line-color);
     padding: 0px 8px;
-    line-height: calc(var(--sc-list-head-title-height) - 1px - 1px);
+    line-height: calc(var(--sc-timeline-title-height) - 1px - 1px);
 }
 
 #sc-list-head-subtitle {
-    height: calc(var(--sc-list-head-height) - var(--sc-list-head-title-height) - 1px);
+    height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) - 1px);
     border-width: 0px 1px 1px 1px;
     border-style: solid;
     border-color: var(--sc-line-color);
     padding: 0px 8px;
-    line-height: calc(var(--sc-list-head-height) - var(--sc-list-head-title-height) - 1px);
+    line-height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) - 1px);
 }
 
 #sc-list-box {
     overflow: hidden;
-    height: calc(var(--sc-height) - var(--sc-list-head-height) - var(--sc-scroll-height));
+    height: calc(var(--sc-height) - var(--sc-timeline-title-height) - var(--sc-timeline-header-height) - var(--sc-timeline-canvas-height) - var(--sc-scroll-height));
 }
 
 .sc-list-item {
@@ -81,16 +83,16 @@
 }
 
 #sc-content-timeline {
-    height: var(--sc-list-head-height);
+    height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
 }
 
 #sc-content-timeline-title {
-    height: calc(var(--sc-list-head-title-height) - 1px - 1px);
+    height: calc(var(--sc-timeline-title-height) - 1px - 1px);
     border-width: 1px 0px 1px 0px;
     border-style: solid;
     border-color: var(--sc-line-color);
     text-align: center;
-    line-height: var(--sc-list-head-title-height);
+    line-height: var(--sc-timeline-title-height);
 }
 
 #sc-content-timeline-header-box {
@@ -117,7 +119,7 @@
 }
 
 #sc-content-timeline-canvas {
-    height: calc(var(--sc-list-head-height) - var(--sc-list-head-title-height) - var(--sc-content-timeline-header-height) - 1px);
+    height: calc(var(--sc-timeline-canvas-height) - 1px);
     background-color: #ffff00;
     border-width: 0px 0px 1px 0px;
     border-style: solid;
@@ -133,7 +135,7 @@
 #sc-content-canvas-box {
     overflow: scroll;
     width: 100%;
-    height: calc(var(--sc-height) - var(--sc-list-head-height));
+    height: calc(var(--sc-height) - var(--sc-timeline-title-height) - var(--sc-timeline-header-height) - var(--sc-timeline-canvas-height));
 }
 
 #sc-content-canvas {
