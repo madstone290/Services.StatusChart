@@ -39,17 +39,31 @@ const StatusChart = function () {
     |---------------|-------------------|
     */
 
+    /* Settings */
+
     /**
-     * Settings
+     * 차트의 시작 시간
      */
     let _chartStartTime: Date;
-    let _chartEndTime: Date;
+
     /**
-     * minutes for each cell
+     * 차트의 종료 시간
+     */
+    let _chartEndTime: Date;
+
+    /**
+     * 하나의 셀이 표현하는 시간. 단위는 분
      */
     let _cellMinutes: number;
 
+    /**
+     * 캔버스 가로선 표시 여부
+     */
     let _hasHorizontalLine: boolean;
+
+    /**
+     * 캔버스 세로선 표시 여부
+     */
     let _hasVertialLine: boolean;
 
     /**
@@ -57,22 +71,46 @@ const StatusChart = function () {
      */
     let _canAutoFit: boolean;
 
+    /**
+     * 타임라인 포인트 이벤트 렌더러
+     */
     let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+
+    /**
+     * 엔티티 포인트 이벤트 렌더러
+     */
     let _entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+
+    /**
+     * 엔티티 레인지 이벤트 렌더러
+     */
     let _entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    
+    /**
+     * 글로벌 레인지 이벤트 렌더러
+     */
     let _globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
 
 
-    /**
-     * Data
-     */
-    let _entities: Entity[];
-    let _timelinePointEvents: PointEvent[];
-    let _globalRangeEvents: RangeEvent[];
+    /* 데이터 */
 
     /**
-     * Html Elements
+     * 엔티티 리스트
      */
+    let _entities: Entity[];
+
+    /**
+     * 타임라인 포인트 이벤트 리스트
+     */
+    let _timelinePointEvents: PointEvent[];
+
+    /**
+     * 글로벌 레인지 이벤트 리스트
+     */
+    let _globalRangeEvents: RangeEvent[];
+
+    /* Html Elements */
+    
     let _mainTitleElement: HTMLElement;
     let _subTitleElement: HTMLElement;
     let _timelineTitleElement: HTMLElement;
