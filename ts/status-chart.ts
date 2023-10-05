@@ -6,6 +6,7 @@ interface StatusChartSettings {
     cellWidth?: number;
     cellHeight?: number;
     headerTimeFormat?: (time: Date) => string;
+    headerCellRender?: (time: Date, containerElement: HTMLElement) => void;
     timelinePointEventRender?: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
     entityPointEventRender?: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
     entityRangeEventRender?: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
@@ -92,6 +93,11 @@ const StatusChart = function () {
      * 헤더 시간 포맷 함수
      */
     let _headerTimeFormat: (time: Date) => string;
+
+    /**
+     * 헤더 셀 렌더러
+     */
+    let _headerCellRender: (time: Date, containerElement: HTMLElement) => void;
 
     /**
      * 타임라인 포인트 이벤트 렌더러
@@ -285,6 +291,7 @@ const StatusChart = function () {
         cellWidth = DEFAULT_CELL_WIDTH,
         cellHeight = DEFAULT_CELL_HEIGHT,
         headerTimeFormat,
+        headerCellRender,
         timelinePointEventRender,
         entityPointEventRender,
         entityRangeEventRender,
@@ -304,6 +311,7 @@ const StatusChart = function () {
         cssService.setCellHeight(cellHeight);
 
         _headerTimeFormat = headerTimeFormat ?? ((time: Date) => { return time.toLocaleString(); });
+        _headerCellRender = headerCellRender;
         _timelinePointEventRender = timelinePointEventRender;
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;
@@ -344,22 +352,26 @@ const StatusChart = function () {
      * 설정값에 맞춰 레이아웃을 초기화한다.
      */
     function initLayout() {
-        const headers: any = [];
         let time = _chartStartTime;
         let end = _chartEndTime;
-
+        let headerCellCount = 0;
         while (time < end) {
-            const header = _headerTimeFormat(time);
-            headers.push(header);
+
+            if (_headerCellRender != null) {
+                const containerElement = document.createElement("div");
+                _timelineHeaderElement.appendChild(containerElement);
+                containerElement.classList.add(TIMELINE_HEADER_ITEM_CLS);
+                _headerCellRender(time, containerElement);
+            }
+            else {
+                const div = document.createElement("div");
+                div.innerText = _headerTimeFormat(time);;
+                div.classList.add(TIMELINE_HEADER_ITEM_CLS);
+                _timelineHeaderElement.appendChild(div);
+            }
 
             time = new Date(time.getTime() + dateTimeService.toTime(_cellMinutes));
-        }
-
-        for (const data of headers) {
-            const div = document.createElement("div");
-            div.innerText = data;
-            div.classList.add(TIMELINE_HEADER_ITEM_CLS);
-            _timelineHeaderElement.appendChild(div);
+            headerCellCount++;
         }
 
         /**
@@ -367,7 +379,7 @@ const StatusChart = function () {
          * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
          * entity list는 main canvas 수직스크롤과 동기화한다.
          */
-        const canvasWidth = cssService.getCellWidth() * headers.length
+        const canvasWidth = cssService.getCellWidth() * headerCellCount;
 
         _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
         _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;

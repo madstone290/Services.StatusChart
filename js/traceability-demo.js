@@ -24,6 +24,16 @@ window.addEventListener("load", () => {
     tr.drawLegend();
     const sc = StatusChart();
     sc.create(document.getElementById("sc-container"));
+    const headerCellRender = function (time, containerElement) {
+        const divElement = document.createElement("div");
+        containerElement.appendChild(divElement);
+        divElement.innerText = dayjs(time).format("MM-DD HH:mm");
+        divElement.style.backgroundColor = "#ccc";
+        divElement.style.color = "black";
+        divElement.style.textAlign = "center";
+        divElement.style.height = "100%";
+        divElement.style.width = "100%";
+    };
     const relocateTooltip = function (tooltipElement, e) {
         const tooltipOffset = 10;
         let top = e.clientY + tooltipOffset;
@@ -140,6 +150,7 @@ window.addEventListener("load", () => {
         cellWidth: cellWidth,
         cellHeight: cellHeight,
         headerTimeFormat: (time) => { return dayjs(time).format("MM-DD HH:mm"); },
+        headerCellRender: headerCellRender,
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,
         entityRangeEventRender: entityRangeEventRender,
