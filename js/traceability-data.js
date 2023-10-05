@@ -106,14 +106,14 @@ var entities = [
     { id: 10, name: "H34A2900010" },
     { id: 11, name: "H34A2900011" },
     { id: 12, name: "H34A2900012" },
-    { id: 13, name: "H34A2900013" },
-    { id: 14, name: "H34A2900014" },
-    { id: 15, name: "H34A2900015" },
-    { id: 16, name: "H34A2900016" },
-    { id: 17, name: "H34A2900017" },
-    { id: 18, name: "H34A2900018" },
-    { id: 19, name: "H34A2900019" },
-    { id: 20, name: "H34A2900020" },
+    // { id: 13, name: "H34A2900013" },
+    // { id: 14, name: "H34A2900014" },
+    // { id: 15, name: "H34A2900015" },
+    // { id: 16, name: "H34A2900016" },
+    // { id: 17, name: "H34A2900017" },
+    // { id: 18, name: "H34A2900018" },
+    // { id: 19, name: "H34A2900019" },
+    // { id: 20, name: "H34A2900020" },
 ];
 var machineErrorEvents = [
     {

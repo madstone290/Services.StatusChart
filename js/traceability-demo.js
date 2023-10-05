@@ -15,8 +15,8 @@ window.addEventListener("load", () => {
         ["barcodeMissing", "blue"],
         ["networkError", "purple"]
     ]);
-    const cellMinutes = 60;
-    const cellWidth = 200;
+    const cellMinutes = 30;
+    const cellWidth = 60;
     const cellHeight = 40;
     const tr = Traceability();
     tr.setup();
@@ -27,7 +27,7 @@ window.addEventListener("load", () => {
     const headerCellRender = function (time, containerElement) {
         const divElement = document.createElement("div");
         containerElement.appendChild(divElement);
-        divElement.innerText = dayjs(time).format("MM-DD HH:mm");
+        divElement.innerText = dayjs(time).format("HH:mm");
         divElement.style.backgroundColor = "#ccc";
         divElement.style.color = "black";
         divElement.style.textAlign = "center";
@@ -86,9 +86,8 @@ window.addEventListener("load", () => {
         const descElement = document.createElement("div");
         descElement.innerText = event.description;
         tooltipElement.appendChild(descElement);
-        // TODO: add time format service
         const timeElement = document.createElement("div");
-        timeElement.innerText = event.start.toString() + " ~ " + event.end.toString();
+        timeElement.innerText = dayjs(event.start).format("MM-DD HH:mm") + " ~ " + dayjs(event.end).format("MM-DD HH:mm");
         tooltipElement.appendChild(timeElement);
         boxElement.addEventListener("mousemove", (e) => {
             if (e.target !== boxElement)
@@ -149,7 +148,6 @@ window.addEventListener("load", () => {
         cellMinutes: cellMinutes,
         cellWidth: cellWidth,
         cellHeight: cellHeight,
-        headerTimeFormat: (time) => { return dayjs(time).format("MM-DD HH:mm"); },
         headerCellRender: headerCellRender,
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,

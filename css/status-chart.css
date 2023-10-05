@@ -131,7 +131,7 @@
 }
 
 #sc-content-canvas-box {
-    overflow: auto;
+    overflow: scroll;
     width: 100%;
     height: calc(var(--sc-height) - var(--sc-list-head-height));
 }
