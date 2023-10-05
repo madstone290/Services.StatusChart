@@ -10,6 +10,7 @@ const StatusChart = function () {
     const LIST_BOX_ID = "sc-list-box";
     const CANVAS_BOX_ID = "sc-content-canvas-box";
     const CANVAS_ID = "sc-content-canvas";
+    const DEFAULT_CELL_MINUTES = 60;
     const DEFAULT_CELL_WIDTH = 200;
     const DEFAULT_CELL_HEIGHT = 40;
     const SC_LIST_ITEM = "sc-list-item";
@@ -30,34 +31,65 @@ const StatusChart = function () {
     |               |                   |
     |---------------|-------------------|
     */
+    /* Settings */
     /**
-     * Settings
+     * 차트의 시작 시간
      */
     let _chartStartTime;
+    /**
+     * 차트의 종료 시간
+     */
     let _chartEndTime;
     /**
-     * minutes for each cell
+     * 하나의 셀이 표현하는 시간. 단위는 분
      */
     let _cellMinutes;
+    /**
+     * 캔버스 가로선 표시 여부
+     */
     let _hasHorizontalLine;
+    /**
+     * 캔버스 세로선 표시 여부
+     */
     let _hasVertialLine;
     /**
      * 캔버스 자동 맞춤 여부. true일 경우 캔버스의 빈 공간을 없앤다.
      */
     let _canAutoFit;
-    let _timelinePointEventRender;
-    let _entityPointEventRender;
-    let _entityRangeEventRender;
-    let _globalRangeEventRender;
     /**
-     * Data
+     * 헤더 시간 포맷 함수
+     */
+    let _headerTimeFormat;
+    /**
+     * 타임라인 포인트 이벤트 렌더러
+     */
+    let _timelinePointEventRender;
+    /**
+     * 엔티티 포인트 이벤트 렌더러
+     */
+    let _entityPointEventRender;
+    /**
+     * 엔티티 레인지 이벤트 렌더러
+     */
+    let _entityRangeEventRender;
+    /**
+     * 글로벌 레인지 이벤트 렌더러
+     */
+    let _globalRangeEventRender;
+    /* 데이터 */
+    /**
+     * 엔티티 리스트
      */
     let _entities;
-    let _timelinePointEvents;
-    let _globalRangeEvents;
     /**
-     * Html Elements
+     * 타임라인 포인트 이벤트 리스트
      */
+    let _timelinePointEvents;
+    /**
+     * 글로벌 레인지 이벤트 리스트
+     */
+    let _globalRangeEvents;
+    /* Html Elements */
     let _mainTitleElement;
     let _subTitleElement;
     let _timelineTitleElement;
@@ -175,7 +207,7 @@ const StatusChart = function () {
         cssService.setChartWidth(container.clientWidth);
         cssService.setChartHeight(container.clientHeight);
     }
-    function setSettings(chartStartTime, chartEndTime, cellMinutes, cellWidth = DEFAULT_CELL_WIDTH, cellHeight = DEFAULT_CELL_HEIGHT, timelinePointEventRender = null, entityPointEventRender = null, entityRangeEventRender = null, globalRangeEventRender = null, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true) {
+    function setSettings({ chartStartTime, chartEndTime, cellMinutes = DEFAULT_CELL_MINUTES, cellWidth = DEFAULT_CELL_WIDTH, cellHeight = DEFAULT_CELL_HEIGHT, headerTimeFormat, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true }) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
@@ -184,6 +216,7 @@ const StatusChart = function () {
         _canAutoFit = canAutoFit;
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
+        _headerTimeFormat = headerTimeFormat !== null && headerTimeFormat !== void 0 ? headerTimeFormat : ((time) => `${time.getHours()}:${time.getMinutes()}`);
         _timelinePointEventRender = timelinePointEventRender;
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;
@@ -215,15 +248,8 @@ const StatusChart = function () {
         let time = _chartStartTime;
         let end = _chartEndTime;
         while (time < end) {
-            // TODO : add time format service
-            headers.push(time.toLocaleTimeString([], {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-            }));
+            const header = _headerTimeFormat(time);
+            headers.push(header);
             time = new Date(time.getTime() + dateTimeService.toTime(_cellMinutes));
         }
         for (const data of headers) {

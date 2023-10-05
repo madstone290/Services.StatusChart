@@ -1,4 +1,20 @@
 
+interface StatusChartSettings {
+    chartStartTime: Date;
+    chartEndTime: Date;
+    cellMinutes: number;
+    cellWidth?: number;
+    cellHeight?: number;
+    headerTimeFormat?: (time: Date) => string;
+    timelinePointEventRender?: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    entityPointEventRender?: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    entityRangeEventRender?: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    globalRangeEventRender?: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+    hasHorizontalLine?: boolean;
+    hasVerticalLine?: boolean;
+    canAutoFit?: boolean;
+}
+
 const StatusChart = function () {
     const TIMELINE_TITLE_ID = "sc-content-timeline-title";
     const TIMELINE_HEADER_BOX_ID = "sc-content-timeline-header-box";
@@ -16,6 +32,7 @@ const StatusChart = function () {
     const CANVAS_ID = "sc-content-canvas";
 
 
+    const DEFAULT_CELL_MINUTES = 60;
     const DEFAULT_CELL_WIDTH = 200;
     const DEFAULT_CELL_HEIGHT = 40;
 
@@ -72,6 +89,11 @@ const StatusChart = function () {
     let _canAutoFit: boolean;
 
     /**
+     * 헤더 시간 포맷 함수
+     */
+    let _headerTimeFormat: (time: Date) => string;
+
+    /**
      * 타임라인 포인트 이벤트 렌더러
      */
     let _timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
@@ -85,7 +107,7 @@ const StatusChart = function () {
      * 엔티티 레인지 이벤트 렌더러
      */
     let _entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-    
+
     /**
      * 글로벌 레인지 이벤트 렌더러
      */
@@ -110,7 +132,7 @@ const StatusChart = function () {
     let _globalRangeEvents: RangeEvent[];
 
     /* Html Elements */
-    
+
     let _mainTitleElement: HTMLElement;
     let _subTitleElement: HTMLElement;
     let _timelineTitleElement: HTMLElement;
@@ -256,15 +278,21 @@ const StatusChart = function () {
         cssService.setChartHeight(container.clientHeight);
     }
 
-    function setSettings(chartStartTime: Date, chartEndTime: Date, cellMinutes: number,
-        cellWidth: number = DEFAULT_CELL_WIDTH,
-        cellHeight: number = DEFAULT_CELL_HEIGHT,
-        timelinePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
-        entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
-        entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
-        globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void = null,
-        hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true
-    ) {
+    function setSettings({
+        chartStartTime,
+        chartEndTime,
+        cellMinutes = DEFAULT_CELL_MINUTES,
+        cellWidth = DEFAULT_CELL_WIDTH,
+        cellHeight = DEFAULT_CELL_HEIGHT,
+        headerTimeFormat,
+        timelinePointEventRender,
+        entityPointEventRender,
+        entityRangeEventRender,
+        globalRangeEventRender,
+        hasHorizontalLine = true,
+        hasVerticalLine = true,
+        canAutoFit = true
+    }: StatusChartSettings) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
@@ -275,6 +303,7 @@ const StatusChart = function () {
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
 
+        _headerTimeFormat = headerTimeFormat ?? ((time: Date) => `${time.getHours()}:${time.getMinutes()}`);
         _timelinePointEventRender = timelinePointEventRender;
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;
@@ -320,15 +349,9 @@ const StatusChart = function () {
         let end = _chartEndTime;
 
         while (time < end) {
-            // TODO : add time format service
-            headers.push(time.toLocaleTimeString([], {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-            }));
+            const header = _headerTimeFormat(time);
+            headers.push(header);
+
             time = new Date(time.getTime() + dateTimeService.toTime(_cellMinutes));
         }
 

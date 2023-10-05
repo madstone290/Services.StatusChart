@@ -35,7 +35,7 @@ window.addEventListener("load", () => {
         divElement.style.width = "20px";
         divElement.style.height = "20px";
         divElement.style.backgroundColor = "blue";
-        
+
         containerElement.appendChild(divElement);
     };
 
@@ -45,19 +45,24 @@ window.addEventListener("load", () => {
         divElement.style.height = "100%";
         divElement.style.backgroundColor = "pink";
         divElement.style.opacity = "0.5";
-        
+
         containerElement.appendChild(divElement);
     };
 
-    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")),
-        cellMinutes, cellWidth, cellHeight,
-        timelinePointEventRender,
-        entityPointEventRender,
-        entityRangeEventRender,
-        globalRangeEventRender,
-        true,
-        true,
-        true);
+    sc.setSettings({
+        chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
+        chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
+        cellMinutes: cellMinutes,
+        cellWidth: cellWidth,
+        cellHeight: cellHeight,
+        timelinePointEventRender: timelinePointEventRender,
+        entityPointEventRender: entityPointEventRender,
+        entityRangeEventRender: entityRangeEventRender,
+        globalRangeEventRender: globalRangeEventRender,
+        canAutoFit: true,
+        hasHorizontalLine: true,
+        hasVerticalLine: true,
+    })
 
     sc.setData((window as any).DEMO_ENTITIES,
         (window as any).TIMELINE_POINT_EVENTS,

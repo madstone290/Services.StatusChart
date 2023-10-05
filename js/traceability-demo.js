@@ -131,7 +131,20 @@ window.addEventListener("load", () => {
             tooltipElement.style.opacity = "0";
         };
     };
-    sc.setSettings(new Date(Date.parse("2020-01-01T00:00:00")), new Date(Date.parse("2020-01-02T00:00:00")), cellMinutes, cellWidth, cellHeight, timelineMachineErrorEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender);
+    sc.setSettings({
+        chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
+        chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
+        cellMinutes: cellMinutes,
+        cellWidth: cellWidth,
+        cellHeight: cellHeight,
+        timelinePointEventRender: timelineMachineErrorEventRender,
+        entityPointEventRender: entityPointEventRender,
+        entityRangeEventRender: entityRangeEventRender,
+        globalRangeEventRender: globalRangeEventRender,
+        canAutoFit: true,
+        hasHorizontalLine: true,
+        hasVerticalLine: true,
+    });
     sc.setData(window.entities, window.machineErrors, window.machineEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
     sc.initLayout();
     sc.drawTimelineCanvas();
