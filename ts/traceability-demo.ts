@@ -57,7 +57,7 @@ window.addEventListener("load", () => {
         tooltipElement.style.top = top + "px";
         tooltipElement.style.left = left + "px";
     }
-    const entityPointEventRender = function (error: ProductError, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const entityPointEventRender = function (error: BarcodePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "20px";
         imgElement.style.height = "20px";
@@ -119,7 +119,7 @@ window.addEventListener("load", () => {
         };
     };
 
-    const timelineMachineErrorEventRender = function (error: MachineError, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const timelineMachineErrorEventRender = function (error: MachinePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.width = 20;
         imgElement.height = 20;
@@ -189,8 +189,8 @@ window.addEventListener("load", () => {
     });
 
     sc.setData((window as any).entities,
-        (window as any).machineErrors,
-        (window as any).machineEvents,
+        (window as any).machineErrorEvents,
+        (window as any).machineOtherEvents,
         "XXX H/L LH Line 03", "Serial No.", "Time Line");
     sc.initLayout();
     sc.drawTimelineCanvas();

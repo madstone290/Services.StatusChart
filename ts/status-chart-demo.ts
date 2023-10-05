@@ -30,7 +30,7 @@ window.addEventListener("load", () => {
         containerElement.appendChild(divElement);
     };
 
-    const timelinePointEventRender = function (event: MachineError, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const timelinePointEventRender = function (event: MachinePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
         divElement.style.width = "20px";
         divElement.style.height = "20px";

@@ -159,7 +159,7 @@ window.addEventListener("load", () => {
         hasHorizontalLine: true,
         hasVerticalLine: true,
     });
-    sc.setData(window.entities, window.machineErrors, window.machineEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
+    sc.setData(window.entities, window.machineErrorEvents, window.machineOtherEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
     sc.initLayout();
     sc.drawTimelineCanvas();
     sc.drawEntityList();

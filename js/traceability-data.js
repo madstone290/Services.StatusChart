@@ -19,12 +19,10 @@ var entities = [
         name: "H34A2900001",
         pointEvents: [
             {
-                type: 1,
                 description: "불량품",
                 time: new Date(Date.parse("2020-01-01T01:30:00")),
             },
             {
-                type: 2,
                 description: "도색불량",
                 time: new Date(Date.parse("2020-01-01T02:00:00")),
             }
@@ -59,12 +57,10 @@ var entities = [
         ],
         pointEvents: [
             {
-                type: 1,
                 description: "불량품 2시",
                 time: new Date(Date.parse("2020-01-01T02:00:00")),
             },
             {
-                type: 2,
                 description: "도색불량 3시",
                 time: new Date(Date.parse("2020-01-01T03:00:00")),
             }
@@ -119,7 +115,7 @@ var entities = [
     { id: 19, name: "H34A2900019" },
     { id: 20, name: "H34A2900020" },
 ];
-var machineErrors = [
+var machineErrorEvents = [
     {
         id: 1,
         description: "서보모터 이상",
@@ -146,7 +142,7 @@ var machineErrors = [
         time: new Date(Date.parse("2020-01-01T22:00:00")),
     }
 ];
-var machineEvents = [
+var machineOtherEvents = [
     {
         type: "pause",
         description: "계획정지 00:30~03:30",
