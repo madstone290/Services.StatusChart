@@ -4,17 +4,16 @@
     --sc-timeline-title-height: 40px;
     --sc-timeline-header-height: 40px;
     --sc-timeline-canvas-height: 40px;
+    --sc-timeline-canvas-content-height: 50px;
 
     --sc-list-width: 200px;
-
-    --sc-content-timeline-header-height: 40px;
 
     --sc-scroll-width: 15px;
     --sc-scroll-height: 15px;
 
     --sc-cell-width: 200px;
     --sc-cell-height: 40px;
-    --sc-cell-content-height: 25px;
+    --sc-cell-content-height: 30px;
 
     --sc-line-color: #999999;
 }
@@ -130,6 +129,8 @@
 
 .sc-content-timeline-canvas-item {
     position: absolute;
+    width: var(--sc-timeline-canvas-content-height);
+    height: var(--sc-timeline-canvas-content-height);
 }
 
 #sc-content-canvas-box {
@@ -144,6 +145,12 @@
     z-index: 0;
 }
 
+.sc-content-canvas-item {
+    position: absolute;
+    height: var(--sc-cell-content-height);
+    width: var(--sc-cell-content-height);
+}
+
 .sc-hline {
     position: absolute;
     border-width: 0px 0px 1px 0px;
@@ -156,11 +163,6 @@
     border-width: 0px 1px 0px 0px;
     border-style: solid;
     border-color: var(--sc-line-color);
-}
-
-.sc-content-canvas-item {
-    position: absolute;
-    height: var(--sc-cell-content-height);
 }
 
 #sc-content-canvas-box::-webkit-scrollbar {

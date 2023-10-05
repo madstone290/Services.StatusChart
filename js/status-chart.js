@@ -123,6 +123,7 @@ const StatusChart = function () {
         const VAR_TIMELINE_TITLE_HEIGHT = "--sc-timeline-title-height";
         const VAR_TIMELINE_HEADER_HEIGHT = "--sc-timeline-header-height";
         const VAR_TIMELINE_CANVAS_HEIGHT = "--sc-timeline-canvas-height";
+        const VAR_TIMELINE_CANVAS_CONTENT_HEIGHT = "--sc-timeline-canvas-content-height";
         function getVariable(name) {
             return getComputedStyle(document.documentElement).getPropertyValue(name);
         }
@@ -140,6 +141,8 @@ const StatusChart = function () {
         function setTimelineHeaderHeight(height) { setVariable(VAR_TIMELINE_HEADER_HEIGHT, `${height}px`); }
         function getTimelineCanvasHeight() { return parseInt(getVariable(VAR_TIMELINE_CANVAS_HEIGHT)); }
         function setTimelineCanvasHeight(height) { setVariable(VAR_TIMELINE_CANVAS_HEIGHT, `${height}px`); }
+        function getTimelineCanvasContentHeight() { return parseInt(getVariable(VAR_TIMELINE_CANVAS_CONTENT_HEIGHT)); }
+        function setTimelineCanvasContentHeight(height) { setVariable(VAR_TIMELINE_CANVAS_CONTENT_HEIGHT, `${height}px`); }
         function getTimelineHeight() { return getTimelineTitleHeight() + getTimelineHeaderHeight() + getTimelineCanvasHeight(); }
         function getCellWidth() { return parseInt(getVariable(VAR_CELL_WIDTH)); }
         function setCellWidth(width) { setVariable(VAR_CELL_WIDTH, `${width}px`); }
@@ -159,6 +162,8 @@ const StatusChart = function () {
             setTimelineHeaderHeight,
             getTimelineCanvasHeight,
             setTimelineCanvasHeight,
+            getTimelineCanvasContentHeight,
+            setTimelineCanvasContentHeight,
             getTimelineHeight,
             getCellWidth,
             setCellWidth,
@@ -210,7 +215,7 @@ const StatusChart = function () {
         cssService.setChartWidth(container.clientWidth);
         cssService.setChartHeight(container.clientHeight);
     }
-    function setSettings({ chartStartTime, chartEndTime, timelineTitleHeight = 40, timelineHeaderHeight = 40, timelineCanvasHeight = 40, cellMinutes = 60, cellWidth = 200, cellHeight = 40, headerTimeFormat, headerCellRender, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true }) {
+    function setSettings({ chartStartTime, chartEndTime, timelineTitleHeight = 40, timelineHeaderHeight = 40, timelineCanvasHeight = 40, timelineCanvasContentHeight = 30, cellMinutes = 60, cellWidth = 200, cellHeight = 40, cellContentHeight = 30, headerTimeFormat, headerCellRender, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true }) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
@@ -220,8 +225,10 @@ const StatusChart = function () {
         cssService.setTimeLineTitleHeight(timelineTitleHeight);
         cssService.setTimelineHeaderHeight(timelineHeaderHeight);
         cssService.setTimelineCanvasHeight(timelineCanvasHeight);
+        cssService.setTimelineCanvasContentHeight(timelineCanvasContentHeight);
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
+        cssService.setCellContentHeight(cellContentHeight);
         _headerTimeFormat = headerTimeFormat !== null && headerTimeFormat !== void 0 ? headerTimeFormat : ((time) => { return time.toLocaleString(); });
         _headerCellRender = headerCellRender;
         _timelinePointEventRender = timelinePointEventRender;
@@ -329,13 +336,10 @@ const StatusChart = function () {
         const containerElement = document.createElement("div");
         _timelineCanvasElement.appendChild(containerElement);
         const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
-        const top = (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2 - 1;
-        const width = cssService.getCellContentHeight();
+        const top = (cssService.getTimelineCanvasHeight() - cssService.getTimelineCanvasContentHeight()) / 2 - 1;
+        const width = cssService.getTimelineCanvasContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
-        containerElement.style.width = width + "px";
-        containerElement.style.height = width + "px";
-        containerElement.style.zIndex = "3";
         containerElement.classList.add(TIMELINE_CANVAS_ITEM_CLS);
         _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
     }
@@ -428,9 +432,7 @@ const StatusChart = function () {
         const width = cssService.getCellContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
-        containerElement.style.width = width + "px";
-        containerElement.style.height = width + "px";
-        containerElement.style.zIndex = "3";
+        containerElement.style.zIndex = "2";
         containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
         render(event, _mainCanvasElement, containerElement);
     }

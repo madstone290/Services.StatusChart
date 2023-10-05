@@ -48,8 +48,8 @@ window.addEventListener("load", () => {
     };
     const entityPointEventRender = function (error, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
-        imgElement.style.width = "20px";
-        imgElement.style.height = "20px";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "100%";
         imgElement.src = "asset/image/error.png";
         containerElement.appendChild(imgElement);
         const tooltipElement = document.createElement("div");
@@ -98,8 +98,8 @@ window.addEventListener("load", () => {
     };
     const timelineMachineErrorEventRender = function (error, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
-        imgElement.width = 20;
-        imgElement.height = 20;
+        imgElement.style.width = "100%";
+        imgElement.style.height = "100%";
         imgElement.src = "asset/image/warning.png";
         containerElement.appendChild(imgElement);
         const tooltipElement = document.createElement("div");
@@ -143,11 +143,13 @@ window.addEventListener("load", () => {
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
         timelineTitleHeight: 40,
-        timelineHeaderHeight: 40,
-        timelineCanvasHeight: 100,
-        cellMinutes: 60,
+        timelineHeaderHeight: 60,
+        timelineCanvasHeight: 60,
+        timelineCanvasContentHeight: 30,
+        cellMinutes: 30,
         cellWidth: 100,
         cellHeight: 60,
+        cellContentHeight: 30,
         headerCellRender: headerCellRender,
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,
