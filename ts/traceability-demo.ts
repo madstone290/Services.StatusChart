@@ -1,3 +1,6 @@
+declare var dayjs: any; {
+
+}
 window.addEventListener("load", () => {
     const CLS_TOOLTIP = "tr-tooltip";
 
@@ -159,11 +162,12 @@ window.addEventListener("load", () => {
     };
 
     sc.setSettings({
-        chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")), 
+        chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
-        cellMinutes: cellMinutes, 
-        cellWidth: cellWidth, 
+        cellMinutes: cellMinutes,
+        cellWidth: cellWidth,
         cellHeight: cellHeight,
+        headerTimeFormat: (time) => { return dayjs(time).format("MM-DD HH:mm") },
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,
         entityRangeEventRender: entityRangeEventRender,

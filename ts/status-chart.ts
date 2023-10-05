@@ -303,7 +303,7 @@ const StatusChart = function () {
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
 
-        _headerTimeFormat = headerTimeFormat ?? ((time: Date) => `${time.getHours()}:${time.getMinutes()}`);
+        _headerTimeFormat = headerTimeFormat ?? ((time: Date) => { return time.toLocaleString(); });
         _timelinePointEventRender = timelinePointEventRender;
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;

@@ -216,7 +216,7 @@ const StatusChart = function () {
         _canAutoFit = canAutoFit;
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
-        _headerTimeFormat = headerTimeFormat !== null && headerTimeFormat !== void 0 ? headerTimeFormat : ((time) => `${time.getHours()}:${time.getMinutes()}`);
+        _headerTimeFormat = headerTimeFormat !== null && headerTimeFormat !== void 0 ? headerTimeFormat : ((time) => { return time.toLocaleString(); });
         _timelinePointEventRender = timelinePointEventRender;
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;

@@ -1,3 +1,5 @@
+{
+}
 window.addEventListener("load", () => {
     const CLS_TOOLTIP = "tr-tooltip";
     const entityRangeEventColors = new Map([
@@ -137,6 +139,7 @@ window.addEventListener("load", () => {
         cellMinutes: cellMinutes,
         cellWidth: cellWidth,
         cellHeight: cellHeight,
+        headerTimeFormat: (time) => { return dayjs(time).format("MM-DD HH:mm"); },
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,
         entityRangeEventRender: entityRangeEventRender,
