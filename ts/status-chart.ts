@@ -22,26 +22,25 @@ interface StatusChartSettings {
 }
 
 const StatusChart = function () {
-    const TIMELINE_TITLE_ID = "sc-content-timeline-title";
-    const TIMELINE_HEADER_BOX_ID = "sc-content-timeline-header-box";
-    const TIMELINE_HEADER_ID = "sc-content-timeline-header";
-    const TIMELINE_CANVAS_BOX_ID = "sc-content-timeline-canvas-box";
-    const TIMELINE_CANVAS_ID = "sc-content-timeline-canvas";
-    const TIMELINE_HEADER_ITEM_CLS = "sc-content-timeline-header-item";
+    const ID_TIMELINE_TITLE = "sc-timeline-title";
+    const ID_TIMELINE_HEADER_BOX = "sc-timeline-header-box";
+    const ID_TIMELINE_HEADER = "sc-timeline-header";
+    const ID_TIMELINE_CANVAS_BOX = "sc-timeline-canvas-box";
+    const ID_TIMELINE_CANVAS = "sc-timeline-canvas";
+    const CLS_TIMELINE_HEADER_ITEM = "sc-timeline-header-item";
 
+    const ID_MAIN_TITLE = "sc-maintitle";
+    const ID_SUBTITLE = "sc-subtitle";
+    const ID_ENTITY_LIST_BOX = "sc-entity-list-box";
 
-    const MAIN_TITLE_ID = "sc-list-head-maintitle";
-    const SUBTITLE_ID = "sc-list-head-subtitle";
-    const LIST_BOX_ID = "sc-list-box";
+    const ID_MAIN_CANVAS_BOX = "sc-main-canvas-box";
+    const ID_MAIN_CANVAS = "sc-main-canvas";
 
-    const CANVAS_BOX_ID = "sc-content-canvas-box";
-    const CANVAS_ID = "sc-content-canvas";
-
-    const SC_LIST_ITEM = "sc-list-item";
-    const TIMELINE_CANVAS_ITEM_CLS = "sc-content-timeline-canvas-item";
-    const MAIN_CANVAS_ITEM_CLS = "sc-content-canvas-item";
-    const SC_HLINE = "sc-hline";
-    const SC_VLINE = "sc-vline";
+    const CLS_ENTITY_LIST_ITEM = "sc-entity-list-item";
+    const CLS_TIMELINE_CANVAS_ITEM = "sc-timeline-canvas-item";
+    const CLS_MAIN_CANVAS_ITEM = "sc-main-canvas-item";
+    const CLS_HLINE = "sc-hline";
+    const CLS_VLINE = "sc-vline";
 
     /* Layout
     |---------------|-------------------|
@@ -257,28 +256,25 @@ const StatusChart = function () {
      */
     function create(container: HTMLElement) {
         const elementString = `
-        <div id="sc-main">
-            <div id="sc-list">
-                <div id="sc-list-head">
-                    <div id="sc-list-head-maintitle"></div>
-                    <div id="sc-list-head-subtitle"></div>
-                </div>
-                <div id="sc-list-box">
-                </div>
+        <div id="sc-root">
+            <div id="sc-left-panel">
+                <div id="sc-maintitle"></div>
+                <div id="sc-subtitle"></div>
+                <div id="sc-entity-list-box"></div>
             </div>
-            <div id="sc-content-box">
-                <div id="sc-content-timeline">
-                    <div id="sc-content-timeline-title"></div>
-                    <div id="sc-content-timeline-header-box">
-                        <div id="sc-content-timeline-header"></div>
+            <div id="sc-main-panel">
+                <div id="sc-timeline">
+                    <div id="sc-timeline-title"></div>
+                    <div id="sc-timeline-header-box">
+                        <div id="sc-timeline-header"></div>
                     </div>
-                    <div id="sc-content-timeline-canvas-box">
-                        <div id="sc-content-timeline-canvas"></div>
+                    <div id="sc-timeline-canvas-box">
+                        <div id="sc-timeline-canvas"></div>
                     </div>
 
                 </div>
-                <div id="sc-content-canvas-box">
-                    <div id="sc-content-canvas">
+                <div id="sc-main-canvas-box">
+                    <div id="sc-main-canvas">
                     </div>
                 </div>
             </div>
@@ -338,20 +334,20 @@ const StatusChart = function () {
         _globalRangeEventRender = globalRangeEventRender;
 
 
-        _mainTitleElement = document.getElementById(MAIN_TITLE_ID) as HTMLElement;
-        _subTitleElement = document.getElementById(SUBTITLE_ID) as HTMLElement;
-        _timelineTitleElement = document.getElementById(TIMELINE_TITLE_ID) as HTMLElement;
+        _mainTitleElement = document.getElementById(ID_MAIN_TITLE) as HTMLElement;
+        _subTitleElement = document.getElementById(ID_SUBTITLE) as HTMLElement;
+        _timelineTitleElement = document.getElementById(ID_TIMELINE_TITLE) as HTMLElement;
 
-        _entityListBoxElement = document.getElementById(LIST_BOX_ID) as HTMLElement;
+        _entityListBoxElement = document.getElementById(ID_ENTITY_LIST_BOX) as HTMLElement;
 
-        _timelineHeaderBoxElement = document.getElementById(TIMELINE_HEADER_BOX_ID) as HTMLElement;
-        _timelineHeaderElement = document.getElementById(TIMELINE_HEADER_ID) as HTMLElement;
+        _timelineHeaderBoxElement = document.getElementById(ID_TIMELINE_HEADER_BOX) as HTMLElement;
+        _timelineHeaderElement = document.getElementById(ID_TIMELINE_HEADER) as HTMLElement;
 
-        _timelineCanvasBoxElement = document.getElementById(TIMELINE_CANVAS_BOX_ID) as HTMLElement;
-        _timelineCanvasElement = document.getElementById(TIMELINE_CANVAS_ID) as HTMLElement;
+        _timelineCanvasBoxElement = document.getElementById(ID_TIMELINE_CANVAS_BOX) as HTMLElement;
+        _timelineCanvasElement = document.getElementById(ID_TIMELINE_CANVAS) as HTMLElement;
 
-        _mainCanvasBoxElement = document.getElementById(CANVAS_BOX_ID) as HTMLElement;
-        _mainCanvasElement = document.getElementById(CANVAS_ID) as HTMLElement;
+        _mainCanvasBoxElement = document.getElementById(ID_MAIN_CANVAS_BOX) as HTMLElement;
+        _mainCanvasElement = document.getElementById(ID_MAIN_CANVAS) as HTMLElement;
     }
 
     function setData(entities: Entity[],
@@ -380,13 +376,13 @@ const StatusChart = function () {
             if (_headerCellRender != null) {
                 const containerElement = document.createElement("div");
                 _timelineHeaderElement.appendChild(containerElement);
-                containerElement.classList.add(TIMELINE_HEADER_ITEM_CLS);
+                containerElement.classList.add(CLS_TIMELINE_HEADER_ITEM);
                 _headerCellRender(time, containerElement);
             }
             else {
                 const div = document.createElement("div");
                 div.innerText = _headerTimeFormat(time);;
-                div.classList.add(TIMELINE_HEADER_ITEM_CLS);
+                div.classList.add(CLS_TIMELINE_HEADER_ITEM);
                 _timelineHeaderElement.appendChild(div);
             }
 
@@ -438,7 +434,7 @@ const StatusChart = function () {
         for (let i = 0; i < lineCount; i++) {
             const div = document.createElement("div");
             _entityListBoxElement.appendChild(div);
-            div.classList.add(SC_LIST_ITEM);
+            div.classList.add(CLS_ENTITY_LIST_ITEM);
 
             const entity = _entities[i];
             if (entity == null)
@@ -467,7 +463,7 @@ const StatusChart = function () {
         const width = cssService.getTimelineCanvasContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
-        containerElement.classList.add(TIMELINE_CANVAS_ITEM_CLS);
+        containerElement.classList.add(CLS_TIMELINE_CANVAS_ITEM);
 
         _timelinePointEventRender(event, _timelineCanvasElement, containerElement);
     }
@@ -503,7 +499,7 @@ const StatusChart = function () {
 
         for (let i = 0; i < lineCount; i++) {
             const line = document.createElement("div") as HTMLElement;
-            line.classList.add(SC_VLINE);
+            line.classList.add(CLS_VLINE);
 
             line.style.left = `${cellWidth * (i + 1) - 1}px`;
             line.style.height = `${_mainCanvasElement.scrollHeight}px`;
@@ -517,7 +513,7 @@ const StatusChart = function () {
         const lineCount = Math.floor(canvasHeight / cellHeight);
         for (let i = 0; i < lineCount; i++) {
             const line = document.createElement("div");
-            line.classList.add(SC_HLINE);
+            line.classList.add(CLS_HLINE);
 
             line.style.top = `${cellHeight * (i + 1) - 1}px`;
             line.style.width = `${_mainCanvasElement.scrollWidth}px`;
@@ -536,7 +532,7 @@ const StatusChart = function () {
 
     function drawLocalRangeEvent(event: RangeEvent, rowIndex: number, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
-        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
         _mainCanvasElement.appendChild(containerElement);
 
         const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
@@ -579,7 +575,7 @@ const StatusChart = function () {
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
         containerElement.style.zIndex = "2";
-        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
     }
@@ -595,7 +591,7 @@ const StatusChart = function () {
         containerElement.style.width = `${width}px`;
         containerElement.style.height = "100%";
         containerElement.style.zIndex = "1";
-        containerElement.classList.add(MAIN_CANVAS_ITEM_CLS);
+        containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
     }

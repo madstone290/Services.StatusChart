@@ -18,23 +18,19 @@
     --sc-line-color: #999999;
 }
 
-#sc-main {
+#sc-root {
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
 }
 
-#sc-list {
+#sc-left-panel {
     width: var(--sc-list-width);
     height: calc(100% - var(--sc-scroll-height));
 }
 
-#sc-list-head {
-    height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
-}
-
-#sc-list-head-maintitle {
+#sc-maintitle {
     height: calc(var(--sc-timeline-title-height) - 1px - 1px);
     border-width: 1px 1px 1px 1px;
     border-style: solid;
@@ -43,7 +39,7 @@
     line-height: calc(var(--sc-timeline-title-height) - 1px - 1px);
 }
 
-#sc-list-head-subtitle {
+#sc-subtitle {
     height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height) - 1px);
     border-width: 0px 1px 1px 1px;
     border-style: solid;
@@ -52,12 +48,12 @@
     line-height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height) - 1px);
 }
 
-#sc-list-box {
+#sc-entity-list-box {
     overflow: hidden;
     height: calc(var(--sc-height) - var(--sc-timeline-title-height) - var(--sc-timeline-header-height) - var(--sc-timeline-canvas-height) - var(--sc-scroll-height));
 }
 
-.sc-list-item {
+.sc-entity-list-item {
     height: calc(var(--sc-cell-height) - 1px);
     border-width: 0px 1px 1px 1px;
     border-style: solid;
@@ -65,11 +61,11 @@
     padding: 0px 8px;
 }
 
-.sc-list-item:nth-child(odd) {
+.sc-entity-list-item:nth-child(odd) {
     background-color: #dddddd;
 }
 
-#sc-content-box {
+#sc-main-panel {
     flex: 1;
     width: 100px;
     height: 100%;
@@ -81,11 +77,11 @@
     overflow: auto;
 }
 
-#sc-content-timeline {
+#sc-timeline {
     height: calc(var(--sc-timeline-title-height) + var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
 }
 
-#sc-content-timeline-title {
+#sc-timeline-title {
     height: calc(var(--sc-timeline-title-height) - 1px - 1px);
     border-width: 1px 0px 1px 0px;
     border-style: solid;
@@ -94,18 +90,18 @@
     line-height: var(--sc-timeline-title-height);
 }
 
-#sc-content-timeline-header-box {
+#sc-timeline-header-box {
     overflow: hidden;
 }
 
-#sc-content-timeline-header {
+#sc-timeline-header {
     height: var(--sc-timeline-header-height);
     display: flex;
     flex-direction: row;
     line-height: var(--sc-timeline-header-height);
 }
 
-.sc-content-timeline-header-item {
+.sc-timeline-header-item {
     border-width: 0px 1px 1px 0px;
     width: calc(var(--sc-cell-width) - 1px);
     border-style: solid;
@@ -113,11 +109,11 @@
     flex-direction: row;
 }
 
-#sc-content-timeline-canvas-box {
+#sc-timeline-canvas-box {
     overflow: hidden;
 }
 
-#sc-content-timeline-canvas {
+#sc-timeline-canvas {
     height: calc(var(--sc-timeline-canvas-height) - 1px);
     background-color: #ffff00;
     border-width: 0px 0px 1px 0px;
@@ -127,25 +123,25 @@
     position: relative;
 }
 
-.sc-content-timeline-canvas-item {
+.sc-timeline-canvas-item {
     position: absolute;
     width: var(--sc-timeline-canvas-content-height);
     height: var(--sc-timeline-canvas-content-height);
 }
 
-#sc-content-canvas-box {
+#sc-main-canvas-box {
     overflow: scroll;
     width: 100%;
     height: calc(var(--sc-height) - var(--sc-timeline-title-height) - var(--sc-timeline-header-height) - var(--sc-timeline-canvas-height));
 }
 
-#sc-content-canvas {
+#sc-main-canvas {
     height: 100%;
     position: relative;
     z-index: 0;
 }
 
-.sc-content-canvas-item {
+.sc-main-canvas-item {
     position: absolute;
     height: var(--sc-cell-content-height);
     width: var(--sc-cell-content-height);
@@ -165,15 +161,15 @@
     border-color: var(--sc-line-color);
 }
 
-#sc-content-canvas-box::-webkit-scrollbar {
+#sc-main-canvas-box::-webkit-scrollbar {
     width: var(--sc-scroll-width);
     height: var(--sc-scroll-height);
 }
 
-#sc-content-canvas-box::-webkit-scrollbar-thumb {
+#sc-main-canvas-box::-webkit-scrollbar-thumb {
     background-color: #999999;
 }
 
-#sc-content-canvas-box::-webkit-scrollbar-track {
+#sc-main-canvas-box::-webkit-scrollbar-track {
     background-color: #cccccc;
 }
