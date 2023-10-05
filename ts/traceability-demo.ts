@@ -19,10 +19,6 @@ window.addEventListener("load", () => {
         ["networkError", "purple"]
     ]);
 
-    const cellMinutes = 30;
-    const cellWidth = 60;
-    const cellHeight = 40;
-
     const tr = Traceability();
     tr.setup();
     tr.setData((window as any).leftLegendDatasource, (window as any).rightLegendDatasource);
@@ -30,7 +26,7 @@ window.addEventListener("load", () => {
 
     const sc = StatusChart();
     sc.create(document.getElementById("sc-container"));
-    
+
     const headerCellRender = function (time: Date, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
         containerElement.appendChild(divElement);
@@ -174,9 +170,12 @@ window.addEventListener("load", () => {
     sc.setSettings({
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
-        cellMinutes: cellMinutes,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
+        timelineTitleHeight: 40,
+        timelineHeaderHeight: 40,
+        timelineCanvasHeight: 100,
+        cellMinutes: 60,
+        cellWidth: 100,
+        cellHeight: 60,
         headerCellRender: headerCellRender,
         timelinePointEventRender: timelineMachineErrorEventRender,
         entityPointEventRender: entityPointEventRender,

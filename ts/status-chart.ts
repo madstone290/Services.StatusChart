@@ -2,6 +2,9 @@
 interface StatusChartSettings {
     chartStartTime: Date;
     chartEndTime: Date;
+    timelineTitleHeight?: number;
+    timelineHeaderHeight?: number;
+    timelineCanvasHeight?: number;
     cellMinutes: number;
     cellWidth?: number;
     cellHeight?: number;
@@ -31,11 +34,6 @@ const StatusChart = function () {
 
     const CANVAS_BOX_ID = "sc-content-canvas-box";
     const CANVAS_ID = "sc-content-canvas";
-
-
-    const DEFAULT_CELL_MINUTES = 60;
-    const DEFAULT_CELL_WIDTH = 200;
-    const DEFAULT_CELL_HEIGHT = 40;
 
     const SC_LIST_ITEM = "sc-list-item";
     const TIMELINE_CANVAS_ITEM_CLS = "sc-content-timeline-canvas-item";
@@ -240,7 +238,7 @@ const StatusChart = function () {
             setCellHeight,
             getCellContentHeight,
             setCellContentHeight,
-            
+
             getScrollWidth
         }
     }();
@@ -292,9 +290,12 @@ const StatusChart = function () {
     function setSettings({
         chartStartTime,
         chartEndTime,
-        cellMinutes = DEFAULT_CELL_MINUTES,
-        cellWidth = DEFAULT_CELL_WIDTH,
-        cellHeight = DEFAULT_CELL_HEIGHT,
+        timelineTitleHeight = 40,
+        timelineHeaderHeight = 40,
+        timelineCanvasHeight = 40,
+        cellMinutes = 60,
+        cellWidth = 200,
+        cellHeight = 40,
         headerTimeFormat,
         headerCellRender,
         timelinePointEventRender,
@@ -312,6 +313,9 @@ const StatusChart = function () {
         _hasVertialLine = hasVerticalLine;
         _canAutoFit = canAutoFit;
 
+        cssService.setTimeLineTitleHeight(timelineTitleHeight);
+        cssService.setTimelineHeaderHeight(timelineHeaderHeight);
+        cssService.setTimelineCanvasHeight(timelineCanvasHeight);
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
 

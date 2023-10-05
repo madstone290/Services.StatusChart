@@ -10,9 +10,6 @@ const StatusChart = function () {
     const LIST_BOX_ID = "sc-list-box";
     const CANVAS_BOX_ID = "sc-content-canvas-box";
     const CANVAS_ID = "sc-content-canvas";
-    const DEFAULT_CELL_MINUTES = 60;
-    const DEFAULT_CELL_WIDTH = 200;
-    const DEFAULT_CELL_HEIGHT = 40;
     const SC_LIST_ITEM = "sc-list-item";
     const TIMELINE_CANVAS_ITEM_CLS = "sc-content-timeline-canvas-item";
     const MAIN_CANVAS_ITEM_CLS = "sc-content-canvas-item";
@@ -213,13 +210,16 @@ const StatusChart = function () {
         cssService.setChartWidth(container.clientWidth);
         cssService.setChartHeight(container.clientHeight);
     }
-    function setSettings({ chartStartTime, chartEndTime, cellMinutes = DEFAULT_CELL_MINUTES, cellWidth = DEFAULT_CELL_WIDTH, cellHeight = DEFAULT_CELL_HEIGHT, headerTimeFormat, headerCellRender, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true }) {
+    function setSettings({ chartStartTime, chartEndTime, timelineTitleHeight = 40, timelineHeaderHeight = 40, timelineCanvasHeight = 40, cellMinutes = 60, cellWidth = 200, cellHeight = 40, headerTimeFormat, headerCellRender, timelinePointEventRender, entityPointEventRender, entityRangeEventRender, globalRangeEventRender, hasHorizontalLine = true, hasVerticalLine = true, canAutoFit = true }) {
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
         _hasHorizontalLine = hasHorizontalLine;
         _hasVertialLine = hasVerticalLine;
         _canAutoFit = canAutoFit;
+        cssService.setTimeLineTitleHeight(timelineTitleHeight);
+        cssService.setTimelineHeaderHeight(timelineHeaderHeight);
+        cssService.setTimelineCanvasHeight(timelineCanvasHeight);
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
         _headerTimeFormat = headerTimeFormat !== null && headerTimeFormat !== void 0 ? headerTimeFormat : ((time) => { return time.toLocaleString(); });
