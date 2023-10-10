@@ -42,6 +42,10 @@ const StatusChart = function () {
     const CLS_HLINE = "sc-hline";
     const CLS_VLINE = "sc-vline";
 
+    const Z_INDEX_ENTITY_POINT_EVENT = 3;
+    const Z_INDEX_ENTITY_RANGE_EVENT = 2;
+    const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
+
     /* Layout
     |---------------|-------------------|
     | main title    | timeline title    |
@@ -544,7 +548,7 @@ const StatusChart = function () {
         containerElement.style.left = `${left}px`;
         containerElement.style.top = `${top}px`;
         containerElement.style.width = `${width}px`;
-        containerElement.style.zIndex = "3";
+        containerElement.style.zIndex = `${Z_INDEX_ENTITY_RANGE_EVENT}`;
         containerElement.addEventListener("click", (e) => {
             console.log(e);
         });
@@ -574,7 +578,7 @@ const StatusChart = function () {
         const width = cssService.getCellContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
-        containerElement.style.zIndex = "2";
+        containerElement.style.zIndex = `${Z_INDEX_ENTITY_POINT_EVENT}`;
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
@@ -590,7 +594,7 @@ const StatusChart = function () {
         containerElement.style.top = "0px";
         containerElement.style.width = `${width}px`;
         containerElement.style.height = "100%";
-        containerElement.style.zIndex = "1";
+        containerElement.style.zIndex = `${Z_INDEX_GLOBAL_RANGE_EVENT}`;
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
