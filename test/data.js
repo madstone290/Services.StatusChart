@@ -23,12 +23,14 @@ var entities = [
                 time: new Date(Date.parse("2020-01-01T01:30:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 1,
             },
             {
                 description: "도색불량",
                 time: new Date(Date.parse("2020-01-01T02:45:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 1,
             }
         ],
         rangeEvents: [
@@ -38,6 +40,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T02:45:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 1,
             },
             {
                 type: "op20",
@@ -45,6 +48,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T04:05:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 1,
             },
             {
                 type: "op30",
@@ -52,6 +56,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 1,
             },
         ],
     },
@@ -65,6 +70,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 2,
             },
         ],
         pointEvents: [
@@ -73,12 +79,14 @@ var entities = [
                 time: new Date(Date.parse("2020-01-01T02:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 2,
             },
             {
                 description: "도색불량",
                 time: new Date(Date.parse("2020-01-01T03:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 2,
             }
         ]
     },
@@ -92,6 +100,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T04:15:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 3,
             },
             {
                 type: "op20",
@@ -99,6 +108,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T07:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 3,
             },
         ],
     },
@@ -112,6 +122,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T23:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 4,
             },
             {
                 type: "op40",
@@ -119,6 +130,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T23:50:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 4,
             },
         ]
     },
@@ -132,6 +144,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T04:25:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 5,
             },
             {
                 type: "op20",
@@ -139,6 +152,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T01:20:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 5,
             },
         ],
         pointEvents: [
@@ -147,12 +161,14 @@ var entities = [
                 time: new Date(Date.parse("2019-12-31T22:00:00")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 5,
             },
             {
                 description: "도색불량",
                 time: new Date(Date.parse("2020-01-01T02:45:12")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 5,
             }
         ]
     },
@@ -168,6 +184,7 @@ var entities = [
                 time: new Date(Date.parse("2020-01-01T10:09:52")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 9,
             },
         ]
     },
@@ -184,6 +201,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T06:26:03")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 13,
             },
         ],
     },
@@ -198,6 +216,7 @@ var entities = [
                 end: new Date(Date.parse("2020-01-01T13:52:20")),
                 productName: "XXX H/L LH",
                 productNo: "00123456",
+                entityId: 15,
             },
         ],
     },
@@ -207,6 +226,7 @@ var entities = [
     { id: 19, name: "H34A2900019" },
     { id: 20, name: "H34A2900020" },
 ];
+
 var machineErrorEvents = [
     {
         id: 1,

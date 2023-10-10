@@ -194,8 +194,9 @@ window.addEventListener("load", () => {
         tooltipElement.appendChild(timeElement);
 
         const barcodeElement = document.createElement("div");
-        barcodeElement.innerText = event.barcode;
+        barcodeElement.innerText = entities.find(entity => entity.id == event.entityId).name;
         tooltipElement.appendChild(barcodeElement);
+
 
         const productElement = document.createElement("div");
         productElement.innerText = event.productNo + " " + event.productName;
@@ -301,7 +302,7 @@ window.addEventListener("load", () => {
     const random = false;
 
     const cellMinutes = random ? Math.round(Math.random() * 90 + 10) : 60;
-    const cellWidth = random ? Math.round(Math.random() * 90 + 10) : 100;
+    const cellWidth = random ? Math.round(Math.random() * 90 + 10) : 150;
     const cellHeight = random ? Math.round(Math.random() * 90 + 10) : 50;
 
     sc.setSettings({
@@ -329,4 +330,17 @@ window.addEventListener("load", () => {
     sc.drawTimelineCanvas();
     sc.drawEntityList();
     sc.drawMainCanvas();
+
+
+    document.body.addEventListener("wheel", e => {
+        console.log(e);
+        return;
+        if (e.ctrlKey) {
+            e.preventDefault();//prevent zoom
+            const cellWidth = sc.cssService.getCellWidth();
+            sc.resizeCellWidth(e.deltaY > 0 ? cellWidth - 10 : cellWidth + 10);
+        }
+    }, {
+        passive: false
+    });
 });
