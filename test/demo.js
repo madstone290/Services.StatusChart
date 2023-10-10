@@ -116,8 +116,8 @@ window.addEventListener("load", () => {
     };
     const entityPointEventRender = function (error, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
-        imgElement.style.width = "80%";
-        imgElement.style.height = "80%";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "100%";
         imgElement.style.padding = "10%";
         imgElement.src = "../asset/image/error.png";
         containerElement.appendChild(imgElement);
@@ -298,7 +298,7 @@ window.addEventListener("load", () => {
     };
 
 
-    const random = true;
+    const random = false;
 
     const cellMinutes = random ? Math.round(Math.random() * 90 + 10) : 60;
     const cellWidth = random ? Math.round(Math.random() * 90 + 10) : 100;
