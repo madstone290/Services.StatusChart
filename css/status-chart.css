@@ -19,10 +19,17 @@
 }
 
 #sc-root {
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }
 
 #sc-left-panel {
@@ -31,21 +38,21 @@
 }
 
 #sc-maintitle {
-    height: calc(var(--sc-timeline-title-height) - 1px - 1px);
+    height: var(--sc-timeline-title-height);
     border-width: 1px 1px 1px 1px;
     border-style: solid;
     border-color: var(--sc-line-color);
     padding: 0px 8px;
-    line-height: calc(var(--sc-timeline-title-height) - 1px - 1px);
+    line-height: calc(var(--sc-timeline-title-height));
 }
 
 #sc-subtitle {
-    height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height) - 1px);
+    height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
     border-width: 0px 1px 1px 1px;
     border-style: solid;
     border-color: var(--sc-line-color);
     padding: 0px 8px;
-    line-height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height) - 1px);
+    line-height: calc(var(--sc-timeline-header-height) + var(--sc-timeline-canvas-height));
 }
 
 #sc-entity-list-box {
@@ -54,7 +61,7 @@
 }
 
 .sc-entity-list-item {
-    height: calc(var(--sc-cell-height) - 1px);
+    height: calc(var(--sc-cell-height));
     border-width: 0px 1px 1px 1px;
     border-style: solid;
     border-color: var(--sc-line-color);
@@ -82,7 +89,7 @@
 }
 
 #sc-timeline-title {
-    height: calc(var(--sc-timeline-title-height) - 1px - 1px);
+    height: var(--sc-timeline-title-height);
     border-width: 1px 0px 1px 0px;
     border-style: solid;
     border-color: var(--sc-line-color);
@@ -103,7 +110,7 @@
 
 .sc-timeline-header-item {
     border-width: 0px 1px 1px 0px;
-    width: calc(var(--sc-cell-width) - 1px);
+    width: var(--sc-cell-width);
     border-style: solid;
     border-color: var(--sc-line-color);
     flex-direction: row;
@@ -114,7 +121,7 @@
 }
 
 #sc-timeline-canvas {
-    height: calc(var(--sc-timeline-canvas-height) - 1px);
+    height: var(--sc-timeline-canvas-height);
     background-color: #ffff00;
     border-width: 0px 0px 1px 0px;
     border-style: solid;

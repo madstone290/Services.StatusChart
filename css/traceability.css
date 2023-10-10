@@ -3,7 +3,8 @@
 }
 
 #tr-legend {
-    height: calc(var(--tr-legend-height) - 4px - 4px);
+    box-sizing: border-box;
+    height: var(--tr-legend-height);
     display: flex;
     flex-direction: row;
     padding: 4px;
@@ -51,7 +52,7 @@
     background-color: black;
     color: #fff;
     text-align: center;
-    /* border-radius: 6px; */
+    border-radius: 6px;
 
     /* Position the tooltip */
     position: fixed;

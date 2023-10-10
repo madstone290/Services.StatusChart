@@ -78,7 +78,7 @@ window.addEventListener("load", () => {
         if (timeDiff.seconds > 0) {
             timeDiffString = timeDiffString + timeDiff.seconds + "초";
         }
-        if(timeDiffString === '')
+        if (timeDiffString === '')
             timeDiffString = '0초';
         return timeDiffString;
     }
@@ -296,12 +296,13 @@ window.addEventListener("load", () => {
             tooltipElement.style.opacity = "0";
         };
     };
-    //    const cellMinutes = Math.round(Math.random() * 90 + 10);
-    //    const cellWidth = Math.round(Math.random() * 90 + 10);
-    //    const cellHeight = Math.round(Math.random() * 90 + 10)
-    const cellHeight = 50;
-    const cellWidth = 100;
-    const cellMinutes = 60;
+
+
+    const random = true;
+
+    const cellMinutes = random ? Math.round(Math.random() * 90 + 10) : 60;
+    const cellWidth = random ? Math.round(Math.random() * 90 + 10) : 100;
+    const cellHeight = random ? Math.round(Math.random() * 90 + 10) : 50;
 
     sc.setSettings({
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
