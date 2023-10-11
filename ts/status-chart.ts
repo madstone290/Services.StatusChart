@@ -497,10 +497,27 @@ const StatusChart = function () {
      * 타임라인 캔버스를 그린다.
      */
     function drawTimelineCanvas() {
+        if (_hasVertialLine)
+            drawTimelineVertialLines();
+
         if (_timelinePointEvents != null && _timelinePointEvents.length > 0) {
             for (const event of _timelinePointEvents) {
                 drawTimelinePointEvent(event);
             }
+        }
+    }
+    function drawTimelineVertialLines() {
+        const canvasWidth = _timelineCanvasElement.scrollWidth;
+        const cellWidth = cssService.getCellWidth();
+        const lineCount = Math.floor(canvasWidth / cellWidth);
+
+        for (let i = 0; i < lineCount; i++) {
+            const line = document.createElement("div") as HTMLElement;
+            line.classList.add(CLS_VLINE);
+
+            line.style.left = `${cellWidth * (i + 1) - 1}px`;
+            line.style.height = `${_timelineCanvasElement.scrollHeight}px`;
+            _timelineCanvasElement.appendChild(line);
         }
     }
 
