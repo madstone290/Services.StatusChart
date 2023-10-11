@@ -62,3 +62,13 @@
     position: fixed;
     opacity: 0;
 }
+
+
+.tr-entity-range-event {
+    /* border: 1px solid #996633; */
+    border-radius: 8px;
+}
+
+.tr-global-range-event {
+    border-radius: 8px;
+}

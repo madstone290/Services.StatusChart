@@ -2,6 +2,9 @@ declare var dayjs: any;
 
 window.addEventListener("load", () => {
     const CLS_TOOLTIP = "tr-tooltip";
+    const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
+    const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
+
     const entityRangeEventColors = new Map([
         ["op10", "#92d050"],
         ["op20", "#00b0f0"],
@@ -165,6 +168,7 @@ window.addEventListener("load", () => {
         boxElement.style.width = "100%";
         boxElement.style.height = "100%";
         boxElement.style.backgroundColor = entityRangeEventColors.get(event.type);
+        boxElement.classList.add(CLS_ENTITY_RANGE_EVENT);
 
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
@@ -249,6 +253,7 @@ window.addEventListener("load", () => {
         boxElement.style.height = "100%";
         boxElement.style.backgroundColor = globalRangeEventColors.get(event.type);
         boxElement.style.opacity = "0.8";
+        boxElement.classList.add(CLS_GLOBAL_RANGE_EVENT);
 
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
