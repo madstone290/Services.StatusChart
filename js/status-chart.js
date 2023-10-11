@@ -368,6 +368,7 @@ const StatusChart = function () {
      * 타임라인 캔버스를 그린다.
      */
     function drawTimelineCanvas() {
+        _timelineCanvasElement.replaceChildren();
         if (_hasVertialLine)
             drawTimelineVertialLines();
         if (_timelinePointEvents != null && _timelinePointEvents.length > 0) {
@@ -528,6 +529,7 @@ const StatusChart = function () {
         }
         cssService.setCellWidth(cellWidth);
         resetCanvas();
+        drawTimelineCanvas();
         drawMainCanvas();
         // keep scroll position
         if (scrollLeft) {
