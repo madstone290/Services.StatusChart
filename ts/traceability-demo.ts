@@ -11,8 +11,10 @@ window.addEventListener("load", () => {
     const IMG_WARNING = "./asset/image/warning.svg";
 
     const CLS_TOOLTIP = "tr-tooltip";
+
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
+    
 
     const COLOR_SELECTED_EVENT = "#333";
     const entityRangeEventColors = new Map([
