@@ -325,6 +325,14 @@ const StatusChart = function () {
         }, {
             passive: false
         });
+        document.body.addEventListener("keydown", (e) => {
+            if (e.ctrlKey) {
+                document.body.style.cursor = "pointer";
+            }
+        });
+        document.body.addEventListener("keyup", (e) => {
+            document.body.style.cursor = "default";
+        });
     }
     /**
      * 캔버스 크기를 재조정한다.
