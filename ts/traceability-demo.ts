@@ -92,7 +92,7 @@ window.addEventListener("load", () => {
         const divElement = document.createElement("div");
         containerElement.appendChild(divElement);
         divElement.innerText = dayjs(time).format("HH:mm");
-        divElement.style.backgroundColor = "#ccc";
+        divElement.style.backgroundColor = "#ddd";
         divElement.style.color = "black";
         divElement.style.textAlign = "center";
         divElement.style.height = "100%";
