@@ -1,4 +1,8 @@
 window.addEventListener("load", () => {
+    /**
+     * 이벤트 아이템 호버시 배경색 표시 여부
+     */
+    let _useHoverColor = false;
     const CLS_TOOLTIP = "tr-tooltip";
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
@@ -125,6 +129,8 @@ window.addEventListener("load", () => {
         });
     }
     function addHoverColor(element, hoverColor) {
+        if (!_useHoverColor)
+            return;
         const originalColor = element.style.backgroundColor;
         element.addEventListener("mouseenter", (e) => {
             element.style.backgroundColor = hoverColor;
