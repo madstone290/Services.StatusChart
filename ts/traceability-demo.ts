@@ -7,6 +7,9 @@ window.addEventListener("load", () => {
      */
     let _useHoverColor = false;
 
+    const IMG_ERROR = "./asset/image/error.svg";
+    const IMG_WARNING = "./asset/image/warning.svg";
+
     const CLS_TOOLTIP = "tr-tooltip";
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
@@ -159,8 +162,7 @@ window.addEventListener("load", () => {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.style.padding = "10%";
-        imgElement.src = "./asset/image/error.png";
+        imgElement.src = IMG_ERROR;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");
@@ -239,7 +241,7 @@ window.addEventListener("load", () => {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.src = "./asset/image/warning.png";
+        imgElement.src = IMG_WARNING;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");

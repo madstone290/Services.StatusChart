@@ -10,8 +10,8 @@ var rightLegendDatasource = [
     { color: "#7f7f7f", label: "비가동" },
     { color: "#cc00ff", label: "네트워크이상" },
     { color: "#081fda", label: "바코드누락" },
-    { icon: "./asset/image/warning.png", label: "설비이상" },
-    { icon: "./asset/image/error.png", label: "품질이상" },
+    { icon: "./asset/image/warning.svg", label: "설비이상" },
+    { icon: "./asset/image/error.svg", label: "품질이상" },
 ];
 var barcodeEntities = [
     {
