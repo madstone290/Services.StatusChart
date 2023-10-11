@@ -123,11 +123,6 @@ window.addEventListener("load", () => {
 
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
-        tooltipElement.style.zIndex = "100";
-        tooltipElement.style.padding = "10px";
-        tooltipElement.style.backgroundColor = "#ffffcc"
-        tooltipElement.style.color = "#996633"
-        tooltipElement.style.textAlign = "left";
         canvasElement.appendChild(tooltipElement);
 
         const titleElement = document.createElement("div");
@@ -172,11 +167,6 @@ window.addEventListener("load", () => {
         boxElement.style.backgroundColor = entityRangeEventColors.get(event.type);
 
         const tooltipElement = document.createElement("div");
-        tooltipElement.style.zIndex = "100";
-        tooltipElement.style.padding = "10px";
-        tooltipElement.style.backgroundColor = "#ffffcc"
-        tooltipElement.style.color = "#996633"
-        tooltipElement.style.textAlign = "left";
         tooltipElement.classList.add(CLS_TOOLTIP);
         canvasElement.appendChild(tooltipElement);
 
@@ -289,7 +279,7 @@ window.addEventListener("load", () => {
     };
 
     const cellMinutes = 30;
-    const cellWidth = 150;
+    const cellWidth = 50;
     const cellHeight = 50;
 
     const tr = Traceability();
