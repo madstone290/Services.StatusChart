@@ -5,6 +5,7 @@ window.addEventListener("load", () => {
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
 
+    const COLOR_SELECTED_EVENT = "#e8056f";
     const entityRangeEventColors = new Map([
         ["op10", "#92d050"],
         ["op20", "#00b0f0"],
@@ -90,7 +91,6 @@ window.addEventListener("load", () => {
         return timeDiffString;
     }
 
-
     const headerCellRender = function (time: Date, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
         containerElement.appendChild(divElement);
@@ -101,6 +101,7 @@ window.addEventListener("load", () => {
         divElement.style.height = "100%";
         divElement.style.width = "100%";
     };
+
     const relocateTooltip = function (tooltipElement: HTMLElement, e: MouseEvent) {
         const tooltipOffset = 10;
         let top = e.clientY + tooltipOffset;
@@ -111,11 +112,41 @@ window.addEventListener("load", () => {
         if (window.innerHeight < e.clientY + tooltipElement.offsetHeight + tooltipOffset) {
             top = window.innerHeight - tooltipElement.offsetHeight - tooltipOffset;
         }
-        tooltipElement.style.visibility = "visible";
-        tooltipElement.style.opacity = "1";
         tooltipElement.style.top = top + "px";
         tooltipElement.style.left = left + "px";
     };
+
+    /**
+     * 엘리먼트에 툴팁을 추가한다.
+     * @param element 툴팁을 추가할 엘리먼트
+     * @param tooltipElement 툴팁 엘리먼트
+     */
+    function addTooltip(element: HTMLElement, tooltipElement: HTMLElement) {
+        element.addEventListener("mousemove", (e) => {
+            if (e.target !== element)
+                return;
+            relocateTooltip(tooltipElement, e);
+        });
+        element.addEventListener("mouseleave", (e) => {
+            tooltipElement.style.visibility = "hidden";
+            tooltipElement.style.opacity = "0";
+        });
+        element.addEventListener("mouseenter", (e) => {
+            tooltipElement.style.visibility = "visible";
+            tooltipElement.style.opacity = "1";
+        });
+    }
+
+    function addHoverColor(element: HTMLElement, hoverColor: string) {
+        const originalColor = element.style.backgroundColor;
+        element.addEventListener("mouseenter", (e) => {
+            element.style.backgroundColor = hoverColor;
+        });
+        element.addEventListener("mouseleave", (e) => {
+            element.style.backgroundColor = originalColor;
+        });
+    }
+
     const entityPointEventRender = function (event: BarcodePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
@@ -152,15 +183,7 @@ window.addEventListener("load", () => {
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
 
-        imgElement.addEventListener("mousemove", (e) => {
-            if (e.target !== imgElement)
-                return;
-            relocateTooltip(tooltipElement, e);
-        });
-        imgElement.onmouseleave = (e) => {
-            tooltipElement.style.visibility = "hidden";
-            tooltipElement.style.opacity = "0";
-        };
+        addTooltip(imgElement, tooltipElement);
     };
     const entityRangeEventRender = function (event: BarcodeRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
@@ -200,15 +223,8 @@ window.addEventListener("load", () => {
         descElement.innerText = event.description;
         tooltipElement.appendChild(descElement);
 
-        boxElement.addEventListener("mousemove", (e) => {
-            if (e.target !== boxElement)
-                return;
-            relocateTooltip(tooltipElement, e);
-        });
-        boxElement.onmouseleave = (e) => {
-            tooltipElement.style.visibility = "hidden";
-            tooltipElement.style.opacity = "0";
-        };
+        addTooltip(boxElement, tooltipElement);
+        addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
     const machinePointEventRender = function (event: MachinePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
@@ -236,15 +252,7 @@ window.addEventListener("load", () => {
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
 
-        imgElement.addEventListener("mousemove", (e) => {
-            if (e.target !== imgElement)
-                return;
-            relocateTooltip(tooltipElement, e);
-        });
-        imgElement.onmouseleave = (e) => {
-            tooltipElement.style.visibility = "hidden";
-            tooltipElement.style.opacity = "0";
-        };
+        addTooltip(imgElement, tooltipElement);
     };
     const machineRangeEventRender = function (event: MachineRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
@@ -272,15 +280,8 @@ window.addEventListener("load", () => {
         timeElement.innerText = dayjs(event.start).format("HH:mm:ss") + " ~ " + dayjs(event.end).format("HH:mm:ss") + " (" + timeDifferenceString + ")";
         tooltipElement.appendChild(timeElement);
 
-        boxElement.addEventListener("mousemove", (e) => {
-            if (e.target !== boxElement)
-                return;
-            relocateTooltip(tooltipElement, e);
-        });
-        boxElement.onmouseleave = (e) => {
-            tooltipElement.style.visibility = "hidden";
-            tooltipElement.style.opacity = "0";
-        };
+        addTooltip(boxElement, tooltipElement);
+        addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
 
     const cellMinutes = 30;
