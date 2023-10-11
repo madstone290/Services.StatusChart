@@ -418,6 +418,19 @@ const StatusChart = function () {
             _entityListBoxElement.scrollTop = _mainCanvasBoxElement.scrollTop;
         });
 
+        _mainCanvasElement.addEventListener("mousemove", (e) => {
+            if (e.buttons === 1) {
+                _mainCanvasBoxElement.scrollLeft -= e.movementX;
+                _mainCanvasBoxElement.scrollTop -= e.movementY;
+            }
+        });
+        _mainCanvasElement.addEventListener("mousedown", (e) => {
+            document.body.style.cursor = "pointer";
+        });
+        _mainCanvasElement.addEventListener("mouseup", (e) => {
+            document.body.style.cursor = "default";
+        });
+
         _mainCanvasElement.addEventListener("wheel", (e) => {
             if (e.ctrlKey) {
                 let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
@@ -449,15 +462,17 @@ const StatusChart = function () {
         }, {
             passive: false
         });
-
+        // change cursor when ctrl key is pressed
         document.body.addEventListener("keydown", (e) => {
             if (e.ctrlKey) {
                 document.body.style.cursor = "pointer";
             }
         });
+        // restore cursor when ctrl key is released
         document.body.addEventListener("keyup", (e) => {
             document.body.style.cursor = "default";
         });
+
     }
 
     /**
