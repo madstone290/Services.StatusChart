@@ -18,6 +18,8 @@ const StatusChart = function () {
     const Z_INDEX_ENTITY_POINT_EVENT = 3;
     const Z_INDEX_ENTITY_RANGE_EVENT = 2;
     const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
+    const MIN_CELL_WIDTH = 50;
+    const MAX_CELL_WIDTH = 500;
     /* Layout
     |---------------|-------------------|
     | main title    | timeline title    |
@@ -44,6 +46,10 @@ const StatusChart = function () {
      * 하나의 셀이 표현하는 시간. 단위는 분
      */
     let _cellMinutes;
+    /**
+     * 헤더 셀 개수. (시작시간 - 종료시간) / 셀시간
+     */
+    let _headerCellCount;
     /**
      * 캔버스 가로선 표시 여부
      */
@@ -260,7 +266,7 @@ const StatusChart = function () {
     function initLayout() {
         let time = _chartStartTime;
         let end = _chartEndTime;
-        let headerCellCount = 0;
+        _headerCellCount = 0;
         while (time < end) {
             if (_headerCellRender != null) {
                 const containerElement = document.createElement("div");
@@ -276,27 +282,9 @@ const StatusChart = function () {
                 _timelineHeaderElement.appendChild(div);
             }
             time = new Date(time.getTime() + dateTimeService.toTime(_cellMinutes));
-            headerCellCount++;
+            _headerCellCount++;
         }
-        /**
-         * main canvas에만 스크롤을 표시한다.
-         * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
-         * entity list는 main canvas 수직스크롤과 동기화한다.
-         */
-        const canvasWidth = cssService.getCellWidth() * headerCellCount;
-        _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
-        _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
-        _mainCanvasElement.style.width = `${canvasWidth}px`;
-        const chartHeight = cssService.getChartHeight();
-        const timelineHeight = cssService.getTimelineHeight();
-        const scrollWidth = cssService.getScrollWidth();
-        const providedCanvasHeight = chartHeight - timelineHeight - scrollWidth;
-        const requiredCanvasHeight = cssService.getCellHeight() * _entities.length;
-        let canvasHeight = requiredCanvasHeight;
-        if (_canAutoFit && requiredCanvasHeight < providedCanvasHeight) {
-            cssService.setChartHeight(timelineHeight + scrollWidth + canvasHeight);
-        }
-        _mainCanvasElement.style.height = `${canvasHeight}px`;
+        resetCanvas();
         _mainCanvasBoxElement.addEventListener("scroll", (e) => {
             _timelineHeaderBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
             _timelineCanvasBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
@@ -304,6 +292,60 @@ const StatusChart = function () {
         _mainCanvasBoxElement.addEventListener("scroll", (e) => {
             _entityListBoxElement.scrollTop = _mainCanvasBoxElement.scrollTop;
         });
+        _mainCanvasElement.addEventListener("wheel", (e) => {
+            if (e.ctrlKey) {
+                let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
+                // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
+                if (e.target == _mainCanvasElement) {
+                    pivotPoint = e.offsetX;
+                }
+                else if (e.target.parentElement.parentElement == _mainCanvasElement) {
+                    pivotPoint = e.target.parentElement.offsetLeft + e.offsetX;
+                }
+                else {
+                    return;
+                }
+                if (e.deltaY > 0) {
+                    sizeDownCellWidth(pivotPoint);
+                }
+                else {
+                    sizeUpCellWidth(pivotPoint);
+                }
+            }
+        });
+        // prevent default zoom
+        document.body.addEventListener("wheel", (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, {
+            passive: false
+        });
+    }
+    /**
+     * 캔버스 크기를 재조정한다.
+     */
+    function resetCanvas() {
+        /**
+         * main canvas에만 스크롤을 표시한다.
+         * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
+         * entity list는 main canvas 수직스크롤과 동기화한다.
+         */
+        const canvasWidth = cssService.getCellWidth() * _headerCellCount;
+        const chartHeight = cssService.getChartHeight();
+        const timelineHeight = cssService.getTimelineHeight();
+        const scrollWidth = cssService.getScrollWidth();
+        const providedCanvasHeight = chartHeight - timelineHeight - scrollWidth;
+        const requiredCanvasHeight = cssService.getCellHeight() * _entities.length;
+        let canvasHeight = requiredCanvasHeight;
+        // 필요한 높이가 제공된 높이보다 작을 경우 높이를 맞춘다.
+        if (_canAutoFit && requiredCanvasHeight < providedCanvasHeight) {
+            cssService.setChartHeight(timelineHeight + scrollWidth + canvasHeight);
+        }
+        _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+        _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+        _mainCanvasElement.style.width = `${canvasWidth}px`;
+        _mainCanvasElement.style.height = `${canvasHeight}px`;
     }
     /**
      * 엔티티 리스트를 그린다.
@@ -347,6 +389,7 @@ const StatusChart = function () {
      * 메인 캔버스를 그린다.
      */
     function drawMainCanvas() {
+        _mainCanvasElement.replaceChildren();
         if (_hasHorizontalLine)
             drawHorizontalLines();
         if (_hasVertialLine)
@@ -449,6 +492,42 @@ const StatusChart = function () {
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
         render(event, _mainCanvasElement, containerElement);
     }
+    /**
+     * 셀 너비 변경을 통해 캔버스 크기를 조정한다.
+     * @param cellWidth 셀 너비
+     * @param pivotPointX 스크롤 기준 위치
+     */
+    function resizeCanvas(cellWidth, pivotPointX) {
+        if (cellWidth < MIN_CELL_WIDTH) {
+            return;
+        }
+        if (cellWidth > MAX_CELL_WIDTH) {
+            return;
+        }
+        // 리사이징 후 스크롤 위치 계산
+        let scrollLeft = _mainCanvasBoxElement.scrollLeft;
+        if (pivotPointX) {
+            const scrollOffset = pivotPointX - scrollLeft;
+            const prevCellWidth = cssService.getCellWidth();
+            const newPivotPointX = pivotPointX * cellWidth / prevCellWidth; // 기준점까지의 거리
+            scrollLeft = newPivotPointX - scrollOffset;
+        }
+        cssService.setCellWidth(cellWidth);
+        resetCanvas();
+        drawMainCanvas();
+        // keep scroll position
+        if (scrollLeft) {
+            _mainCanvasBoxElement.scrollLeft = scrollLeft;
+        }
+    }
+    function sizeUpCellWidth(pivotPointX) {
+        const cellWidth = cssService.getCellWidth();
+        resizeCanvas(cellWidth + 10, pivotPointX);
+    }
+    function sizeDownCellWidth(pivotPointX) {
+        const cellWidth = cssService.getCellWidth();
+        resizeCanvas(cellWidth - 10, pivotPointX);
+    }
     return {
         cssService,
         // public
@@ -462,5 +541,8 @@ const StatusChart = function () {
         // custom render
         drawLocalPointEvent,
         drawGlobalEvent,
+        resizeCellWidth: resizeCanvas,
+        sizeUpCellWidth,
+        sizeDownCellWidth
     };
 };

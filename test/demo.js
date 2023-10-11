@@ -330,17 +330,4 @@ window.addEventListener("load", () => {
     sc.drawTimelineCanvas();
     sc.drawEntityList();
     sc.drawMainCanvas();
-
-
-    document.body.addEventListener("wheel", e => {
-        console.log(e);
-        return;
-        if (e.ctrlKey) {
-            e.preventDefault();//prevent zoom
-            const cellWidth = sc.cssService.getCellWidth();
-            sc.resizeCellWidth(e.deltaY > 0 ? cellWidth - 10 : cellWidth + 10);
-        }
-    }, {
-        passive: false
-    });
 });
