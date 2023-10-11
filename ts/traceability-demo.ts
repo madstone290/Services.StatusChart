@@ -184,6 +184,7 @@ window.addEventListener("load", () => {
         tooltipElement.appendChild(timeElement);
 
         addTooltip(imgElement, tooltipElement);
+        addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
     const entityRangeEventRender = function (event: BarcodeRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
@@ -253,6 +254,7 @@ window.addEventListener("load", () => {
         tooltipElement.appendChild(timeElement);
 
         addTooltip(imgElement, tooltipElement);
+        addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
     const machineRangeEventRender = function (event: MachineRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");

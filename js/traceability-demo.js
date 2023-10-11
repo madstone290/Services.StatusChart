@@ -163,6 +163,7 @@ window.addEventListener("load", () => {
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
         addTooltip(imgElement, tooltipElement);
+        addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
     const entityRangeEventRender = function (event, canvasElement, containerElement) {
         const boxElement = document.createElement("div");
@@ -220,6 +221,7 @@ window.addEventListener("load", () => {
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
         addTooltip(imgElement, tooltipElement);
+        addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
     const machineRangeEventRender = function (event, canvasElement, containerElement) {
         const boxElement = document.createElement("div");
