@@ -5,7 +5,7 @@ window.addEventListener("load", () => {
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
 
-    const COLOR_SELECTED_EVENT = "#e8056f";
+    const COLOR_SELECTED_EVENT = "#333";
     const entityRangeEventColors = new Map([
         ["op10", "#92d050"],
         ["op20", "#00b0f0"],
