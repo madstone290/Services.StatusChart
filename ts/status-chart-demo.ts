@@ -1,17 +1,4 @@
 window.addEventListener("load", () => {
-
-    const chartHeight = 400;
-    const chartWidth = 1000;
-    const cellMinutes = 60;
-    const cellWidth = 200;
-    const cellHeight = 40;
-    const TOOLTIP_BOX_CLS = "sc-tooltip";
-    const TOOLTIP_TEXT_CLS = "sc-tooltip-text";
-
-    const container = document.getElementById("sc-container");
-    const sc = StatusChart();
-    sc.create(container);
-
     const entityPointEventRender = function (error: PointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const divElement = document.createElement("div");
         divElement.style.width = "100%";
@@ -39,7 +26,7 @@ window.addEventListener("load", () => {
         containerElement.appendChild(divElement);
     };
 
-    const globalRangeEventRender = (event: MachineGlobalRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) => {
+    const globalRangeEventRender = (event: MachineRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) => {
         const divElement = document.createElement("div");
         divElement.style.width = "100%";
         divElement.style.height = "100%";
@@ -48,6 +35,14 @@ window.addEventListener("load", () => {
 
         containerElement.appendChild(divElement);
     };
+
+    const cellMinutes = 60;
+    const cellWidth = 200;
+    const cellHeight = 40;
+
+    const container = document.getElementById("sc-container");
+    const sc = StatusChart();
+    sc.create(container);
 
     sc.setSettings({
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),

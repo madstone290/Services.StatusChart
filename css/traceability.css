@@ -48,14 +48,17 @@
 
 .tr-tooltip {
     visibility: hidden;
-    width: 200px;
     background-color: black;
     color: #fff;
     text-align: center;
     border-radius: 6px;
+    z-index: 100;
+    padding: 10px;
+    background-color: #ffffcc;
+    color: #996633;
+    text-align: left;
 
     /* Position the tooltip */
     position: fixed;
-    z-index: 0;
     opacity: 0;
 }

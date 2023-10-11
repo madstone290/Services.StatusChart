@@ -1,4 +1,6 @@
 interface BarcodeEntity extends Entity {
+    barcodeNumber?: string;
+    productNumber?: string;
     pointEvents?: BarcodePointEvent[];
     rangeEvents?: BarcodeRangeEvent[];
 }
@@ -8,11 +10,13 @@ interface BarcodeEntity extends Entity {
  */
 interface BarcodePointEvent extends PointEvent {
     id?: any;
+    entityId?: any;
     description?: string;
 }
 
 interface BarcodeRangeEvent extends RangeEvent {
     id?: any;
+    entityId?: any;
     type: "op10" | "op20" | "op30" | "op40" | "op50";
     description?: string;
 }
@@ -20,7 +24,7 @@ interface BarcodeRangeEvent extends RangeEvent {
 /**
  * 설비 글로벌 이벤트(계획정지/비가동/네트워크이상/바코드누락)
  */
-interface MachineGlobalRangeEvent extends RangeEvent {
+interface MachineRangeEvent extends RangeEvent {
     id?: any;
     type: "pause" | "fault" | "barcodeMissing" | "networkError";
     description?: string;
@@ -35,7 +39,7 @@ interface MachinePointEvent extends PointEvent {
 }
 
 interface LegendItem {
-    color: string;
     label: string;
+    color?: string;
     icon?: string;
 }

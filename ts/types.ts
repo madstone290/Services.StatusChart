@@ -9,7 +9,7 @@ interface RangeEvent {
 
 interface Entity {
     id: number;
-    name: string;
+    name?: string;
     pointEvents?: PointEvent[];
     rangeEvents?: RangeEvent[];
 }
