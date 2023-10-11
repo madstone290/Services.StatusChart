@@ -63,6 +63,10 @@ const StatusChart = function () {
      */
     let _canAutoFit;
     /**
+     * 셀 크기 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
+     */
+    let _resizeUnit = 20;
+    /**
      * 헤더 시간 포맷 함수
      */
     let _headerTimeFormat;
@@ -538,11 +542,11 @@ const StatusChart = function () {
     }
     function sizeUpCellWidth(pivotPointX) {
         const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth + 10, pivotPointX);
+        resizeCanvas(cellWidth + _resizeUnit, pivotPointX);
     }
     function sizeDownCellWidth(pivotPointX) {
         const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth - 10, pivotPointX);
+        resizeCanvas(cellWidth - _resizeUnit, pivotPointX);
     }
     return {
         cssService,

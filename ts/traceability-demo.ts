@@ -288,7 +288,7 @@ window.addEventListener("load", () => {
         };
     };
 
-    const cellMinutes = 60;
+    const cellMinutes = 30;
     const cellWidth = 150;
     const cellHeight = 50;
 

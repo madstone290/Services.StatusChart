@@ -254,7 +254,7 @@ window.addEventListener("load", () => {
             tooltipElement.style.opacity = "0";
         };
     };
-    const cellMinutes = 60;
+    const cellMinutes = 30;
     const cellWidth = 150;
     const cellHeight = 50;
     const tr = Traceability();
