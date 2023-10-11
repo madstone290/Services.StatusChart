@@ -14,7 +14,7 @@ window.addEventListener("load", () => {
 
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
-    
+
 
     const COLOR_SELECTED_EVENT = "#333";
     const entityRangeEventColors = new Map([
@@ -134,8 +134,9 @@ window.addEventListener("load", () => {
      */
     function addTooltip(element: HTMLElement, tooltipElement: HTMLElement) {
         element.addEventListener("mousemove", (e) => {
-            if (e.target !== element)
+            if (e.target !== element) {
                 return;
+            }
             relocateTooltip(tooltipElement, e);
         });
         element.addEventListener("mouseleave", (e) => {
@@ -145,6 +146,11 @@ window.addEventListener("load", () => {
         element.addEventListener("mouseenter", (e) => {
             tooltipElement.style.visibility = "visible";
             tooltipElement.style.opacity = "1";
+            /**
+             * mouseenter이벤트만 발생하고 mousemove이벤트가 발생하지 않는 경우가 있다. ex) 휠스크롤
+             * mouseenter이벤트순간부터 툴팁위치를 조정한다.
+             */
+            relocateTooltip(tooltipElement, e);
         });
     }
 

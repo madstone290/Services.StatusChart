@@ -117,8 +117,9 @@ window.addEventListener("load", () => {
      */
     function addTooltip(element, tooltipElement) {
         element.addEventListener("mousemove", (e) => {
-            if (e.target !== element)
+            if (e.target !== element) {
                 return;
+            }
             relocateTooltip(tooltipElement, e);
         });
         element.addEventListener("mouseleave", (e) => {
@@ -128,6 +129,11 @@ window.addEventListener("load", () => {
         element.addEventListener("mouseenter", (e) => {
             tooltipElement.style.visibility = "visible";
             tooltipElement.style.opacity = "1";
+            /**
+             * mouseenter이벤트만 발생하고 mousemove이벤트가 발생하지 않는 경우가 있다. ex) 휠스크롤
+             * mouseenter이벤트순간부터 툴팁위치를 조정한다.
+             */
+            relocateTooltip(tooltipElement, e);
         });
     }
     function addHoverColor(element, hoverColor) {
