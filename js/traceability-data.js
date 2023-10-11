@@ -105,6 +105,30 @@ var barcodeEntities = [
         productNumber: "00123H4",
         rangeEvents: [
             {
+                type: "op10",
+                start: new Date(Date.parse("2020-01-01T00:40:00")),
+                end: new Date(Date.parse("2020-01-01T01:20:00")),
+                entityId: 4,
+            },
+            {
+                type: "op20",
+                start: new Date(Date.parse("2020-01-01T01:20:00")),
+                end: new Date(Date.parse("2020-01-01T02:00:00")),
+                entityId: 4,
+            },
+            {
+                type: "op30",
+                start: new Date(Date.parse("2020-01-01T02:00:00")),
+                end: new Date(Date.parse("2020-01-01T02:40:00")),
+                entityId: 4,
+            },
+            {
+                type: "op40",
+                start: new Date(Date.parse("2020-01-01T02:40:00")),
+                end: new Date(Date.parse("2020-01-01T03:20:00")),
+                entityId: 4,
+            },
+            {
                 type: "op30",
                 start: new Date(Date.parse("2020-01-01T22:00:00")),
                 end: new Date(Date.parse("2020-01-01T23:00:00")),
@@ -125,15 +149,27 @@ var barcodeEntities = [
         productNumber: "00123H5",
         rangeEvents: [
             {
-                type: "op50",
-                start: new Date(Date.parse("2020-01-01T04:10:00")),
-                end: new Date(Date.parse("2020-01-01T04:25:00")),
+                type: "op10",
+                start: new Date(Date.parse("2020-01-01T01:40:00")),
+                end: new Date(Date.parse("2020-01-01T02:20:00")),
                 entityId: 5,
             },
             {
                 type: "op20",
-                start: new Date(Date.parse("2020-01-01T00:10:00")),
-                end: new Date(Date.parse("2020-01-01T01:20:00")),
+                start: new Date(Date.parse("2020-01-01T02:20:00")),
+                end: new Date(Date.parse("2020-01-01T03:00:00")),
+                entityId: 5,
+            },
+            {
+                type: "op30",
+                start: new Date(Date.parse("2020-01-01T03:00:00")),
+                end: new Date(Date.parse("2020-01-01T03:40:00")),
+                entityId: 5,
+            },
+            {
+                type: "op40",
+                start: new Date(Date.parse("2020-01-01T03:40:00")),
+                end: new Date(Date.parse("2020-01-01T04:20:00")),
                 entityId: 5,
             },
         ],
@@ -158,6 +194,32 @@ var barcodeEntities = [
         name: "H34A2900009",
         barcodeNumber: "H34A2900009",
         productNumber: "00123H9",
+        rangeEvents: [
+            {
+                type: "op10",
+                start: new Date(Date.parse("2020-01-01T03:40:00")),
+                end: new Date(Date.parse("2020-01-01T04:20:00")),
+                entityId: 9,
+            },
+            {
+                type: "op20",
+                start: new Date(Date.parse("2020-01-01T04:20:00")),
+                end: new Date(Date.parse("2020-01-01T05:00:00")),
+                entityId: 9,
+            },
+            {
+                type: "op30",
+                start: new Date(Date.parse("2020-01-01T05:00:00")),
+                end: new Date(Date.parse("2020-01-01T05:40:00")),
+                entityId: 9,
+            },
+            {
+                type: "op40",
+                start: new Date(Date.parse("2020-01-01T05:40:00")),
+                end: new Date(Date.parse("2020-01-01T06:20:00")),
+                entityId: 9,
+            },
+        ],
         pointEvents: [
             {
                 description: "불량품",
