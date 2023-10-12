@@ -21,17 +21,27 @@ interface MesChartOptions {
      */
     useHoverColor?: boolean;
 
-    timelineChartOptions: TimelineChartOptions;
+    mainTitle?: string;
+    subTitle?: string;
+    headerTitle?: string;
+    chartStartTime: Date;
+    chartEndTime: Date;
+    timelineTitleHeight?: number;
+    timelineHeaderHeight?: number;
+    timelineCanvasHeight?: number;
+    timelineCanvasContentHeight?: number;
+    cellMinutes: number;
+    cellWidth?: number;
+    cellHeight?: number;
+    cellContentHeight?: number;
+    hasHorizontalLine?: boolean;
+    hasVerticalLine?: boolean;
+    canAutoFit?: boolean;
 }
 
 const MesChart = function () {
 
     let _timelineChart = TimelineChart();
-
-    /**
-     * 이벤트 아이템 호버시 배경색 표시 여부
-     */
-    let _useHoverColor = false;
 
     let _data: MesChartData;
     let _options: MesChartOptions;
@@ -65,10 +75,6 @@ const MesChart = function () {
         ["networkError", "네트워크 이상"],
         ["barcodeMissing", "바코드 누락"]
     ]);
-
-    const barcodeEntities = (window as any).barcodeEntities as MesEntity[];
-    const machinePointEvents = (window as any).machinePointEvents as MesSidePointEvents[];
-    const machineRangeEvents = (window as any).machineRangeEvents as MesGlobalRangeEvent[];
 
     function getTimeDiff(start: Date, end: Date) {
         const totalMilliseconds = end.getTime() - start.getTime();
@@ -184,7 +190,7 @@ const MesChart = function () {
     }
 
     function addHoverColor(element: HTMLElement, hoverColor: string) {
-        if (!_useHoverColor)
+        if (!_options.useHoverColor)
             return;
         const originalColor = element.style.backgroundColor;
         element.addEventListener("mouseenter", (e) => {
@@ -303,6 +309,7 @@ const MesChart = function () {
         addTooltip(imgElement, tooltipElement);
         addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
+
     const machineRangeEventRender = function (event: MesGlobalRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
@@ -333,41 +340,22 @@ const MesChart = function () {
         addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
 
-    const cellMinutes = 30;
-    const cellWidth = 50;
-    const cellHeight = 50;
+    function create(container: HTMLElement, data: MesChartData, options: MesChartOptions) {
+        _data = data;
+        _options = options;
 
-    function create() {
-        const data: TimelineChartData = {
-            entities: barcodeEntities,
-            sidePointEvents: machinePointEvents,
-            globalRangeEvents: machineRangeEvents
-        }
-        const options: TimelineChartOptions = {
-            mainTitle: "XXX H/L LH Line 03",
-            subTitle: "Serial No.",
-            headerTitle: "Time Line",
-            chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
-            chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
-            timelineTitleHeight: cellHeight,
-            timelineHeaderHeight: cellHeight,
-            timelineCanvasHeight: cellHeight,
-            timelineCanvasContentHeight: cellHeight / 2,
-            cellMinutes: cellMinutes,
-            cellWidth: cellWidth,
-            cellHeight: cellHeight,
-            cellContentHeight: cellHeight / 2,
+        const timelineChartData: TimelineChartData = {
+            ...data
+        };
+        const timelineChartOptions: TimelineChartOptions = {
+            ...options,
             headerCellRender: headerCellRender,
             timelinePointEventRender: machinePointEventRender,
             entityPointEventRender: entityPointEventRender,
             entityRangeEventRender: entityRangeEventRender,
             globalRangeEventRender: machineRangeEventRender,
-            canAutoFit: true,
-            hasHorizontalLine: true,
-            hasVerticalLine: true,
         };
-
-        _timelineChart.create(document.getElementById("tc-container"), data, options);
+        _timelineChart.create(container, timelineChartData, timelineChartOptions);
     }
 
     function render() {
