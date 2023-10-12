@@ -63,7 +63,7 @@ window.addEventListener("load", () => {
     };
     const data: TimelineChartData = {
         entities: (window as any).DEMO_ENTITIES,
-        timelinePointEvents: (window as any).TIMELINE_POINT_EVENTS,
+        sidePointEvents: (window as any).TIMELINE_POINT_EVENTS,
         globalRangeEvents: (window as any).GLOBAL_RANGE_EVENTS
     };
     

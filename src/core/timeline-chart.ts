@@ -25,8 +25,19 @@ interface TimelineChartOptions {
 }
 
 interface TimelineChartData {
+    /**
+     * 엔티티 목록. 메인 캔버스에 표시할 엔티티 목록.
+     */
     entities: Entity[];
-    timelinePointEvents: PointEvent[];
+
+    /**
+     * 사이드(타임라인)캔버스에 표시할 이벤트
+     */
+    sidePointEvents: PointEvent[];
+
+    /**
+     * 메인 캔버스에 표시할 글로벌 레인지 이벤트 목록.
+     */
     globalRangeEvents: RangeEvent[];
 }
 
@@ -386,7 +397,7 @@ const TimelineChart = function () {
     }
 
     function setData(data: TimelineChartData) {
-        const { entities, timelinePointEvents, globalRangeEvents } = data;
+        const { entities, sidePointEvents: timelinePointEvents, globalRangeEvents } = data;
 
         _entities = entities;
         _timelinePointEvents = timelinePointEvents;

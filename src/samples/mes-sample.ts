@@ -316,7 +316,7 @@ window.addEventListener("load", () => {
     const tc = TimelineChart();
     const data: TimelineChartData = {
         entities: barcodeEntities,
-        timelinePointEvents: machinePointEvents,
+        sidePointEvents: machinePointEvents,
         globalRangeEvents: machineRangeEvents
     }
     const options: TimelineChartOptions = {
