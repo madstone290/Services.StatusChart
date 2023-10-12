@@ -13,7 +13,7 @@ var rightLegendDatasource = [
     { icon: "./asset/image/warning.svg", label: "설비이상" },
     { icon: "./asset/image/error.svg", label: "품질이상" },
 ];
-var barcodeEntities: BarcodeEntity[] = [
+var barcodeEntities: MesEntity[] = [
     {
         id: 1,
         name: "H34A2900001",

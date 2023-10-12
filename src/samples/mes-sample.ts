@@ -37,9 +37,9 @@ window.addEventListener("load", () => {
         ["barcodeMissing", "바코드 누락"]
     ]);
 
-    const barcodeEntities = (window as any).barcodeEntities as BarcodeEntity[];
-    const machinePointEvents = (window as any).machinePointEvents as MachinePointEvent[];
-    const machineRangeEvents = (window as any).machineRangeEvents as MachineRangeEvent[];
+    const barcodeEntities = (window as any).barcodeEntities as MesEntity[];
+    const machinePointEvents = (window as any).machinePointEvents as MesSidePointEvents[];
+    const machineRangeEvents = (window as any).machineRangeEvents as MesGlobalRangeEvent[];
 
     function getTimeDiff(start: Date, end: Date) {
         const totalMilliseconds = end.getTime() - start.getTime();
@@ -166,7 +166,7 @@ window.addEventListener("load", () => {
         });
     }
 
-    const entityPointEventRender = function (event: BarcodePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const entityPointEventRender = function (event: MesEntityPointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
@@ -204,7 +204,7 @@ window.addEventListener("load", () => {
         addTooltip(imgElement, tooltipElement);
         addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
-    const entityRangeEventRender = function (event: BarcodeRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const entityRangeEventRender = function (event: MesEntityRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
         boxElement.style.width = "100%";
@@ -245,7 +245,7 @@ window.addEventListener("load", () => {
         addTooltip(boxElement, tooltipElement);
         addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
-    const machinePointEventRender = function (event: MachinePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const machinePointEventRender = function (event: MesSidePointEvents, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
@@ -274,7 +274,7 @@ window.addEventListener("load", () => {
         addTooltip(imgElement, tooltipElement);
         addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
-    const machineRangeEventRender = function (event: MachineRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const machineRangeEventRender = function (event: MesGlobalRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
         boxElement.style.width = "100%";
