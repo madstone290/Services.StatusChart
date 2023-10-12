@@ -1,2 +1,3 @@
-# Services.StatusChart
-자바스크립트로 구현한 Status Chart
+# Timeline Chart
+자바스크립트 타임라인 차트
+

@@ -1,21 +1,13 @@
-declare var dayjs: any;
-
 window.addEventListener("load", () => {
-
     /**
      * 이벤트 아이템 호버시 배경색 표시 여부
      */
     let _useHoverColor = false;
-
     const IMG_ERROR = "./asset/image/error.svg";
     const IMG_WARNING = "./asset/image/warning.svg";
-
     const CLS_TOOLTIP = "tr-tooltip";
-
     const CLS_ENTITY_RANGE_EVENT = "tr-entity-range-event";
     const CLS_GLOBAL_RANGE_EVENT = "tr-global-range-event";
-
-
     const COLOR_SELECTED_EVENT = "#333";
     const entityRangeEventColors = new Map([
         ["op10", "#92d050"],
@@ -36,12 +28,10 @@ window.addEventListener("load", () => {
         ["networkError", "네트워크 이상"],
         ["barcodeMissing", "바코드 누락"]
     ]);
-
     const barcodeEntities = window.barcodeEntities;
     const machinePointEvents = window.machinePointEvents;
     const machineRangeEvents = window.machineRangeEvents;
-
-    function getTimeDiff(start: Date, end: Date) {
+    function getTimeDiff(start, end) {
         const totalMilliseconds = end.getTime() - start.getTime();
         const totalSeconds = totalMilliseconds / 1000;
         const totalMinutes = totalSeconds / 60;
@@ -49,7 +39,6 @@ window.addEventListener("load", () => {
         const totalDays = totalHours / 24;
         const totalMonths = totalDays / 30;
         const totalYears = totalMonths / 12;
-
         const milliseconds = Math.floor(totalMilliseconds % 1000);
         const seconds = Math.floor(totalSeconds % 60);
         const minutes = Math.floor(totalMinutes % 60);
@@ -57,7 +46,6 @@ window.addEventListener("load", () => {
         const days = Math.floor(totalDays % 30);
         const months = Math.floor(totalMonths % 12);
         const years = Math.floor(totalYears);
-
         return {
             years: years,
             months: months,
@@ -66,7 +54,6 @@ window.addEventListener("load", () => {
             minutes: minutes,
             seconds: seconds,
             milliseconds: milliseconds,
-
             totalYears: totalYears,
             totalMonths: totalMonths,
             totalDays: totalDays,
@@ -76,8 +63,7 @@ window.addEventListener("load", () => {
             totalMilliseconds: totalMilliseconds,
         };
     }
-
-    function getTimeDiffString(timeDiff: any) {
+    function getTimeDiffString(timeDiff) {
         let timeDiffString = '';
         if (timeDiff.years > 0) {
             timeDiffString = timeDiffString + timeDiff.years + "년";
@@ -101,8 +87,7 @@ window.addEventListener("load", () => {
             timeDiffString = '0초';
         return timeDiffString;
     }
-
-    const headerCellRender = function (time: Date, containerElement: HTMLElement) {
+    const headerCellRender = function (time, containerElement) {
         const divElement = document.createElement("div");
         containerElement.appendChild(divElement);
         divElement.innerText = dayjs(time).format("HH:mm");
@@ -112,8 +97,7 @@ window.addEventListener("load", () => {
         divElement.style.height = "100%";
         divElement.style.width = "100%";
     };
-
-    const relocateTooltip = function (tooltipElement: HTMLElement, e: MouseEvent) {
+    const relocateTooltip = function (tooltipElement, e) {
         const tooltipOffset = 10;
         let top = e.clientY + tooltipOffset;
         let left = e.clientX + tooltipOffset;
@@ -126,13 +110,12 @@ window.addEventListener("load", () => {
         tooltipElement.style.top = top + "px";
         tooltipElement.style.left = left + "px";
     };
-
     /**
      * 엘리먼트에 툴팁을 추가한다.
      * @param element 툴팁을 추가할 엘리먼트
      * @param tooltipElement 툴팁 엘리먼트
      */
-    function addTooltip(element: HTMLElement, tooltipElement: HTMLElement) {
+    function addTooltip(element, tooltipElement) {
         element.addEventListener("mousemove", (e) => {
             if (e.target !== element) {
                 return;
@@ -153,8 +136,7 @@ window.addEventListener("load", () => {
             relocateTooltip(tooltipElement, e);
         });
     }
-
-    function addHoverColor(element: HTMLElement, hoverColor: string) {
+    function addHoverColor(element, hoverColor) {
         if (!_useHoverColor)
             return;
         const originalColor = element.style.backgroundColor;
@@ -165,116 +147,96 @@ window.addEventListener("load", () => {
             element.style.backgroundColor = originalColor;
         });
     }
-
-    const entityPointEventRender = function (event: BarcodePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const entityPointEventRender = function (event, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
         imgElement.src = IMG_ERROR;
         containerElement.appendChild(imgElement);
-
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
         canvasElement.appendChild(tooltipElement);
-
         const titleElement = document.createElement("div");
         titleElement.innerText = "품질 이상";
         titleElement.style.fontWeight = "bold";
         titleElement.style.textAlign = "center";
-        titleElement.style.color = "black"
+        titleElement.style.color = "black";
         tooltipElement.appendChild(titleElement);
-
         const barcode = barcodeEntities.find(x => x.id == event.entityId);
         const barcodeElement = document.createElement("div");
         barcodeElement.innerText = `Barcode: ${barcode.barcodeNumber}`;
         tooltipElement.appendChild(barcodeElement);
-
         const productElement = document.createElement("div");
         productElement.innerText = `ProductNo: ${barcode.productNumber}`;
         tooltipElement.appendChild(productElement);
-
         const descElement = document.createElement("div");
         descElement.innerText = event.description;
         tooltipElement.appendChild(descElement);
-
         const timeElement = document.createElement("div");
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
-
         addTooltip(imgElement, tooltipElement);
         addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
-    const entityRangeEventRender = function (event: BarcodeRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const entityRangeEventRender = function (event, canvasElement, containerElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
         boxElement.style.width = "100%";
         boxElement.style.height = "100%";
         boxElement.style.backgroundColor = entityRangeEventColors.get(event.type);
         boxElement.classList.add(CLS_ENTITY_RANGE_EVENT);
-
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
         canvasElement.appendChild(tooltipElement);
-
         const typeElement = document.createElement("div");
         typeElement.innerText = event.type;
         typeElement.style.fontWeight = "bold";
         typeElement.style.textAlign = "center";
-        typeElement.style.color = "black"
+        typeElement.style.color = "black";
         tooltipElement.appendChild(typeElement);
-
         const timeDifference = getTimeDiff(event.start, event.end);
         const timeDifferenceString = getTimeDiffString(timeDifference);
         const timeElement = document.createElement("div");
         timeElement.innerText = dayjs(event.start).format("HH:mm:ss") + " ~ " + dayjs(event.end).format("HH:mm:ss") + " (" + timeDifferenceString + ")";
         tooltipElement.appendChild(timeElement);
-
         const barcodeElement = document.createElement("div");
         barcodeElement.innerText = barcodeEntities.find(entity => entity.id == event.entityId).name;
         tooltipElement.appendChild(barcodeElement);
-
         const barcode = barcodeEntities.find(x => x.id == event.entityId);
         const productElement = document.createElement("div");
         productElement.innerText = `ProductNo: ${barcode.productNumber}`;
         tooltipElement.appendChild(productElement);
-
         const descElement = document.createElement("div");
         descElement.innerText = event.description;
         tooltipElement.appendChild(descElement);
-
         addTooltip(boxElement, tooltipElement);
         addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
-    const machinePointEventRender = function (event: MachinePointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const machinePointEventRender = function (event, canvasElement, containerElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
         imgElement.src = IMG_WARNING;
         containerElement.appendChild(imgElement);
-
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
         canvasElement.appendChild(tooltipElement);
-
         const titleElement = document.createElement("div");
         titleElement.innerText = "설비 이상";
         titleElement.style.fontWeight = "bold";
         titleElement.style.textAlign = "center";
-        titleElement.style.color = "black"
+        titleElement.style.color = "black";
         tooltipElement.appendChild(titleElement);
-
         const descElement = document.createElement("div");
         descElement.innerText = event.description;
         tooltipElement.appendChild(descElement);
-
         const timeElement = document.createElement("div");
         timeElement.innerText = dayjs(event.time).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
-
         addTooltip(imgElement, tooltipElement);
         addHoverColor(imgElement, COLOR_SELECTED_EVENT);
     };
-    const machineRangeEventRender = function (event: MachineRangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const machineRangeEventRender = function (event, canvasElement, containerElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
         boxElement.style.width = "100%";
@@ -282,40 +244,33 @@ window.addEventListener("load", () => {
         boxElement.style.backgroundColor = globalRangeEventColors.get(event.type);
         boxElement.style.opacity = "0.8";
         boxElement.classList.add(CLS_GLOBAL_RANGE_EVENT);
-
         const tooltipElement = document.createElement("div");
         tooltipElement.classList.add(CLS_TOOLTIP);
         canvasElement.appendChild(tooltipElement);
-
         const typeElement = document.createElement("div");
         typeElement.innerText = globalRangeEventNames.get(event.type);
         typeElement.style.fontWeight = "bold";
         typeElement.style.textAlign = "center";
-        typeElement.style.color = "black"
+        typeElement.style.color = "black";
         tooltipElement.appendChild(typeElement);
-
         const timeDifference = getTimeDiff(event.start, event.end);
         const timeDifferenceString = getTimeDiffString(timeDifference);
         const timeElement = document.createElement("div");
         timeElement.innerText = dayjs(event.start).format("HH:mm:ss") + " ~ " + dayjs(event.end).format("HH:mm:ss") + " (" + timeDifferenceString + ")";
         tooltipElement.appendChild(timeElement);
-
         addTooltip(boxElement, tooltipElement);
         addHoverColor(boxElement, COLOR_SELECTED_EVENT);
     };
-
     const cellMinutes = 30;
     const cellWidth = 50;
     const cellHeight = 50;
-
-    const tr = Traceability();
-    tr.setup();
-    tr.setData(window.leftLegendDatasource, window.rightLegendDatasource);
-    tr.drawLegend();
-
-    const sc = StatusChart();
-    sc.create(document.getElementById("sc-container"));
-    sc.setSettings({
+    const mes = MesChart();
+    mes.setup();
+    mes.setData(window.leftLegendDatasource, window.rightLegendDatasource);
+    mes.drawLegend();
+    const tc = TimelineChart();
+    tc.create(document.getElementById("sc-container"));
+    tc.setSettings({
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
         timelineTitleHeight: cellHeight,
@@ -335,9 +290,9 @@ window.addEventListener("load", () => {
         hasHorizontalLine: true,
         hasVerticalLine: true,
     });
-    sc.setData(barcodeEntities, machinePointEvents, machineRangeEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
-    sc.initLayout();
-    sc.drawTimelineCanvas();
-    sc.drawEntityList();
-    sc.drawMainCanvas();
+    tc.setData(barcodeEntities, machinePointEvents, machineRangeEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
+    tc.initLayout();
+    tc.drawTimelineCanvas();
+    tc.drawEntityList();
+    tc.drawMainCanvas();
 });

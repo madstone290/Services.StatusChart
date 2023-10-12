@@ -6,7 +6,10 @@
         "removeComments": false,
         "sourceMap": false,
         "target": "ES2017",
-        "outDir": "js",
-        "baseUrl": "."
+        "outDir": "dist",
+        "baseUrl": "./src",
     },
+    "include": [
+        "src/**/*"
+    ]
 }
