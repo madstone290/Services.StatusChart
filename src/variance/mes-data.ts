@@ -269,6 +269,10 @@ var barcodeEntities: MesEntity[] = [
 
 var machinePointEvents = [
     {
+        description: "X모터 이상",
+        time: new Date(Date.parse("2020-01-01T00:00:00")),
+    },
+    {
         id: 1,
         description: "서보모터 이상",
         time: new Date(Date.parse("2020-01-01T01:30:00")),
