@@ -1,4 +1,5 @@
 interface BarcodeEntity extends Entity {
+    id?: any;
     barcodeNumber?: string;
     productNumber?: string;
     pointEvents?: BarcodePointEvent[];
