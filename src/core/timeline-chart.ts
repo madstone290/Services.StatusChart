@@ -1,5 +1,8 @@
 
 interface TimelineChartOptions {
+    mainTitle?: string;
+    subTitle?: string;
+    headerTitle?: string;
     chartStartTime: Date;
     chartEndTime: Date;
     timelineTitleHeight?: number;
@@ -19,6 +22,12 @@ interface TimelineChartOptions {
     hasHorizontalLine?: boolean;
     hasVerticalLine?: boolean;
     canAutoFit?: boolean;
+}
+
+interface TimelineChartData {
+    entities: Entity[];
+    timelinePointEvents: PointEvent[];
+    globalRangeEvents: RangeEvent[];
 }
 
 const TimelineChart = function () {
@@ -271,7 +280,7 @@ const TimelineChart = function () {
      * 차트 엘리먼트를 생성한다.
      * @param container 
      */
-    function create(container: HTMLElement) {
+    function create(container: HTMLElement, data: TimelineChartData, options: TimelineChartOptions) {
         const elementString = `
         <div id="sc-root">
             <div id="sc-left-panel">
@@ -302,12 +311,33 @@ const TimelineChart = function () {
         const element = doc.body.firstChild;
         container.appendChild(element);
 
+        _mainTitleElement = document.getElementById(ID_MAIN_TITLE) as HTMLElement;
+        _subTitleElement = document.getElementById(ID_SUBTITLE) as HTMLElement;
+        _timelineTitleElement = document.getElementById(ID_TIMELINE_TITLE) as HTMLElement;
+
+        _entityListBoxElement = document.getElementById(ID_ENTITY_LIST_BOX) as HTMLElement;
+
+        _timelineHeaderBoxElement = document.getElementById(ID_TIMELINE_HEADER_BOX) as HTMLElement;
+        _timelineHeaderElement = document.getElementById(ID_TIMELINE_HEADER) as HTMLElement;
+
+        _timelineCanvasBoxElement = document.getElementById(ID_TIMELINE_CANVAS_BOX) as HTMLElement;
+        _timelineCanvasElement = document.getElementById(ID_TIMELINE_CANVAS) as HTMLElement;
+
+        _mainCanvasBoxElement = document.getElementById(ID_MAIN_CANVAS_BOX) as HTMLElement;
+        _mainCanvasElement = document.getElementById(ID_MAIN_CANVAS) as HTMLElement;
+
         // 컨테이너 크기에 맞춰 차트 크기를 조정한다.
         cssService.setChartWidth(container.clientWidth);
         cssService.setChartHeight(container.clientHeight);
+
+        setData(data);
+        setOptions(options);
     }
 
-    function setSettings({
+    function setOptions({
+        mainTitle,
+        subTitle,
+        headerTitle,
         chartStartTime,
         chartEndTime,
         timelineTitleHeight = 40,
@@ -328,6 +358,10 @@ const TimelineChart = function () {
         hasVerticalLine = true,
         canAutoFit = true
     }: TimelineChartOptions) {
+        _mainTitleElement.innerText = mainTitle;
+        _subTitleElement.innerText = subTitle;
+        _timelineTitleElement.innerText = headerTitle;
+
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
         _cellMinutes = cellMinutes;
@@ -349,36 +383,24 @@ const TimelineChart = function () {
         _entityRangeEventRender = entityRangeEventRender;
         _entityPointEventRender = entityPointEventRender;
         _globalRangeEventRender = globalRangeEventRender;
-
-
-        _mainTitleElement = document.getElementById(ID_MAIN_TITLE) as HTMLElement;
-        _subTitleElement = document.getElementById(ID_SUBTITLE) as HTMLElement;
-        _timelineTitleElement = document.getElementById(ID_TIMELINE_TITLE) as HTMLElement;
-
-        _entityListBoxElement = document.getElementById(ID_ENTITY_LIST_BOX) as HTMLElement;
-
-        _timelineHeaderBoxElement = document.getElementById(ID_TIMELINE_HEADER_BOX) as HTMLElement;
-        _timelineHeaderElement = document.getElementById(ID_TIMELINE_HEADER) as HTMLElement;
-
-        _timelineCanvasBoxElement = document.getElementById(ID_TIMELINE_CANVAS_BOX) as HTMLElement;
-        _timelineCanvasElement = document.getElementById(ID_TIMELINE_CANVAS) as HTMLElement;
-
-        _mainCanvasBoxElement = document.getElementById(ID_MAIN_CANVAS_BOX) as HTMLElement;
-        _mainCanvasElement = document.getElementById(ID_MAIN_CANVAS) as HTMLElement;
     }
 
-    function setData(entities: Entity[],
-        timelinePointEvents: PointEvent[],
-        globalRangeEvents: RangeEvent[],
-        mainTitle: string, subtitle: string, timelineHeader: string) {
+    function setData(data: TimelineChartData) {
+        const { entities, timelinePointEvents, globalRangeEvents } = data;
 
         _entities = entities;
         _timelinePointEvents = timelinePointEvents;
         _globalRangeEvents = globalRangeEvents;
+    }
 
-        _mainTitleElement.innerText = mainTitle;
-        _subTitleElement.innerText = subtitle;
-        _timelineTitleElement.innerText = timelineHeader;
+    /**
+     * 차트를 그린다.
+     */
+    function render() {
+        initLayout();
+        drawTimelineCanvas();
+        drawEntityList();
+        drawMainCanvas();
     }
 
     /**
@@ -740,24 +762,8 @@ const TimelineChart = function () {
     }
 
     return {
-        cssService,
-
-        // public
         create,
-        setSettings,
-        setData,
-        initLayout,
-        drawTimelineCanvas,
-        drawEntityList,
-        drawMainCanvas,
-
-        // custom render
-        drawLocalPointEvent,
-        drawGlobalEvent,
-
-        resizeCellWidth: resizeCanvas,
-        sizeUpCellWidth,
-        sizeDownCellWidth
+        render,
     }
 };
 

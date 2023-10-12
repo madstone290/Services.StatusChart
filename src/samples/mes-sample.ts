@@ -314,8 +314,15 @@ window.addEventListener("load", () => {
     mes.drawLegend();
 
     const tc = TimelineChart();
-    tc.create(document.getElementById("sc-container"));
-    tc.setSettings({
+    const data: TimelineChartData = {
+        entities: barcodeEntities,
+        timelinePointEvents: machinePointEvents,
+        globalRangeEvents: machineRangeEvents
+    }
+    const options: TimelineChartOptions = {
+        mainTitle: "XXX H/L LH Line 03",
+        subTitle: "Serial No.",
+        headerTitle: "Time Line",
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
         timelineTitleHeight: cellHeight,
@@ -334,10 +341,8 @@ window.addEventListener("load", () => {
         canAutoFit: true,
         hasHorizontalLine: true,
         hasVerticalLine: true,
-    });
-    tc.setData(barcodeEntities, machinePointEvents, machineRangeEvents, "XXX H/L LH Line 03", "Serial No.", "Time Line");
-    tc.initLayout();
-    tc.drawTimelineCanvas();
-    tc.drawEntityList();
-    tc.drawMainCanvas();
+    };
+
+    tc.create(document.getElementById("sc-container"), data, options);
+    tc.render();
 });

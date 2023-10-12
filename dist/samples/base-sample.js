@@ -31,10 +31,12 @@ window.addEventListener("load", () => {
     const cellMinutes = 60;
     const cellWidth = 200;
     const cellHeight = 40;
-    const container = document.getElementById("sc-container");
     const tc = TimelineChart();
-    tc.create(container);
-    tc.setSettings({
+    const container = document.getElementById("sc-container");
+    const options = {
+        mainTitle: "Main title",
+        subTitle: "Sub title",
+        headerTitle: "Timeline title",
         chartStartTime: new Date(Date.parse("2020-01-01T00:00:00")),
         chartEndTime: new Date(Date.parse("2020-01-02T00:00:00")),
         cellMinutes: cellMinutes,
@@ -47,10 +49,12 @@ window.addEventListener("load", () => {
         canAutoFit: true,
         hasHorizontalLine: true,
         hasVerticalLine: true,
-    });
-    tc.setData(window.DEMO_ENTITIES, window.TIMELINE_POINT_EVENTS, window.GLOBAL_RANGE_EVENTS, "Main title", "Sub title", "Timeline title");
-    tc.initLayout();
-    tc.drawTimelineCanvas();
-    tc.drawEntityList();
-    tc.drawMainCanvas();
+    };
+    const data = {
+        entities: window.DEMO_ENTITIES,
+        timelinePointEvents: window.TIMELINE_POINT_EVENTS,
+        globalRangeEvents: window.GLOBAL_RANGE_EVENTS
+    };
+    tc.create(container, data, options);
+    tc.render();
 });
