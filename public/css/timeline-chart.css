@@ -126,11 +126,15 @@ img {
 }
 
 .sc-timeline-header-item {
-    border-width: 0px 1px 1px 0px;
+    border-width: 0px 0px 1px 1px;
     width: var(--sc-cell-width);
     border-style: solid;
     border-color: var(--sc-line-color);
     flex-direction: row;
+}
+
+.sc-timeline-header-item:first-child{
+    border-left: none;
 }
 
 #sc-timeline-canvas-box {

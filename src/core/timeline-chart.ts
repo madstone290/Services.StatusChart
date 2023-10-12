@@ -575,11 +575,11 @@ const TimelineChart = function () {
         const cellWidth = cssService.getCellWidth();
         const lineCount = Math.floor(canvasWidth / cellWidth);
 
-        for (let i = 0; i < lineCount; i++) {
+        for (let i = 0; i < lineCount - 1; i++) {
             const line = document.createElement("div") as HTMLElement;
             line.classList.add(CLS_VLINE);
 
-            line.style.left = `${cellWidth * (i + 1) - 1}px`;
+            line.style.left = `${cellWidth * (i + 1)}px`;
             line.style.height = `${_timelineCanvasElement.scrollHeight}px`;
             _timelineCanvasElement.appendChild(line);
         }
@@ -630,11 +630,12 @@ const TimelineChart = function () {
         const cellWidth = cssService.getCellWidth();
         const lineCount = Math.floor(canvasWidth / cellWidth);
 
-        for (let i = 0; i < lineCount; i++) {
+        // 
+        for (let i = 0; i < lineCount - 1; i++) {
             const line = document.createElement("div") as HTMLElement;
             line.classList.add(CLS_VLINE);
 
-            line.style.left = `${cellWidth * (i + 1) - 1}px`;
+            line.style.left = `${cellWidth * (i + 1)}px`;
             line.style.height = `${_mainCanvasElement.scrollHeight}px`;
             _mainCanvasElement.appendChild(line);
         }
