@@ -86,14 +86,29 @@ const TimelineChart = function () {
     /* Settings */
 
     /**
-     * 차트의 시작 시간
+     * 차트의 시작 시간. 렌더링 시작시간과 다를 수 있다.
      */
     let _chartStartTime: Date;
 
     /**
-     * 차트의 종료 시간
+     * 차트의 종료 시간. 렌더링 시작시간과 다를 수 있다.
      */
     let _chartEndTime: Date;
+
+    /**
+     * 차트 렌더링 시작 시간
+     */
+    let _chartRenderStartTime: Date;
+
+    /**
+     * 차트 렌더링 종료 시간
+     */
+    let _chartRenderEndTime: Date;
+
+    /**
+     * 차트 좌우 공백을 채울 셀 개수. 좌/우측에 각각 적용된다.
+     */
+    let _paddingCellCount: number = 2;
 
     /**
      * 하나의 셀이 표현하는 시간. 단위는 분
@@ -373,9 +388,11 @@ const TimelineChart = function () {
         _subTitleElement.innerText = subTitle;
         _timelineTitleElement.innerText = headerTitle;
 
+        _cellMinutes = cellMinutes;
         _chartStartTime = chartStartTime;
         _chartEndTime = chartEndTime;
-        _cellMinutes = cellMinutes;
+        _chartRenderStartTime = new Date(chartStartTime.getTime() - dateTimeService.toTime(_cellMinutes * _paddingCellCount));
+        _chartRenderEndTime = new Date(chartEndTime.getTime() + dateTimeService.toTime(_cellMinutes * _paddingCellCount));
         _hasHorizontalLine = hasHorizontalLine;
         _hasVertialLine = hasVerticalLine;
         _canAutoFit = canAutoFit;
@@ -418,9 +435,10 @@ const TimelineChart = function () {
      * 설정값에 맞춰 레이아웃을 초기화한다.
      */
     function initLayout() {
-        let time = _chartStartTime;
-        let end = _chartEndTime;
+        let time = _chartRenderStartTime;
+        let end = _chartRenderEndTime;
         _headerCellCount = 0;
+
         while (time < end) {
 
             if (_headerCellRender != null) {
@@ -440,7 +458,7 @@ const TimelineChart = function () {
             _headerCellCount++;
         }
 
-        resetCanvas();
+        resetCanvasSize();
 
         _mainCanvasBoxElement.addEventListener("scroll", (e) => {
             _timelineHeaderBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
@@ -511,7 +529,7 @@ const TimelineChart = function () {
     /**
      * 캔버스 크기를 재조정한다.
      */
-    function resetCanvas() {
+    function resetCanvasSize() {
         /**
          * main canvas에만 스크롤을 표시한다.
          * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
@@ -589,7 +607,7 @@ const TimelineChart = function () {
         const containerElement = document.createElement("div");
         _timelineCanvasElement.appendChild(containerElement);
 
-        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartRenderStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const top = (cssService.getTimelineCanvasHeight() - cssService.getTimelineCanvasContentHeight()) / 2 - 1;
         const width = cssService.getTimelineCanvasContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
@@ -669,7 +687,7 @@ const TimelineChart = function () {
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
         _mainCanvasElement.appendChild(containerElement);
 
-        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartRenderStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
         const top = (cssService.getCellHeight() * rowIndex)
             + (cssService.getCellHeight() - cssService.getCellContentHeight()) / 2
@@ -703,7 +721,7 @@ const TimelineChart = function () {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
 
-        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        const center = dateTimeService.toMinutes(event.time.valueOf() - _chartRenderStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const top = (cssService.getCellHeight() * rowIndex) + ((cssService.getCellHeight() - cssService.getCellContentHeight()) / 2) - 1;
         const width = cssService.getCellContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
@@ -717,8 +735,8 @@ const TimelineChart = function () {
     function drawGlobalEvent(event: RangeEvent, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
-
-        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
+        console.log("chartRenderStartTime", _chartRenderStartTime);
+        const left = dateTimeService.toMinutes(event.start.valueOf() - _chartRenderStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
         containerElement.style.left = `${left}px`;
         containerElement.style.top = "0px";
@@ -753,7 +771,7 @@ const TimelineChart = function () {
         }
 
         cssService.setCellWidth(cellWidth);
-        resetCanvas();
+        resetCanvasSize();
         drawTimelineCanvas();
         drawMainCanvas();
 
