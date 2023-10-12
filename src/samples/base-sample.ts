@@ -43,7 +43,7 @@ window.addEventListener("load", () => {
 
     const tc = TimelineChart();
     
-    const container = document.getElementById("sc-container");
+    const container = document.getElementById("tc-container");
     const options: TimelineChartOptions = {
         mainTitle: "Main title",
         subTitle: "Sub title",

@@ -24,9 +24,22 @@ const MesLegend = function () {
     let _leftLegendElement: HTMLElement;
     let _rightLegendElement: HTMLElement;
 
-    function create(data: MesLegendData) {
+
+
+    function create(container: HTMLElement, data: MesLegendData) {
+        const elementString = `
+        <div id="tr-legend">
+            <div id="tr-legend-left"></div>
+            <div id="tr-legend-right"></div>
+        </div>
+        `;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(elementString, 'text/html');
+        const element = doc.body.firstChild;
+        container.appendChild(element);
+
         _data = data;
-        
+
         _leftLegendElement = document.getElementById(ID_LEFT_LEGEND);
         _rightLegendElement = document.getElementById(ID_RIGHT_LEGEND);
     }
