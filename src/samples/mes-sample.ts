@@ -308,10 +308,13 @@ window.addEventListener("load", () => {
     const cellWidth = 50;
     const cellHeight = 50;
 
-    const mes = MesChart();
-    mes.setup();
-    mes.setData(window.leftLegendDatasource, window.rightLegendDatasource);
-    mes.drawLegend();
+    const mesLegend = MesLegend();
+    const mesLegendData: MesLegendData = {
+        leftLegendItems: window.leftLegendDatasource,
+        rightLegendItems: window.rightLegendDatasource
+    };
+    mesLegend.create(mesLegendData);
+    mesLegend.render();
 
     const tc = TimelineChart();
     const data: TimelineChartData = {
