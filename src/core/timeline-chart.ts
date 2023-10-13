@@ -503,7 +503,6 @@ const TimelineChart = function () {
         });
 
         _mainCanvasElement.addEventListener("wheel", (e) => {
-            console.log(e);
             if (e.ctrlKey) {
                 let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
                 // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
