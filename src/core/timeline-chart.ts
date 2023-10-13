@@ -232,7 +232,7 @@ const TimelineChart = function () {
     let _globalRangeEvents: RangeEvent[];
 
     /* Html Elements */
-
+    let _rootElement: HTMLElement;
     let _mainTitleElement: HTMLElement;
     let _subTitleElement: HTMLElement;
     let _timelineTitleElement: HTMLElement;
@@ -278,11 +278,11 @@ const TimelineChart = function () {
         const VAR_TIMELINE_CANVAS_CONTENT_HEIGHT = "--tc-timeline-canvas-content-height";
 
         function getVariable(name: string) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name);
+            return getComputedStyle(_rootElement).getPropertyValue(name);
         }
 
         function setVariable(name: string, value: string) {
-            document.documentElement.style.setProperty(name, value);
+            _rootElement.style.setProperty(name, value);
         }
 
         function setChartWidth(width: number) {
@@ -355,6 +355,7 @@ const TimelineChart = function () {
         const element = doc.body.firstChild;
         container.appendChild(element);
 
+        _rootElement = container.getElementsByClassName(CLS_ROOT)[0] as HTMLElement;
         _mainTitleElement = container.getElementsByClassName(CLS_MAIN_TITLE)[0] as HTMLElement;
         _subTitleElement = container.getElementsByClassName(CLS_SUBTITLE)[0] as HTMLElement;
         _timelineTitleElement = container.getElementsByClassName(CLS_TIMELINE_TITLE)[0] as HTMLElement;
@@ -774,7 +775,6 @@ const TimelineChart = function () {
      * @param pivotPointX 스크롤 기준 위치
      */
     function resizeCanvas(cellWidth: number, pivotPointX?: number) {
-        console.log(`resizeCanvas: ${cellWidth}`);
         if (cellWidth < _minCellWidth) {
             return;
         }
