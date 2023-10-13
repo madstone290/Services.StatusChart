@@ -1,13 +1,15 @@
 :root {
-    --tr-legend-height: 40px;
 }
 
 #tr-legend {
     box-sizing: border-box;
-    height: var(--tr-legend-height);
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     padding: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+
 }
 
 #tr-legend-left {
