@@ -23,7 +23,7 @@ window.addEventListener("load", () => {
         globalRangeEvents: (window as any).machineRangeEvents as MesGlobalRangeEvent[]
     };
     const cellMinutes = 30;
-    const cellWidth = 10;
+    const cellWidth = 30;
     const cellHeight = 20;
     const mesChartOptions: MesChartOptions = {
         useHoverColor: true,
