@@ -1,10 +1,9 @@
 declare var dayjs: any;
 
 window.addEventListener("load", () => {
-    // const legendContainerIds = ["legend-container1", "legend-container2", "legend-container3", "legend-container4"];
+    const legendContainerIds = ["legend-container1", "legend-container2", "legend-container3", "legend-container4"];
     // const tcContainerIds = ["tc-container1", "tc-container2", "tc-container3", "tc-container4"]
-
-    const legendContainerIds = ["legend-container1"];
+    // const legendContainerIds = ["legend-container1"];
     const tcContainerIds = ["tc-container1"];
     const mesLegendData: MesLegendData = {
         leftLegendItems: window.leftLegendDatasource,

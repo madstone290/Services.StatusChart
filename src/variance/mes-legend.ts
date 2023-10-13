@@ -16,8 +16,9 @@ const MesLegend = function () {
     const CLS_LEGEND_ITEM_COLOR = "tr-legend-item-color";
     const CLS_LEGEND_ITEM_LABEL = "tr-legend-item-label";
 
-    const ID_LEFT_LEGEND = "tr-legend-left";
-    const ID_RIGHT_LEGEND = "tr-legend-right";
+    const CLS_LEGEND = "mes-legend";
+    const CLS_LEFT_LEGEND = "mes-legend-left";
+    const CLS_RIGHT_LEGEND = "mes-legend-right";
 
     let _data: MesLegendData;
 
@@ -28,9 +29,9 @@ const MesLegend = function () {
 
     function create(container: HTMLElement, data: MesLegendData) {
         const elementString = `
-        <div id="tr-legend">
-            <div id="tr-legend-left"></div>
-            <div id="tr-legend-right"></div>
+        <div class="${CLS_LEGEND}">
+            <div class="${CLS_LEFT_LEGEND}"></div>
+            <div class="${CLS_RIGHT_LEGEND}"></div>
         </div>
         `;
         const parser = new DOMParser();
@@ -40,8 +41,8 @@ const MesLegend = function () {
 
         _data = data;
 
-        _leftLegendElement = document.getElementById(ID_LEFT_LEGEND);
-        _rightLegendElement = document.getElementById(ID_RIGHT_LEGEND);
+        _leftLegendElement = container.getElementsByClassName(CLS_LEFT_LEGEND)[0] as HTMLElement;
+        _rightLegendElement = container.getElementsByClassName(CLS_RIGHT_LEGEND)[0] as HTMLElement;
     }
 
     function render() {

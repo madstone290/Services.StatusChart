@@ -1,7 +1,7 @@
 :root {
 }
 
-#tr-legend {
+.mes-legend {
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -12,13 +12,13 @@
 
 }
 
-#tr-legend-left {
+.mes-legend-left {
     display: flex;
     flex-direction: row;
     padding: 4px;
 }
 
-#tr-legend-right {
+.mes-legend-right {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
