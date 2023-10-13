@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <title>Timeline Chart</title>
+    <meta charset="utf-8">
+
+<body>
+    <script src="../dist/core/timeline-chart.js"></script>
+    <script src="../dist/variance/mes-data.js"></script>
+    <script src="../dist/variance/mes-legend.js"></script>
+    <script src="../dist/variance/mes-timeline-chart.js"></script>
+    <script src="../dist/samples/multi-mes-sample.js"></script>
+    <script src="js/lib/dayjs.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/timeline-chart.css">
+    <link rel="stylesheet" type="text/css" href="css/mes-timeline-chart.css">
+
+    <style>
+        .tc-flex {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .tc-row-flex {
+            width: 100%;
+            height: 500px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .tc-root-container {
+            width: 50%;
+            height: 100%;
+            border: 1px solid black;
+            margin: 1px;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+
+    <div class="tc-flex">
+        <div class="tc-row-flex">
+            <div class="tc-root-container">
+                <div id="legend-container1"></div>
+                <div id="tc-container1" style="flex: 1;"></div>
+            </div>
+            <div class="tc-root-container">
+                <div id="legend-container2"></div>
+                <div id="tc-container2" style="flex: 1;"></div>
+            </div>
+        </div>
+        <div class="tc-row-flex">
+            <div class="tc-root-container">
+                <div id="legend-container3"></div>
+                <div id="tc-container3" style="flex: 1;"></div>
+            </div>
+            <div class="tc-root-container">
+                <div id="legend-container4"></div>
+                <div id="tc-container4" style="flex: 1;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
