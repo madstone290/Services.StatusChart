@@ -42,25 +42,57 @@ interface TimelineChartData {
 }
 
 const TimelineChart = function () {
-    const ID_TIMELINE_TITLE = "sc-timeline-title";
-    const ID_TIMELINE_HEADER_BOX = "sc-timeline-header-box";
-    const ID_TIMELINE_HEADER = "sc-timeline-header";
-    const ID_TIMELINE_CANVAS_BOX = "sc-timeline-canvas-box";
-    const ID_TIMELINE_CANVAS = "sc-timeline-canvas";
-    const CLS_TIMELINE_HEADER_ITEM = "sc-timeline-header-item";
+    const CLS_ROOT = "tc-root";
+    const CLS_TIMELINE_TITLE = "tc-timeline-title";
+    const CLS_TIMELINE_HEADER_BOX = "tc-timeline-header-box";
+    const CLS_TIMELINE_HEADER = "tc-timeline-header";
+    const CLS_TIMELINE_CANVAS_BOX = "tc-timeline-canvas-box";
+    const CLS_TIMELINE_CANVAS = "tc-timeline-canvas";
+    const CLS_TIMELINE_HEADER_ITEM = "tc-timeline-header-item";
+    const CLS_TIMELINE = "tc-timeline";
+    const CLS_LEFT_PANEL = "tc-left-panel";
+    const CLS_MAIN_PANEL = "tc-main-panel";
+    const CLS_MAIN_TITLE = "tc-maintitle";
+    const CLS_SUBTITLE = "tc-subtitle";
+    const CLS_ENTITY_LIST_BOX = "tc-entity-list-box";
 
-    const ID_MAIN_TITLE = "sc-maintitle";
-    const ID_SUBTITLE = "sc-subtitle";
-    const ID_ENTITY_LIST_BOX = "sc-entity-list-box";
+    const CLS_MAIN_CANVAS_BOX = "tc-main-canvas-box";
+    const CLS_MAIN_CANVAS = "tc-main-canvas";
 
-    const ID_MAIN_CANVAS_BOX = "sc-main-canvas-box";
-    const ID_MAIN_CANVAS = "sc-main-canvas";
+    const CLS_ENTITY_LIST_ITEM = "tc-entity-list-item";
+    const CLS_TIMELINE_CANVAS_ITEM = "tc-timeline-canvas-item";
+    const CLS_MAIN_CANVAS_ITEM = "tc-main-canvas-item";
+    const CLS_HLINE = "tc-hline";
+    const CLS_VLINE = "tc-vline";
 
-    const CLS_ENTITY_LIST_ITEM = "sc-entity-list-item";
-    const CLS_TIMELINE_CANVAS_ITEM = "sc-timeline-canvas-item";
-    const CLS_MAIN_CANVAS_ITEM = "sc-main-canvas-item";
-    const CLS_HLINE = "sc-hline";
-    const CLS_VLINE = "sc-vline";
+    /**
+     * 타임라인차트 엘리먼트
+     */
+    const TC_ELEMENT_HTML = `
+        <div class="${CLS_ROOT}">
+            <div class="${CLS_LEFT_PANEL}">
+                <div class="${CLS_MAIN_TITLE}"></div>
+                <div class="${CLS_SUBTITLE}"></div>
+                <div class="${CLS_ENTITY_LIST_BOX}"></div>
+            </div>
+            <div class="${CLS_MAIN_PANEL}">
+                <div class="${CLS_TIMELINE}">
+                    <div class="${CLS_TIMELINE_TITLE}"></div>
+                    <div class="${CLS_TIMELINE_HEADER_BOX}">
+                        <div class="${CLS_TIMELINE_HEADER}"></div>
+                    </div>
+                    <div class="${CLS_TIMELINE_CANVAS_BOX}">
+                        <div class="${CLS_TIMELINE_CANVAS}"></div>
+                    </div>
+
+                </div>
+                <div class="${CLS_MAIN_CANVAS_BOX}">
+                    <div class="${CLS_MAIN_CANVAS}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
 
     const Z_INDEX_ENTITY_POINT_EVENT = 3;
     const Z_INDEX_ENTITY_RANGE_EVENT = 2;
@@ -221,18 +253,18 @@ const TimelineChart = function () {
     }();
 
     const cssService = function () {
-        const VAR_CELL_WIDTH = "--sc-cell-width";
-        const VAR_CELL_HEIGHT = "--sc-cell-height";
-        const VAR_CELL_CONTENT_HEIGHT = "--sc-cell-content-height";
-        const VAR_SCROLL_WIDTH = "--sc-scroll-width";
+        const VAR_CELL_WIDTH = "--tc-cell-width";
+        const VAR_CELL_HEIGHT = "--tc-cell-height";
+        const VAR_CELL_CONTENT_HEIGHT = "--tc-cell-content-height";
+        const VAR_SCROLL_WIDTH = "--tc-scroll-width";
 
-        const VAR_CHART_HEIGHT = "--sc-height";
-        const VAR_CHART_WIDTH = "--sc-width";
+        const VAR_CHART_HEIGHT = "--tc-height";
+        const VAR_CHART_WIDTH = "--tc-width";
 
-        const VAR_TIMELINE_TITLE_HEIGHT = "--sc-timeline-title-height";
-        const VAR_TIMELINE_HEADER_HEIGHT = "--sc-timeline-header-height";
-        const VAR_TIMELINE_CANVAS_HEIGHT = "--sc-timeline-canvas-height";
-        const VAR_TIMELINE_CANVAS_CONTENT_HEIGHT = "--sc-timeline-canvas-content-height";
+        const VAR_TIMELINE_TITLE_HEIGHT = "--tc-timeline-title-height";
+        const VAR_TIMELINE_HEADER_HEIGHT = "--tc-timeline-header-height";
+        const VAR_TIMELINE_CANVAS_HEIGHT = "--tc-timeline-canvas-height";
+        const VAR_TIMELINE_CANVAS_CONTENT_HEIGHT = "--tc-timeline-canvas-content-height";
 
         function getVariable(name: string) {
             return getComputedStyle(document.documentElement).getPropertyValue(name);
@@ -307,50 +339,21 @@ const TimelineChart = function () {
      * @param container 
      */
     function create(container: HTMLElement, data: TimelineChartData, options: TimelineChartOptions) {
-        const elementString = `
-        <div id="sc-root">
-            <div id="sc-left-panel">
-                <div id="sc-maintitle"></div>
-                <div id="sc-subtitle"></div>
-                <div id="sc-entity-list-box"></div>
-            </div>
-            <div id="sc-main-panel">
-                <div id="sc-timeline">
-                    <div id="sc-timeline-title"></div>
-                    <div id="sc-timeline-header-box">
-                        <div id="sc-timeline-header"></div>
-                    </div>
-                    <div id="sc-timeline-canvas-box">
-                        <div id="sc-timeline-canvas"></div>
-                    </div>
-
-                </div>
-                <div id="sc-main-canvas-box">
-                    <div id="sc-main-canvas">
-                    </div>
-                </div>
-            </div>
-        </div>
-        `;
         const parser = new DOMParser();
-        const doc = parser.parseFromString(elementString, 'text/html');
+        const doc = parser.parseFromString(TC_ELEMENT_HTML, 'text/html');
         const element = doc.body.firstChild;
         container.appendChild(element);
 
-        _mainTitleElement = document.getElementById(ID_MAIN_TITLE) as HTMLElement;
-        _subTitleElement = document.getElementById(ID_SUBTITLE) as HTMLElement;
-        _timelineTitleElement = document.getElementById(ID_TIMELINE_TITLE) as HTMLElement;
-
-        _entityListBoxElement = document.getElementById(ID_ENTITY_LIST_BOX) as HTMLElement;
-
-        _timelineHeaderBoxElement = document.getElementById(ID_TIMELINE_HEADER_BOX) as HTMLElement;
-        _timelineHeaderElement = document.getElementById(ID_TIMELINE_HEADER) as HTMLElement;
-
-        _timelineCanvasBoxElement = document.getElementById(ID_TIMELINE_CANVAS_BOX) as HTMLElement;
-        _timelineCanvasElement = document.getElementById(ID_TIMELINE_CANVAS) as HTMLElement;
-
-        _mainCanvasBoxElement = document.getElementById(ID_MAIN_CANVAS_BOX) as HTMLElement;
-        _mainCanvasElement = document.getElementById(ID_MAIN_CANVAS) as HTMLElement;
+        _mainTitleElement = container.getElementsByClassName(CLS_MAIN_TITLE)[0] as HTMLElement;
+        _subTitleElement = container.getElementsByClassName(CLS_SUBTITLE)[0] as HTMLElement;
+        _timelineTitleElement = container.getElementsByClassName(CLS_TIMELINE_TITLE)[0] as HTMLElement;
+        _entityListBoxElement = container.getElementsByClassName(CLS_ENTITY_LIST_BOX)[0] as HTMLElement;
+        _timelineHeaderBoxElement = container.getElementsByClassName(CLS_TIMELINE_HEADER_BOX)[0] as HTMLElement;
+        _timelineHeaderElement = container.getElementsByClassName(CLS_TIMELINE_HEADER)[0] as HTMLElement;
+        _timelineCanvasBoxElement = container.getElementsByClassName(CLS_TIMELINE_CANVAS_BOX)[0] as HTMLElement;
+        _timelineCanvasElement = container.getElementsByClassName(CLS_TIMELINE_CANVAS)[0] as HTMLElement;
+        _mainCanvasBoxElement = container.getElementsByClassName(CLS_MAIN_CANVAS_BOX)[0] as HTMLElement;
+        _mainCanvasElement = container.getElementsByClassName(CLS_MAIN_CANVAS)[0] as HTMLElement;
 
         // 컨테이너 크기에 맞춰 차트 크기를 조정한다.
         cssService.setChartWidth(container.clientWidth);
@@ -696,7 +699,7 @@ const TimelineChart = function () {
         containerElement.style.left = `${left}px`;
         containerElement.style.top = `${top}px`;
         containerElement.style.width = `${width}px`;
-        containerElement.style.zIndex = `${Z_INDEX_ENTITY_RANGE_EVENT}`;
+        containerElement.style.zIndex = `${Z_INDEX_ENTITY_RANGE_EVENT} `;
         containerElement.addEventListener("click", (e) => {
             console.log(e);
         });
@@ -726,7 +729,7 @@ const TimelineChart = function () {
         const width = cssService.getCellContentHeight();
         containerElement.style.left = `${center - (width / 2)}px`;
         containerElement.style.top = `${top}px`;
-        containerElement.style.zIndex = `${Z_INDEX_ENTITY_POINT_EVENT}`;
+        containerElement.style.zIndex = `${Z_INDEX_ENTITY_POINT_EVENT} `;
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
@@ -742,7 +745,7 @@ const TimelineChart = function () {
         containerElement.style.top = "0px";
         containerElement.style.width = `${width}px`;
         containerElement.style.height = "100%";
-        containerElement.style.zIndex = `${Z_INDEX_GLOBAL_RANGE_EVENT}`;
+        containerElement.style.zIndex = `${Z_INDEX_GLOBAL_RANGE_EVENT} `;
         containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
         render(event, _mainCanvasElement, containerElement);
