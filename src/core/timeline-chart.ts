@@ -12,6 +12,8 @@ interface TimelineChartOptions {
     cellMinutes: number;
     cellWidth?: number;
     cellHeight?: number;
+    minCellWidth?: number;
+    maxCellWidth?: number;
     cellContentHeight?: number;
     headerTimeFormat?: (time: Date) => string;
     headerCellRender?: (time: Date, containerElement: HTMLElement) => void;
@@ -98,7 +100,6 @@ const TimelineChart = function () {
     const Z_INDEX_ENTITY_RANGE_EVENT = 2;
     const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
 
-    const MIN_CELL_WIDTH = 50;
     const MAX_CELL_WIDTH = 500;
 
     /* Layout
@@ -171,6 +172,16 @@ const TimelineChart = function () {
      * 셀 크기 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
      */
     let _resizeUnit = 20;
+
+    /**
+     * 리사이즈에서 허용하는 최소 셀 너비. 설정값이 없는 경우 기본 셀너비와 동일하다.
+     */
+    let _minCellWidth: number;
+
+    /**
+     * 리사이즈에서 허용하는 최대 셀 너비.
+     */
+    let _maxCellWidth: number = MAX_CELL_WIDTH
 
     /**
      * 헤더 시간 포맷 함수
@@ -375,6 +386,8 @@ const TimelineChart = function () {
         timelineCanvasContentHeight = 30,
         cellMinutes = 60,
         cellWidth = 200,
+        minCellWidth,
+        maxCellWidth,
         cellHeight = 40,
         cellContentHeight = 30,
         headerTimeFormat,
@@ -399,6 +412,9 @@ const TimelineChart = function () {
         _hasHorizontalLine = hasHorizontalLine;
         _hasVertialLine = hasVerticalLine;
         _canAutoFit = canAutoFit;
+
+        _minCellWidth = minCellWidth ?? cellWidth;
+        _maxCellWidth = maxCellWidth ?? MAX_CELL_WIDTH;
 
         cssService.setTimeLineTitleHeight(timelineTitleHeight);
         cssService.setTimelineHeaderHeight(timelineHeaderHeight);
@@ -486,6 +502,7 @@ const TimelineChart = function () {
         });
 
         _mainCanvasElement.addEventListener("wheel", (e) => {
+            console.log(e);
             if (e.ctrlKey) {
                 let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
                 // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
@@ -701,7 +718,7 @@ const TimelineChart = function () {
         containerElement.style.width = `${width}px`;
         containerElement.style.zIndex = `${Z_INDEX_ENTITY_RANGE_EVENT} `;
         containerElement.addEventListener("click", (e) => {
-            console.log(e);
+
         });
 
         render(event, _mainCanvasElement, containerElement);
@@ -738,7 +755,7 @@ const TimelineChart = function () {
     function drawGlobalEvent(event: RangeEvent, render: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void) {
         const containerElement = document.createElement("div");
         _mainCanvasElement.appendChild(containerElement);
-        console.log("chartRenderStartTime", _chartRenderStartTime);
+
         const left = dateTimeService.toMinutes(event.start.valueOf() - _chartRenderStartTime.valueOf()) * cssService.getCellWidth() / _cellMinutes;
         const width = cssService.getCellWidth() * dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf()) / _cellMinutes;
         containerElement.style.left = `${left}px`;
@@ -757,10 +774,11 @@ const TimelineChart = function () {
      * @param pivotPointX 스크롤 기준 위치
      */
     function resizeCanvas(cellWidth: number, pivotPointX?: number) {
-        if (cellWidth < MIN_CELL_WIDTH) {
+        console.log(`resizeCanvas: ${cellWidth}`);
+        if (cellWidth < _minCellWidth) {
             return;
         }
-        if (cellWidth > MAX_CELL_WIDTH) {
+        if (cellWidth > _maxCellWidth) {
             return;
         }
 

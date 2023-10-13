@@ -32,6 +32,8 @@ interface MesChartOptions {
     timelineCanvasContentHeight?: number;
     cellMinutes: number;
     cellWidth?: number;
+    minCellWidth?: number;
+    maxCellWidth?: number;
     cellHeight?: number;
     cellContentHeight?: number;
     hasHorizontalLine?: boolean;
