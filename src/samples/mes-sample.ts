@@ -18,7 +18,7 @@ window.addEventListener("load", () => {
         sidePointEvents: (window as any).machinePointEvents as MesSidePointEvents[],
         globalRangeEvents: (window as any).machineRangeEvents as MesGlobalRangeEvent[]
     };
-    const cellMinutes = 60;
+    const cellMinutes = 30;
     const cellWidth = 50;
     const cellHeight = 50;
     const mesChartOptions: MesChartOptions = {

@@ -503,26 +503,11 @@ const TimelineChart = function () {
         });
 
         _mainCanvasElement.addEventListener("wheel", (e) => {
-            if (e.ctrlKey) {
-                let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
-                // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
-                if (e.target == _mainCanvasElement) {
-                    pivotPoint = e.offsetX;
-                }
-                else if ((e.target as HTMLElement).parentElement.parentElement == _mainCanvasElement) {
-                    pivotPoint = (e.target as HTMLElement).parentElement.offsetLeft + e.offsetX;
-                }
-                else {
-                    return;
-                }
+            resizeCanvasWhenWheel(_mainCanvasElement, e);
+        });
 
-                if (e.deltaY > 0) {
-                    sizeDownCellWidth(pivotPoint);
-                }
-                else {
-                    sizeUpCellWidth(pivotPoint);
-                }
-            }
+        _timelineCanvasElement.addEventListener("wheel", (e) => {
+            resizeCanvasWhenWheel(_timelineCanvasElement, e);
         });
 
         // prevent default zoom
@@ -546,6 +531,33 @@ const TimelineChart = function () {
 
     }
 
+    /**
+     * 휠이벤트 발생시 캔버스 리사이징을 수행한다.
+     * @param canvasElement 
+     * @param e 
+     * @returns 
+     */
+    function resizeCanvasWhenWheel(canvasElement: HTMLElement, e: WheelEvent) {
+        if (e.ctrlKey) {
+            let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
+            // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
+            if (e.target == canvasElement) {
+                pivotPoint = e.offsetX;
+            }
+            else if ((e.target as HTMLElement).parentElement.parentElement == canvasElement) {
+                pivotPoint = (e.target as HTMLElement).parentElement.offsetLeft + e.offsetX;
+            }
+            else {
+                return;
+            }
+            if (e.deltaY > 0) {
+                sizeDownCellWidth(pivotPoint);
+            }
+            else {
+                sizeUpCellWidth(pivotPoint);
+            }
+        }
+    }
     /**
      * 캔버스 크기를 재조정한다.
      */
