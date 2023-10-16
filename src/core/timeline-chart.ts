@@ -555,12 +555,10 @@ const TimelineChart = function () {
                 return;
             }
             if (e.deltaY > 0) {
-                sizeDownCellWidth(pivotPoint.x);
-                sizeDownCellHeight(pivotPoint.y);
+                sizeDownCanvas(pivotPoint.x, pivotPoint.y);
             }
             else {
-                sizeUpCellWidth(pivotPoint.x);
-                sizeUpCellHeight(pivotPoint.y);
+                sizeUpCanvas(pivotPoint.x, pivotPoint.y);
             }
         }
     }
@@ -789,13 +787,15 @@ const TimelineChart = function () {
     /**
      * 셀 너비 변경을 통해 캔버스 크기를 조정한다. 
      * @param cellWidth 셀 너비
-     * @param pivotPointX 스크롤 기준 위치
+     * @param cellHeight 셀 높이
+     * @param pivotPointX 스크롤 x기준 위치
+     * @param pivotPointY 스크롤 y기준 위치
      */
-    function resizeCanvas(cellWidth: number, pivotPointX?: number) {
-        if (cellWidth < _minCellWidth) {
+    function resizeCanvas(cellWidth: number, cellHeight: number, pivotPointX?: number, pivotPointY?: number) {
+        if (cellWidth < _minCellWidth || cellHeight < _minCellHeight) {
             return;
         }
-        if (cellWidth > _maxCellWidth) {
+        if (cellHeight > _maxCellHeight || cellWidth > _maxCellWidth) {
             return;
         }
 
@@ -807,46 +807,6 @@ const TimelineChart = function () {
             const newPivotPointX = pivotPointX * cellWidth / prevCellWidth; // 기준점까지의 거리
             scrollLeft = newPivotPointX - scrollOffset;
         }
-
-        cssService.setCellWidth(cellWidth);
-        resetCanvasSize();
-        drawTimelineCanvas();
-        drawMainCanvas();
-
-        // keep scroll position
-        _mainCanvasBoxElement.scrollLeft = scrollLeft;
-    }
-
-    function sizeUpCellWidth(pivotPointX?: number) {
-        const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth + _resizeWidthstep, pivotPointX);
-    }
-
-    function sizeDownCellWidth(pivotPointX?: number) {
-        const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth - _resizeWidthstep, pivotPointX);
-    }
-
-    function sizeUpCellHeight(pivotPointY?: number) {
-        const cellHeight = cssService.getCellHeight();
-        resizeCanvasHeight(cellHeight + _resizeHeightStep, pivotPointY);
-    }
-
-    function sizeDownCellHeight(pivotPointY?: number) {
-        const cellHeight = cssService.getCellHeight();
-        resizeCanvasHeight(cellHeight - _resizeHeightStep, pivotPointY);
-    }
-
-    function resizeCanvasHeight(cellHeight: number, pivotPointY?: number) {
-        console.log(cellHeight, _minCellHeight, _maxCellHeight);
-        if (cellHeight < _minCellHeight) {
-            return;
-        }
-        if (cellHeight > _maxCellHeight) {
-            return;
-        }
-
-        // 리사이징 후 스크롤 위치 계산
         let scrollTop = _mainCanvasBoxElement.scrollTop;
         if (pivotPointY) {
             const scrollOffset = pivotPointY - scrollTop;
@@ -855,14 +815,35 @@ const TimelineChart = function () {
             scrollTop = newPivotPointY - scrollOffset;
         }
 
-        /** width와 중복되는 부분 삭제 */
+        cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
         resetCanvasSize();
         drawTimelineCanvas();
         drawMainCanvas();
 
         // keep scroll position
+        _mainCanvasBoxElement.scrollLeft = scrollLeft;
         _mainCanvasBoxElement.scrollTop = scrollTop;
+    }
+
+    function sizeUpCanvas(pivotPointX?: number, pivotPointY?: number) {
+        const cellWidth = cssService.getCellWidth();
+        const cellHeight = cssService.getCellHeight();
+        resizeCanvas(
+            cellWidth + _resizeWidthstep,
+            cellHeight + _resizeHeightStep,
+            pivotPointX,
+            pivotPointY);
+    }
+
+    function sizeDownCanvas(pivotPointX?: number, pivotPointY?: number) {
+        const cellWidth = cssService.getCellWidth();
+        const cellHeight = cssService.getCellHeight();
+        resizeCanvas(
+            cellWidth - _resizeWidthstep,
+            cellHeight - _resizeHeightStep,
+            pivotPointX,
+            pivotPointY);
     }
 
     return {
