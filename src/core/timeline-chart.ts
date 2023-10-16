@@ -13,7 +13,9 @@ interface TimelineChartOptions {
     cellWidth?: number;
     cellHeight?: number;
     minCellWidth?: number;
+    minCellHeight?: number;
     maxCellWidth?: number;
+    maxCellHeight?: number;
     cellContentHeight?: number;
     headerTimeFormat?: (time: Date) => string;
     headerCellRender?: (time: Date, containerElement: HTMLElement) => void;
@@ -100,7 +102,10 @@ const TimelineChart = function () {
     const Z_INDEX_ENTITY_RANGE_EVENT = 2;
     const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
 
-    const MAX_CELL_WIDTH = 500;
+    /**
+     * 최대 리사이즈 스케일. 셀 크기를 최대 2배까지 키울 수 있다.
+     */
+    const MAX_RESIZE_SCALE = 2;
 
     /* Layout
     |---------------|-------------------|
@@ -169,9 +174,14 @@ const TimelineChart = function () {
     let _canAutoFit: boolean;
 
     /**
-     * 셀 크기 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
+     * 셀 너비 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
      */
-    let _resizeUnit = 20;
+    let _resizeWidthstep = 20;
+
+    /**
+     * 셀 높이 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
+     */
+    let _resizeHeightStep = 10;
 
     /**
      * 리사이즈에서 허용하는 최소 셀 너비. 설정값이 없는 경우 기본 셀너비와 동일하다.
@@ -181,7 +191,17 @@ const TimelineChart = function () {
     /**
      * 리사이즈에서 허용하는 최대 셀 너비.
      */
-    let _maxCellWidth: number = MAX_CELL_WIDTH
+    let _maxCellWidth: number;
+
+    /**
+     * 리사이즈에서 허용하는 최소 셀 높이. 설정값이 없는 경우 기본 셀높이와 동일하다.
+     */
+    let _minCellHeight: number;
+
+    /**
+     * 리사이즈에서 허용하는 최대 셀 높이.
+     */
+    let _maxCellHeight: number;
 
     /**
      * 헤더 시간 포맷 함수
@@ -388,7 +408,9 @@ const TimelineChart = function () {
         cellMinutes = 60,
         cellWidth = 200,
         minCellWidth,
+        minCellHeight,
         maxCellWidth,
+        maxCellHeight,
         cellHeight = 40,
         cellContentHeight = 30,
         headerTimeFormat,
@@ -414,8 +436,15 @@ const TimelineChart = function () {
         _hasVertialLine = hasVerticalLine;
         _canAutoFit = canAutoFit;
 
+        _resizeWidthstep = cellWidth / 10;
+        _resizeHeightStep = cellHeight / 10;
+
         _minCellWidth = minCellWidth ?? cellWidth;
-        _maxCellWidth = maxCellWidth ?? MAX_CELL_WIDTH;
+        _maxCellWidth = maxCellWidth ?? cellWidth * MAX_RESIZE_SCALE;
+
+        _minCellHeight = minCellHeight ?? cellHeight;
+        _maxCellHeight = maxCellHeight ?? cellHeight * MAX_RESIZE_SCALE;
+        console.log(_maxCellWidth, _maxCellHeight);
 
         cssService.setTimeLineTitleHeight(timelineTitleHeight);
         cssService.setTimelineHeaderHeight(timelineHeaderHeight);
@@ -539,22 +568,26 @@ const TimelineChart = function () {
      */
     function resizeCanvasWhenWheel(canvasElement: HTMLElement, e: WheelEvent) {
         if (e.ctrlKey) {
-            let pivotPoint = 0; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
+            let pivotPoint = { x: 0, y: 0 }; // 리사이징 기준위치. 마우스 커서가 위치한 셀의 좌표.
             // 대상 엘리먼트에 따라 pivotPoint를 다르게 계산한다.
             if (e.target == canvasElement) {
-                pivotPoint = e.offsetX;
+                pivotPoint.x = e.offsetX;
+                pivotPoint.y = e.offsetY;
             }
             else if ((e.target as HTMLElement).parentElement.parentElement == canvasElement) {
-                pivotPoint = (e.target as HTMLElement).parentElement.offsetLeft + e.offsetX;
+                pivotPoint.x = (e.target as HTMLElement).parentElement.offsetLeft + e.offsetX;
+                pivotPoint.y = (e.target as HTMLElement).parentElement.offsetTop + e.offsetY;
             }
             else {
                 return;
             }
             if (e.deltaY > 0) {
-                sizeDownCellWidth(pivotPoint);
+                sizeDownCellWidth(pivotPoint.x);
+                sizeDownCellHeight(pivotPoint.y);
             }
             else {
-                sizeUpCellWidth(pivotPoint);
+                sizeUpCellWidth(pivotPoint.x);
+                sizeUpCellHeight(pivotPoint.y);
             }
         }
     }
@@ -808,19 +841,55 @@ const TimelineChart = function () {
         drawMainCanvas();
 
         // keep scroll position
-        if (scrollLeft) {
-            _mainCanvasBoxElement.scrollLeft = scrollLeft;
-        }
+        _mainCanvasBoxElement.scrollLeft = scrollLeft;
     }
 
     function sizeUpCellWidth(pivotPointX?: number) {
         const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth + _resizeUnit, pivotPointX);
+        resizeCanvas(cellWidth + _resizeWidthstep, pivotPointX);
     }
 
     function sizeDownCellWidth(pivotPointX?: number) {
         const cellWidth = cssService.getCellWidth();
-        resizeCanvas(cellWidth - _resizeUnit, pivotPointX);
+        resizeCanvas(cellWidth - _resizeWidthstep, pivotPointX);
+    }
+
+    function sizeUpCellHeight(pivotPointY?: number) {
+        const cellHeight = cssService.getCellHeight();
+        resizeCanvasHeight(cellHeight + _resizeHeightStep, pivotPointY);
+    }
+
+    function sizeDownCellHeight(pivotPointY?: number) {
+        const cellHeight = cssService.getCellHeight();
+        resizeCanvasHeight(cellHeight - _resizeHeightStep, pivotPointY);
+    }
+
+    function resizeCanvasHeight(cellHeight: number, pivotPointY?: number) {
+        console.log(cellHeight, _minCellHeight, _maxCellHeight);
+        if (cellHeight < _minCellHeight) {
+            return;
+        }
+        if (cellHeight > _maxCellHeight) {
+            return;
+        }
+
+        // 리사이징 후 스크롤 위치 계산
+        let scrollTop = _mainCanvasBoxElement.scrollTop;
+        if (pivotPointY) {
+            const scrollOffset = pivotPointY - scrollTop;
+            const prevCellHeight = cssService.getCellHeight();
+            const newPivotPointY = pivotPointY * cellHeight / prevCellHeight; // 기준점까지의 거리
+            scrollTop = newPivotPointY - scrollOffset;
+        }
+
+        /** width와 중복되는 부분 삭제 */
+        cssService.setCellHeight(cellHeight);
+        resetCanvasSize();
+        drawTimelineCanvas();
+        drawMainCanvas();
+
+        // keep scroll position
+        _mainCanvasBoxElement.scrollTop = scrollTop;
     }
 
     return {
