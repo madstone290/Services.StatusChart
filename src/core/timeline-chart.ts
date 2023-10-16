@@ -176,12 +176,12 @@ const TimelineChart = function () {
     /**
      * 셀 너비 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
      */
-    let _resizeWidthstep = 20;
+    let _resizeWidthstep: number;
 
     /**
      * 셀 높이 조절 단위. 마우스 휠을 이용해 셀 크기를 조절할 때 사용한다.
      */
-    let _resizeHeightStep = 10;
+    let _resizeHeightStep: number;
 
     /**
      * 리사이즈에서 허용하는 최소 셀 너비. 설정값이 없는 경우 기본 셀너비와 동일하다.
