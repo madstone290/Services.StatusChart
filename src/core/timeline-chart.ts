@@ -395,71 +395,44 @@ const TimelineChart = function () {
         setOptions(options);
     }
 
-    function setOptions({
-        mainTitle,
-        subTitle,
-        headerTitle,
-        chartStartTime,
-        chartEndTime,
-        timelineTitleHeight = 40,
-        timelineHeaderHeight = 40,
-        timelineCanvasHeight = 40,
-        timelineCanvasContentHeight = 30,
-        cellMinutes = 60,
-        cellWidth = 200,
-        minCellWidth,
-        minCellHeight,
-        maxCellWidth,
-        maxCellHeight,
-        cellHeight = 40,
-        cellContentHeight = 30,
-        headerTimeFormat,
-        headerCellRender,
-        timelinePointEventRender,
-        entityPointEventRender,
-        entityRangeEventRender,
-        globalRangeEventRender,
-        hasHorizontalLine = true,
-        hasVerticalLine = true,
-        canAutoFit = true
-    }: TimelineChartOptions) {
-        _mainTitleElement.innerText = mainTitle;
-        _subTitleElement.innerText = subTitle;
-        _timelineTitleElement.innerText = headerTitle;
+    function setOptions(options: TimelineChartOptions) {
+        _mainTitleElement.innerText = options.mainTitle;
+        _subTitleElement.innerText = options.subTitle;
+        _timelineTitleElement.innerText = options.headerTitle;
 
-        _cellMinutes = cellMinutes;
-        _chartStartTime = chartStartTime;
-        _chartEndTime = chartEndTime;
-        _chartRenderStartTime = new Date(chartStartTime.getTime() - dateTimeService.toTime(_cellMinutes * _paddingCellCount));
-        _chartRenderEndTime = new Date(chartEndTime.getTime() + dateTimeService.toTime(_cellMinutes * _paddingCellCount));
-        _hasHorizontalLine = hasHorizontalLine;
-        _hasVertialLine = hasVerticalLine;
-        _canAutoFit = canAutoFit;
+        _cellMinutes = options.cellMinutes;
+        _chartStartTime = options.chartStartTime;
+        _chartEndTime = options.chartEndTime;
+        _chartRenderStartTime = new Date(options.chartStartTime.getTime() - dateTimeService.toTime(_cellMinutes * _paddingCellCount));
+        _chartRenderEndTime = new Date(options.chartEndTime.getTime() + dateTimeService.toTime(_cellMinutes * _paddingCellCount));
+        _hasHorizontalLine = options.hasHorizontalLine;
+        _hasVertialLine = options.hasVerticalLine;
+        _canAutoFit = options.canAutoFit;
 
-        _resizeWidthstep = cellWidth / 10;
-        _resizeHeightStep = cellHeight / 10;
+        _resizeWidthstep = options.cellWidth / 10;
+        _resizeHeightStep = options.cellHeight / 10;
 
-        _minCellWidth = minCellWidth ?? cellWidth;
-        _maxCellWidth = maxCellWidth ?? cellWidth * MAX_RESIZE_SCALE;
+        _minCellWidth = options.minCellWidth ?? options.cellWidth;
+        _maxCellWidth = options.maxCellWidth ?? options.cellWidth * MAX_RESIZE_SCALE;
 
-        _minCellHeight = minCellHeight ?? cellHeight;
-        _maxCellHeight = maxCellHeight ?? cellHeight * MAX_RESIZE_SCALE;
+        _minCellHeight = options.minCellHeight ?? options.cellHeight;
+        _maxCellHeight = options.maxCellHeight ?? options.cellHeight * MAX_RESIZE_SCALE;
         console.log(_maxCellWidth, _maxCellHeight);
 
-        cssService.setTimeLineTitleHeight(timelineTitleHeight);
-        cssService.setTimelineHeaderHeight(timelineHeaderHeight);
-        cssService.setTimelineCanvasHeight(timelineCanvasHeight);
-        cssService.setTimelineCanvasContentHeight(timelineCanvasContentHeight);
-        cssService.setCellWidth(cellWidth);
-        cssService.setCellHeight(cellHeight);
-        cssService.setCellContentHeight(cellContentHeight);
+        cssService.setTimeLineTitleHeight(options.timelineTitleHeight ?? 40);
+        cssService.setTimelineHeaderHeight(options.timelineHeaderHeight ?? 40);
+        cssService.setTimelineCanvasHeight(options.timelineCanvasHeight ?? 40);
+        cssService.setTimelineCanvasContentHeight(options.timelineCanvasContentHeight ?? 30);
+        cssService.setCellWidth(options.cellWidth ?? 80);
+        cssService.setCellHeight(options.cellHeight ?? 40);
+        cssService.setCellContentHeight(options.cellContentHeight ?? 30);
 
-        _headerTimeFormat = headerTimeFormat ?? ((time: Date) => { return time.toLocaleString(); });
-        _headerCellRender = headerCellRender;
-        _timelinePointEventRender = timelinePointEventRender;
-        _entityRangeEventRender = entityRangeEventRender;
-        _entityPointEventRender = entityPointEventRender;
-        _globalRangeEventRender = globalRangeEventRender;
+        _headerTimeFormat = options.headerTimeFormat ?? ((time: Date) => { return time.toLocaleString(); });
+        _headerCellRender = options.headerCellRender;
+        _timelinePointEventRender = options.timelinePointEventRender;
+        _entityRangeEventRender = options.entityRangeEventRender;
+        _entityPointEventRender = options.entityPointEventRender;
+        _globalRangeEventRender = options.globalRangeEventRender;
     }
 
     function setData(data: TimelineChartData) {
