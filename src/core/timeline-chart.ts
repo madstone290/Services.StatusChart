@@ -1,4 +1,3 @@
-
 interface TimelineChartOptions {
     mainTitle?: string;
     subTitle?: string;
@@ -8,7 +7,7 @@ interface TimelineChartOptions {
     timelineTitleHeight?: number;
     timelineHeaderHeight?: number;
     timelineCanvasHeight?: number;
-    timelineCanvasContentHeight?: number;
+    timelineCanvasContentHeightRatio?: number;
     cellMinutes: number;
     cellWidth?: number;
     cellHeight?: number;
@@ -16,7 +15,8 @@ interface TimelineChartOptions {
     minCellHeight?: number;
     maxCellWidth?: number;
     maxCellHeight?: number;
-    cellContentHeight?: number;
+    cellContentHeightRatio?: number;
+    maxResizeScale?: number;
     headerTimeFormat?: (time: Date) => string;
     headerCellRender?: (time: Date, containerElement: HTMLElement) => void;
     timelinePointEventRender?: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
@@ -102,11 +102,6 @@ const TimelineChart = function () {
     const Z_INDEX_ENTITY_RANGE_EVENT = 2;
     const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
 
-    /**
-     * 최대 리사이즈 스케일. 셀 크기를 최대 2배까지 키울 수 있다.
-     */
-    const MAX_RESIZE_SCALE = 2;
-
     /* Layout
     |---------------|-------------------|
     | main title    | timeline title    |
@@ -149,9 +144,19 @@ const TimelineChart = function () {
     let _paddingCellCount: number = 2;
 
     /**
-     * 하나의 셀이 표현하는 시간. 단위는 분
+     * 셀 시간. 분 단위.
      */
     let _cellMinutes: number;
+
+    /**
+     * 메인 캔버스 셀 컨텐츠 비율. 0~1
+     */
+    let _mainCanvasContentRatio: number;
+
+    /**
+     * 타임라인 캔버스 셀 컨텐츠 비율. 0~1
+     */
+    let _timelineCanvasContentRatio: number;
 
     /**
      * 헤더 셀 개수. (시작시간 - 종료시간) / 셀시간
@@ -413,19 +418,28 @@ const TimelineChart = function () {
         _resizeHeightStep = options.cellHeight / 10;
 
         _minCellWidth = options.minCellWidth ?? options.cellWidth;
-        _maxCellWidth = options.maxCellWidth ?? options.cellWidth * MAX_RESIZE_SCALE;
+        _maxCellWidth = options.maxCellWidth ?? options.cellWidth * (options.maxResizeScale ?? 3);
 
         _minCellHeight = options.minCellHeight ?? options.cellHeight;
-        _maxCellHeight = options.maxCellHeight ?? options.cellHeight * MAX_RESIZE_SCALE;
-        console.log(_maxCellWidth, _maxCellHeight);
+        _maxCellHeight = options.maxCellHeight ?? options.cellHeight * (options.maxResizeScale ?? 3);
 
         cssService.setTimeLineTitleHeight(options.timelineTitleHeight ?? 40);
         cssService.setTimelineHeaderHeight(options.timelineHeaderHeight ?? 40);
-        cssService.setTimelineCanvasHeight(options.timelineCanvasHeight ?? 40);
-        cssService.setTimelineCanvasContentHeight(options.timelineCanvasContentHeight ?? 30);
-        cssService.setCellWidth(options.cellWidth ?? 80);
-        cssService.setCellHeight(options.cellHeight ?? 40);
-        cssService.setCellContentHeight(options.cellContentHeight ?? 30);
+
+        const timelineCanvasHeight = options.timelineCanvasHeight ?? 40;
+        _timelineCanvasContentRatio = options.timelineCanvasContentHeightRatio ?? 0.6;
+        const timelineCanvasContentHeight = timelineCanvasHeight * _timelineCanvasContentRatio;
+
+        cssService.setTimelineCanvasHeight(timelineCanvasHeight);
+        cssService.setTimelineCanvasContentHeight(timelineCanvasContentHeight);
+
+        const cellWidth = options.cellWidth ?? 80;
+        const cellHeight = options.cellHeight ?? 40;
+        _mainCanvasContentRatio = options.cellContentHeightRatio ?? 0.6;
+        const cellContentHeight = cellHeight * _mainCanvasContentRatio;
+        cssService.setCellWidth(cellWidth);
+        cssService.setCellHeight(cellHeight);
+        cssService.setCellContentHeight(cellContentHeight);
 
         _headerTimeFormat = options.headerTimeFormat ?? ((time: Date) => { return time.toLocaleString(); });
         _headerCellRender = options.headerCellRender;
@@ -817,6 +831,8 @@ const TimelineChart = function () {
 
         cssService.setCellWidth(cellWidth);
         cssService.setCellHeight(cellHeight);
+        cssService.setCellContentHeight(cellHeight * _mainCanvasContentRatio);
+
         resetCanvasSize();
         drawTimelineCanvas();
         drawMainCanvas();
