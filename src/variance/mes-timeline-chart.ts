@@ -224,7 +224,7 @@ const MesChart = function () {
         titleElement.style.color = "black"
         tooltipElement.appendChild(titleElement);
 
-        const barcode = barcodeEntities.find(x => x.id == event.entityId);
+        const barcode = _data.entities.find(x => x.id == event.entityId);
         const barcodeElement = document.createElement("div");
         barcodeElement.innerText = `Barcode: ${barcode.barcodeNumber}`;
         tooltipElement.appendChild(barcodeElement);
@@ -270,10 +270,10 @@ const MesChart = function () {
         tooltipElement.appendChild(timeElement);
 
         const barcodeElement = document.createElement("div");
-        barcodeElement.innerText = barcodeEntities.find(entity => entity.id == event.entityId).name;
+        barcodeElement.innerText = _data.entities.find(entity => entity.id == event.entityId).name;
         tooltipElement.appendChild(barcodeElement);
 
-        const barcode = barcodeEntities.find(x => x.id == event.entityId);
+        const barcode = _data.entities.find(x => x.id == event.entityId);
         const productElement = document.createElement("div");
         productElement.innerText = `ProductNo: ${barcode.productNumber}`;
         tooltipElement.appendChild(productElement);
