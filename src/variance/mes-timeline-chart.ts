@@ -16,6 +16,9 @@ interface MesChartData {
 }
 
 interface MesChartOptions {
+    errorImgSrc?: string;
+    warningImgSrc?: string;
+
     /**
      * 이벤트 아이템 호버시 배경색 표시 여부
      */
@@ -207,7 +210,7 @@ const MesChart = function () {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.src = IMG_ERROR;
+        imgElement.src = _options.errorImgSrc || IMG_ERROR;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");
@@ -286,7 +289,7 @@ const MesChart = function () {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.src = IMG_WARNING;
+        imgElement.src = _options.warningImgSrc ?? IMG_WARNING;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");
