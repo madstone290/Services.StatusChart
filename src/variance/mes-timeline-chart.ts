@@ -51,8 +51,8 @@ const MesChart = function () {
     let _data: MesChartData;
     let _options: MesChartOptions;
 
-    const IMG_ERROR = "./asset/image/error.svg";
-    const IMG_WARNING = "./asset/image/warning.svg";
+    const ERROR_IMG_SRC = "./asset/image/error.svg";
+    const WARNING_IMG_SRC = "./asset/image/warning.svg";
 
     const CLS_TOOLTIP = "tr-tooltip";
 
@@ -210,7 +210,7 @@ const MesChart = function () {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.src = _options.errorImgSrc || IMG_ERROR;
+        imgElement.src = _options.errorImgSrc || ERROR_IMG_SRC;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");
@@ -289,7 +289,7 @@ const MesChart = function () {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
-        imgElement.src = _options.warningImgSrc ?? IMG_WARNING;
+        imgElement.src = _options.warningImgSrc ?? WARNING_IMG_SRC;
         containerElement.appendChild(imgElement);
 
         const tooltipElement = document.createElement("div");
