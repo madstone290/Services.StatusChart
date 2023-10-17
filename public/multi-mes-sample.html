@@ -12,6 +12,9 @@
     <script src="../dist/samples/multi-mes-sample.js"></script>
     <script src="js/lib/dayjs.min.js"></script>
 
+    <script src="../dist/other/element-full.js"></script>
+    <script src="../dist/other/screen-full.js"></script>
+
     <link rel="stylesheet" type="text/css" href="css/timeline-chart.css">
     <link rel="stylesheet" type="text/css" href="css/mes-timeline-chart.css">
 
@@ -38,36 +41,75 @@
             display: flex;
             flex-direction: column;
         }
+
         .legend-container {
             height: 40px;
         }
+
         .tc-container {
-            height: calc(100% - 40px);
+            height: calc(100% - 40px - 20px);
+        }
+
+        .fullscreen-btn {
+            height: 20px;
+            width: 100px;
+        }
+        ::backdrop{
+            background-color: #FFFFFF;
         }
     </style>
 
     <div class="tc-flex">
         <div class="tc-row-flex">
             <div class="tc-root-container">
+                <button id="btn1" class="fullscreen-btn">f1</button>
                 <div id="legend-container1" class="legend-container"></div>
                 <div id="tc-container1" class="tc-container" style="flex: 1;"></div>
             </div>
             <div class="tc-root-container">
+                <button id="btn2" class="fullscreen-btn">f2</button>
                 <div id="legend-container2" class="legend-container"></div>
                 <div id="tc-container2" class="tc-container" style="flex: 1;"></div>
             </div>
         </div>
         <div class="tc-row-flex">
             <div class="tc-root-container">
+                <button id="btn3" class="fullscreen-btn">f3</button>
                 <div id="legend-container3" class="legend-container"></div>
                 <div id="tc-container3" class="tc-container" style="flex: 1;"></div>
             </div>
             <div class="tc-root-container">
+                <button id="btn4" class="fullscreen-btn">f4</button>
                 <div id="legend-container4" class="legend-container"></div>
                 <div id="tc-container4" class="tc-container" style="flex: 1;"></div>
             </div>
         </div>
     </div>
 </body>
+
+<script>
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    const btn3 = document.getElementById('btn3');
+    const btn4 = document.getElementById('btn4');
+
+   
+    //const fuller = new ScreenFull();
+    const fuller = new ElementFull(document.getElementsByClassName('tc-flex')[0]);
+    function fullscreenHandler(element) {
+        element.onclick = () => {
+            console.log(element);
+            fuller.toggle(element.parentElement);
+
+        }
+    }
+
+    console.log(btn1.parentElement);
+    fullscreenHandler(btn1);
+    fullscreenHandler(btn2);
+    fullscreenHandler(btn3);
+    fullscreenHandler(btn4);
+
+</script>
 
 </html>
