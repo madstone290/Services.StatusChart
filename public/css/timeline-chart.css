@@ -66,7 +66,7 @@ img {
 
 .tc-entity-list-box {
     overflow: hidden;
-    height: calc(100% - var(--tc-timeline-title-height) - var(--tc-timeline-header-height) - var(--tc-timeline-canvas-height) - var(--tc-scroll-height));
+    height: calc(100% - var(--tc-timeline-title-height) - var(--tc-timeline-header-height) - var(--tc-timeline-canvas-height));
 }
 
 .tc-entity-list-item {

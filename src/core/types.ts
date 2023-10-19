@@ -12,3 +12,4 @@ interface Entity {
     pointEvents?: PointEvent[];
     rangeEvents?: RangeEvent[];
 }
+

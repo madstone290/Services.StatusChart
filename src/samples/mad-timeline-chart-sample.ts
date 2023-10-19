@@ -257,7 +257,7 @@ namespace Samples {
     ];
 
     export const eventOwnersX100: any = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 100; i++) {
         eventOwnersX100.push(...eventOwners.map(owner => owner));
     }
 }
@@ -277,7 +277,7 @@ window.addEventListener("load", () => {
 
     const rootContainer = document.getElementById("root-container");
     const data: Mad.ChartData = {
-        entities: Samples.eventOwners,
+        entities: Samples.eventOwnersX100,
         sidePointEvents: [],
         globalRangeEvents: []
     };

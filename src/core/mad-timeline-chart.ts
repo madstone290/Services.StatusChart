@@ -137,6 +137,32 @@ namespace Mad {
          */
         resizeHeightStep: number;
 
+        /**
+         * 최근 차트 리사이징 시간. 리사이징 전에 렌더링된 엘리먼트는 새로 렌더링한다.
+         */
+        lastResizeTime: Date;
+
+    }
+
+    /**
+     * 엔티티 렌더링 정보
+     */
+    interface EntityContainer {
+        index: number;
+        entity: Entity;
+        /**
+         * 엔티티 컨테이너 엘리먼트
+         */
+        containerEl: HTMLElement;
+        /**
+         * 수평선
+         */
+        hLine: HTMLElement;
+
+        /**
+         * 최근 렌더링 시간
+         */
+        lastRenderTime: Date;
     }
 
     export const TimelineChart = function () {
@@ -262,7 +288,13 @@ namespace Mad {
             headerCellCount: 0,
             cellContentHeight: 0,
             timelineCanvasContentHeight: 0,
+            lastResizeTime: new Date()
         }
+
+        /**
+         * 엔티티 컨테이너 목록. 엔티티 렌더링에 사용한다.
+         */
+        let _entityContainers = new Map<HTMLElement, EntityContainer>();
 
         /* Html Elements */
         let _rootElement: HTMLElement;
@@ -463,13 +495,6 @@ namespace Mad {
          * 차트를 그린다.
          */
         function render() {
-            // init layout (calc & apply size)
-            // render texts
-            // render header
-            // add event listeners
-            // render side canvas
-            // render entity list(main canvas)
-
             _initLayout();
             _renderHeader();
             _addEventListeners();
@@ -480,7 +505,7 @@ namespace Mad {
             _renderSidePointEvents();
 
             _renderMainCanvas();
-            _renderEntityList();
+            _startRenderEntityList();
             _renderGlobalRangeEvents();
         }
 
@@ -511,9 +536,10 @@ namespace Mad {
 
             while (time < end) {
                 const containerElement = document.createElement("div");
-                _timelineHeaderElement.appendChild(containerElement);
                 containerElement.classList.add(CLS_TIMELINE_HEADER_ITEM);
                 _state.headerCellRender(time, containerElement);
+
+                _timelineHeaderElement.appendChild(containerElement);
 
                 time = new Date(time.getTime() + dateTimeService.toTime(_state.cellMinutes));
                 headerCellCount++;
@@ -636,15 +662,16 @@ namespace Mad {
         }
         function _renderSideCanvasVerticalLine() {
             const canvasWidth = _timelineCanvasElement.scrollWidth;
-            const cellWidth = cssService.getCellWidth();
-            const lineCount = Math.floor(canvasWidth / cellWidth);
+            const lineGap = _state.cellWidth;
+            const lineHeight = _state.timelineCanvasHeight;
+            const vLineCount = Math.floor(canvasWidth / lineGap);
 
-            for (let i = 0; i < lineCount - 1; i++) {
+            for (let i = 0; i < vLineCount - 1; i++) {
                 const line = document.createElement("div") as HTMLElement;
                 line.classList.add(CLS_VLINE);
+                line.style.left = `${lineGap * (i + 1)}px`;
+                line.style.height = `${lineHeight}px`;
 
-                line.style.left = `${cellWidth * (i + 1)}px`;
-                line.style.height = `${_timelineCanvasElement.scrollHeight}px`;
                 _timelineCanvasElement.appendChild(line);
             }
         }
@@ -658,7 +685,6 @@ namespace Mad {
         }
         function _renderSidePointEvent(event: PointEvent) {
             const containerElement = document.createElement("div");
-            _timelineCanvasElement.appendChild(containerElement);
 
             const eventTime = event[_dataOptions.pointEventTimeProp] as Date;
             const time = dateTimeService.toMinutes(eventTime.valueOf() - _state.chartRenderStartTime.valueOf());
@@ -672,65 +698,123 @@ namespace Mad {
 
             if (_state.sidePointEventRender != null)
                 _state.sidePointEventRender(event, _timelineCanvasElement, containerElement);
+            _timelineCanvasElement.appendChild(containerElement);
         }
 
         function _renderMainCanvas() {
             _mainCanvasElement.replaceChildren();
-            if (_state.hasHorizontalLine)
-                _renderMainCanvasHLine();
+            // if (_state.hasHorizontalLine)
+            //     _renderMainCanvasHLine();
             if (_state.hasVerticalLine)
                 _renderMainCanvasVLine();
         }
         function _renderMainCanvasVLine() {
             const canvasWidth = _mainCanvasElement.scrollWidth;
-            const cellWidth = cssService.getCellWidth();
-            const lineCount = Math.floor(canvasWidth / cellWidth);
+            const lineGap = _state.cellWidth;
+            const lineHeight = _mainCanvasElement.scrollHeight;
+            const vLineCount = Math.floor(canvasWidth / lineGap);
 
-            // 
-            for (let i = 0; i < lineCount - 1; i++) {
+            for (let i = 0; i < vLineCount - 1; i++) {
                 const line = document.createElement("div") as HTMLElement;
                 line.classList.add(CLS_VLINE);
+                line.style.left = `${lineGap * (i + 1)}px`;
+                line.style.height = `${lineHeight}px`;
 
-                line.style.left = `${cellWidth * (i + 1)}px`;
-                line.style.height = `${_mainCanvasElement.scrollHeight}px`;
                 _mainCanvasElement.appendChild(line);
             }
         }
         function _renderMainCanvasHLine() {
             const canvasHeight = _mainCanvasElement.scrollHeight;
-            const cellHeight = cssService.getCellHeight();
-            const lineCount = Math.floor(canvasHeight / cellHeight);
+            const lineGap = _state.cellHeight;
+            const lineWidth = _mainCanvasElement.scrollWidth;
+            const lineCount = Math.floor(canvasHeight / lineGap);
             for (let i = 0; i < lineCount; i++) {
                 const line = document.createElement("div");
                 line.classList.add(CLS_HLINE);
+                line.style.top = `${lineGap * (i + 1) - 1}px`;
+                line.style.width = `${lineWidth}px`;
 
-                line.style.top = `${cellHeight * (i + 1) - 1}px`;
-                line.style.width = `${_mainCanvasElement.scrollWidth}px`;
                 _mainCanvasElement.appendChild(line);
             }
         }
 
 
         /**
-         * 엔티티 리스트를 그린다.
+         * 현재 리스트에 보여지는 엔티티의 인덱스
          */
-        function _renderEntityList() {
-            const canvasHeight = _mainCanvasElement.scrollHeight;
-            const cellHeight = _state.cellHeight;
-            const lineCount = Math.floor(canvasHeight / cellHeight);
-            for (let i = 0; i < lineCount; i++) {
-                const containerEl = document.createElement("div");
-                _entityListBoxElement.appendChild(containerEl);
-                containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
+        let _intersectingEntityContainers = new Map<number, EntityContainer>();
 
-                const entity = _data.entities[i];
-                if (entity == null)
-                    continue;
-                _state.entityRender(entity, containerEl);
-                _renderEntityEvents(entity, i);
+        function _renderEntity(entityContainer: EntityContainer) {
+            const { index, entity, containerEl, lastRenderTime } = entityContainer;
+            const shouldRender = lastRenderTime == null || lastRenderTime < _state.lastResizeTime;
+            if (!shouldRender)
+                return;
+
+            containerEl.replaceChildren();
+            _state.entityRender(entity, containerEl);
+            _renderEntityEvents(entity, index);
+
+            if (_state.hasHorizontalLine) {
+                const lineGap = _state.cellHeight;
+                const lineWidth = _mainCanvasElement.scrollWidth;
+
+                const line = document.createElement("div");
+                line.classList.add(CLS_HLINE);
+                line.style.top = `${lineGap * (index + 1) - 1}px`;
+                line.style.width = `${lineWidth}px`;
+
+                _mainCanvasElement.appendChild(line);
             }
+            entityContainer.lastRenderTime = new Date();
         }
 
+        const callback: IntersectionObserverCallback = (changedEntries: IntersectionObserverEntry[]) => {
+            changedEntries.forEach((entry: IntersectionObserverEntry, i: number) => {
+                const containerEl = entry.target as HTMLElement;
+                const entityContainer = _entityContainers.get(containerEl);
+
+                if (entry.isIntersecting)
+                    _intersectingEntityContainers.set(entityContainer.index, entityContainer);
+                else
+                    _intersectingEntityContainers.delete(entityContainer.index);
+
+                if (entry.isIntersecting) {
+                    _renderEntity(entityContainer);
+                }
+                
+            });
+        }
+        const options: IntersectionObserverInit = {
+            root: _entityListBoxElement,
+            threshold: 0,
+        };
+
+        const _intersecionObserver = new IntersectionObserver(callback, options);
+
+        /**
+         * 엔티티 리스트 그리기 과정을 실행한다.
+         * 실제 엔티티는 보여지는 영역에 따라 동적으로 그려진다.
+         */
+        function _startRenderEntityList() {
+            const canvasHeight = _mainCanvasElement.scrollHeight;
+            const cellHeight = _state.cellHeight;
+            const containerCount = Math.floor(canvasHeight / cellHeight);
+            for (let i = 0; i < containerCount; i++) {
+                const containerEl = document.createElement("div");
+                containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
+                _entityListBoxElement.appendChild(containerEl);
+
+                _entityContainers.set(containerEl, {
+                    index: i,
+                    containerEl: containerEl,
+                    entity: _data.entities[i],
+                    lastRenderTime: null,
+                    hLine: null
+                });
+
+                _intersecionObserver.observe(containerEl);
+            }
+        }
 
         function _renderEntityEvents(entity: Entity, rowIndex: number) {
             if (entity.pointEvents != null && entity.pointEvents.length > 0) {
@@ -747,7 +831,6 @@ namespace Mad {
 
         function _renderEntityPointEvent(event: PointEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
-            _mainCanvasElement.appendChild(containerElement);
 
             const eventTime = event[_dataOptions.pointEventTimeProp] as Date;
             const time = dateTimeService.toMinutes(eventTime.valueOf() - _state.chartRenderStartTime.valueOf());
@@ -760,14 +843,14 @@ namespace Mad {
             containerElement.style.zIndex = `${Z_INDEX_ENTITY_POINT_EVENT} `;
             containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
-
             if (_state.entityPointEventRender != null)
                 _state.entityPointEventRender(event, _mainCanvasElement, containerElement);
+
+            _mainCanvasElement.appendChild(containerElement);
         }
 
         function _renderEntityRangeEvent(event: RangeEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
-            _mainCanvasElement.appendChild(containerElement);
 
             const eventStartTime = event[_dataOptions.rangeEventStartTimeProp] as Date;
             const eventEndTime = event[_dataOptions.rangeEventEndTimeProp] as Date;
@@ -787,6 +870,8 @@ namespace Mad {
 
             if (_state.entityRangeEventRender != null)
                 _state.entityRangeEventRender(event, _mainCanvasElement, containerElement);
+
+            _mainCanvasElement.appendChild(containerElement);
         }
 
         function _renderGlobalRangeEvents() {
@@ -799,7 +884,6 @@ namespace Mad {
 
         function _renderGlobalRangeEvent(event: RangeEvent) {
             const containerElement = document.createElement("div");
-            _mainCanvasElement.appendChild(containerElement);
 
             const eventStartTime = event[_dataOptions.rangeEventStartTimeProp] as Date;
             const eventEndTime = event[_dataOptions.rangeEventEndTimeProp] as Date;
@@ -817,6 +901,24 @@ namespace Mad {
 
             if (_state.globalRangeEventRender != null)
                 _state.globalRangeEventRender(event, _mainCanvasElement, containerElement);
+
+            _mainCanvasElement.appendChild(containerElement);
+        }
+
+        function sizeUpCanvas(pivotPointX?: number, pivotPointY?: number) {
+            resizeCanvas(
+                _state.cellWidth + _state.resizeWidthstep,
+                _state.cellHeight + _state.resizeHeightStep,
+                pivotPointX,
+                pivotPointY);
+        }
+
+        function sizeDownCanvas(pivotPointX?: number, pivotPointY?: number) {
+            resizeCanvas(
+                _state.cellWidth - _state.resizeWidthstep,
+                _state.cellHeight - _state.resizeHeightStep,
+                pivotPointX,
+                pivotPointY);
         }
 
         /**
@@ -838,14 +940,14 @@ namespace Mad {
             let scrollLeft = _mainCanvasBoxElement.scrollLeft;
             if (pivotPointX) {
                 const scrollOffset = pivotPointX - scrollLeft;
-                const prevCellWidth = cssService.getCellWidth();
+                const prevCellWidth = _state.cellWidth;
                 const newPivotPointX = pivotPointX * cellWidth / prevCellWidth; // 기준점까지의 거리
                 scrollLeft = newPivotPointX - scrollOffset;
             }
             let scrollTop = _mainCanvasBoxElement.scrollTop;
             if (pivotPointY) {
                 const scrollOffset = pivotPointY - scrollTop;
-                const prevCellHeight = cssService.getCellHeight();
+                const prevCellHeight = _state.cellHeight;
                 const newPivotPointY = pivotPointY * cellHeight / prevCellHeight; // 기준점까지의 거리
                 scrollTop = newPivotPointY - scrollOffset;
             }
@@ -853,34 +955,36 @@ namespace Mad {
             _state.cellHeight = cellHeight;
             _state.cellWidth = cellWidth;
             _state.cellContentHeight = _state.cellContentHeightRatio * _state.cellHeight;
-
             cssService.setCellWidth(_state.cellWidth);
             cssService.setCellHeight(_state.cellHeight);
             cssService.setCellContentHeight(_state.cellContentHeight);
 
+            // 차트 렌더링을 새로 진행한다.
+            // 엔티티리스트는 동적으로 렌더링이 진행되므로 새로 그리지 않는다.
+            // 현재 보여지는 엔티티 리스트만 다시 그린다.
+
             _resetCanvasSize();
+
             _renderSideCanvas();
+            _renderSidePointEvents();
+
             _renderMainCanvas();
+            _renderGlobalRangeEvents();
+
+            // 현재 보여지는 엔티티 리스트만 다시 그린다.
+            _renderIntersectingEntitiList();
 
             // keep scroll position
             _mainCanvasBoxElement.scrollLeft = scrollLeft;
             _mainCanvasBoxElement.scrollTop = scrollTop;
+
+            _state.lastResizeTime = new Date();
         }
 
-        function sizeUpCanvas(pivotPointX?: number, pivotPointY?: number) {
-            resizeCanvas(
-                _state.cellWidth + _state.resizeWidthstep,
-                _state.cellHeight + _state.resizeHeightStep,
-                pivotPointX,
-                pivotPointY);
-        }
-
-        function sizeDownCanvas(pivotPointX?: number, pivotPointY?: number) {
-            resizeCanvas(
-                _state.cellWidth - _state.resizeWidthstep,
-                _state.cellHeight - _state.resizeHeightStep,
-                pivotPointX,
-                pivotPointY);
+        function _renderIntersectingEntitiList() {
+            for (const [index, entityContainer] of _intersectingEntityContainers.entries()) {
+                _renderEntity(entityContainer);
+            }
         }
 
         return {
