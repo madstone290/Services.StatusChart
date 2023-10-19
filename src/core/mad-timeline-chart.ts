@@ -40,6 +40,7 @@ namespace Mad {
         mainTitle?: string;
         subTitle?: string;
         headerTitle?: string;
+        leftPanelWidth?: number;
         timelineTitleHeight?: number;
         timelineHeaderHeight?: number;
         timelineCanvasHeight?: number;
@@ -73,6 +74,7 @@ namespace Mad {
         mainTitle: string;
         subTitle: string;
         headerTitle?: string;
+        leftPanelWidth: number;
         timelineTitleHeight: number;
         timelineHeaderHeight: number;
         timelineCanvasHeight: number;
@@ -206,6 +208,7 @@ namespace Mad {
             paddingCellCount: 2,
             mainTitle: "",
             subTitle: "",
+            leftPanelWidth: 200,
             timelineTitleHeight: 40,
             timelineHeaderHeight: 40,
             timelineCanvasHeight: 40,
@@ -286,6 +289,7 @@ namespace Mad {
             const VAR_TIMELINE_CANVAS_HEIGHT = "--tc-timeline-canvas-height";
             const VAR_TIMELINE_CANVAS_CONTENT_HEIGHT = "--tc-timeline-canvas-content-height";
 
+            const VAR_LEFT_PANEL_WIDTH = "--tc-list-width";
             function getVariable(name: string) {
                 return getComputedStyle(_rootElement).getPropertyValue(name);
             }
@@ -296,6 +300,10 @@ namespace Mad {
 
             function setChartWidth(width: number) {
                 setVariable(VAR_CHART_WIDTH, `${width}px`);
+            }
+
+            function setLeftPanelWidth(width: number) {
+                setVariable(VAR_LEFT_PANEL_WIDTH, `${width}px`);
             }
 
             function getChartHeight() { return parseInt(getVariable(VAR_CHART_HEIGHT)); }
@@ -328,8 +336,11 @@ namespace Mad {
 
             return {
                 getVariable,
-                setChartWidth,
+                setVariable,
 
+                setLeftPanelWidth,
+
+                setChartWidth,
                 getChartHeight,
                 setChartHeight,
 
@@ -432,6 +443,8 @@ namespace Mad {
         function render() {
             cssService.setChartWidth(_state.chartWidth);
             cssService.setChartHeight(_state.chartHeight);
+
+            cssService.setLeftPanelWidth(_state.leftPanelWidth);
 
             cssService.setTimeLineTitleHeight(_state.timelineTitleHeight);
             cssService.setTimelineHeaderHeight(_state.timelineHeaderHeight);
