@@ -15,7 +15,7 @@ interface MesChartData {
     globalRangeEvents: MesGlobalRangeEvent[];
 }
 
-interface MesChartOptions {
+interface MesChartOptions { 
     errorImgSrc?: string;
     warningImgSrc?: string;
 

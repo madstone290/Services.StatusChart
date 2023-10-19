@@ -14,7 +14,7 @@ window.addEventListener("load", () => {
     const container = document.getElementById("tc-container");
     const mesChartData: MesChartData =
     {
-        entities: (window as any).barcodeEntities as MesEntity[],
+        entities: (window as any).barcodeEntitiesX100 as MesEntity[],
         sidePointEvents: (window as any).machinePointEvents as MesSidePointEvents[],
         globalRangeEvents: (window as any).machineRangeEvents as MesGlobalRangeEvent[]
     };

@@ -267,6 +267,11 @@ var barcodeEntities: MesEntity[] = [
     { id: 20, name: "H34A2900020" },
 ];
 
+var barcodeEntitiesX100 = [];
+for(let i = 0 ; i < 30; i++){
+    barcodeEntitiesX100.push(...barcodeEntities.map(entity => entity));
+}
+
 var machinePointEvents = [
     {
         description: "X모터 이상",
