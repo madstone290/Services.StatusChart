@@ -5,6 +5,7 @@ namespace Samples {
         {
             id: 1,
             name: "H34A2900001H34A2H34A2900001H34A2900001900001",
+            goodName: "sdfsdf",
             barcodeNumber: "H34A2900001",
             productNumber: "00123H1",
             pointEvents: [
@@ -276,9 +277,9 @@ window.addEventListener("load", () => {
 
     const rootContainer = document.getElementById("root-container");
     const data: Mad.ChartData = {
-        eventOwners: Samples.eventOwners,
-        sideTimeEvents: [],
-        globalDurationEvents: []
+        entities: Samples.eventOwners,
+        sidePointEvents: [],
+        globalRangeEvents: []
     };
 
     const relocateTooltip = function (tooltipElement: HTMLElement, e: MouseEvent) {
@@ -328,7 +329,7 @@ window.addEventListener("load", () => {
         divElement.style.width = "100%";
     };
 
-    const ownerTimeEventRender = function (event: Mad.TimeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const ownerTimeEventRender = function (event: Mad.PointEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const imgElement = document.createElement("img");
         imgElement.style.width = "100%";
         imgElement.style.height = "100%";
@@ -361,7 +362,7 @@ window.addEventListener("load", () => {
         return "#" + color;
     }
 
-    const ownerDurationEventRender = function (event: Mad.DurationEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
+    const ownerDurationEventRender = function (event: Mad.RangeEvent, canvasElement: HTMLElement, containerElement: HTMLElement) {
         const boxElement = document.createElement("div");
         containerElement.appendChild(boxElement);
         boxElement.style.width = "100%";
@@ -375,7 +376,7 @@ window.addEventListener("load", () => {
 
 
         const timeElement = document.createElement("div");
-        timeElement.innerText = dayjs(event.start).format("HH:mm:ss") + " ~ " + dayjs(event.end).format("HH:mm:ss");
+        timeElement.innerText = dayjs(event.startTime).format("HH:mm:ss") + " ~ " + dayjs(event.endTime).format("HH:mm:ss");
         tooltipElement.appendChild(timeElement);
 
         addTooltip(boxElement, tooltipElement);
@@ -402,15 +403,24 @@ window.addEventListener("load", () => {
         hasHorizontalLine: true,
         hasVerticalLine: true,
         headerCellRender: headerCellRender,
-        ownerTimeEventRender: ownerTimeEventRender,
-        ownerDurationEventRender: ownerDurationEventRender,
-        globalDurationEventRender: null,
-        sideTimeEventRender: null,
+        entityPointEventRender: ownerTimeEventRender,
+        entityRangeEventRender: ownerDurationEventRender,
+        globalRangeEventRender: null,
+        sidePointEventRender: null,
 
     }
 
+    const dataOptions: Mad.ChartDataOptions = {
+        entityNameProp: "name",
+        pointEventTimeProp: "time",
+        entityPointEventsProp: "pointEvents",
+        entityRangeEventsProp: "rangeEvents",
+        rangeEventStartTimeProp: "start",
+        rangeEventEndTimeProp: "end",
+    };
+
     const chart = Mad.TimelineChart();
-    chart.create(rootContainer, data, options);
+    chart.create(rootContainer, data, options, dataOptions);
     chart.render();
 
 });

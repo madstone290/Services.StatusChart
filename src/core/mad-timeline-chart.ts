@@ -3,34 +3,46 @@ namespace Mad {
     /**
      * 차트 이벤트.
      */
-    export interface TimeEvent {
+    export interface PointEvent {
+        [key: string]: any;
         time: Date;
     }
 
-    export interface DurationEvent {
-        start: Date;
-        end: Date;
+    export interface RangeEvent {
+        [key: string]: any;
+        startTime: Date;
+        endTime: Date;
     }
 
-    export interface EventOwner {
+    export interface Entity {
+        [key: string]: any;
         name: string;
-        pointEvents: TimeEvent[];
-        rangeEvents: DurationEvent[];
+        pointEvents: PointEvent[];
+        rangeEvents: RangeEvent[];
     }
 
     export interface ChartData {
 
-        eventOwners: EventOwner[];
+        entities: Entity[];
 
         /**
          * 사이드캔버스에 표시할 이벤트
          */
-        sideTimeEvents: TimeEvent[];
+        sidePointEvents: PointEvent[];
 
         /**
          * 메인 캔버스에 표시할 글로벌 포인트 이벤트 목록.
          */
-        globalDurationEvents: DurationEvent[];
+        globalRangeEvents: RangeEvent[];
+    }
+
+    export interface ChartDataOptions {
+        entityNameProp?: string;
+        entityPointEventsProp?: string;
+        entityRangeEventsProp?: string;
+        pointEventTimeProp?: string;
+        rangeEventStartTimeProp?: string;
+        rangeEventEndTimeProp?: string;
     }
 
     export interface ChartOptions {
@@ -59,11 +71,11 @@ namespace Mad {
         canAutoFit?: boolean;
         headerTimeFormat?: (time: Date) => string;
         headerCellRender?: (time: Date, containerEl: HTMLElement) => void;
-        ownerRender?: (owner: EventOwner, containerEl: HTMLElement) => void;
-        sideTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        ownerTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        ownerDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        globalDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityRender?: (entity: Entity, containerEl: HTMLElement) => void;
+        sidePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
 
     }
 
@@ -99,11 +111,11 @@ namespace Mad {
         canAutoFit: boolean;
         headerTimeFormat: (time: Date) => string;
         headerCellRender: (time: Date, containerElement: HTMLElement) => void;
-        ownerRender: (owner: EventOwner, containerEl: HTMLElement) => void;
-        sideTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        ownerTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        ownerDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
-        globalDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityRender: (entity: Entity, containerEl: HTMLElement) => void;
+        sidePointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityPointEventRender: (event: PointEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        entityRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
+        globalRangeEventRender: (event: RangeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
 
         /**
         * 차트 렌더링 시작 시간
@@ -135,15 +147,14 @@ namespace Mad {
         |---------------|-------------------|
         |               | timeline header   |
         | sub title     |-------------------|
-        |               | timeline canvas   |
+        |               | side canvas       |
         |---------------|-------------------|
         |               |                   |
         | entity list   | main canvas       |
         |               |                   |
         |---------------|-------------------|
         */
-
-
+        // #region Constants
         const CLS_ROOT = "tc-root";
         const CLS_TIMELINE_TITLE = "tc-timeline-title";
         const CLS_TIMELINE_HEADER_BOX = "tc-timeline-header-box";
@@ -167,11 +178,11 @@ namespace Mad {
         const CLS_HLINE = "tc-hline";
         const CLS_VLINE = "tc-vline";
 
-
         const Z_INDEX_ENTITY_POINT_EVENT = 3;
         const Z_INDEX_ENTITY_RANGE_EVENT = 2;
         const Z_INDEX_GLOBAL_RANGE_EVENT = 1;
 
+        // #endregion
         /**
         * 타임라인차트 엘리먼트
         */
@@ -202,6 +213,14 @@ namespace Mad {
                 `;
 
         let _data: ChartData;
+        let _dataOptions: ChartDataOptions = {
+            entityNameProp: "name",
+            entityPointEventsProp: "pointEvents",
+            entityRangeEventsProp: "rangeEvents",
+            pointEventTimeProp: "time",
+            rangeEventStartTimeProp: "startTime",
+            rangeEventEndTimeProp: "endTime"
+        }
 
         let _state: ChartState = {
             chartStartTime: new Date(),
@@ -228,11 +247,11 @@ namespace Mad {
             maxResizeScale: 3,
             headerTimeFormat: null,
             headerCellRender: null,
-            ownerRender: null,
-            sideTimeEventRender: null,
-            ownerTimeEventRender: null,
-            ownerDurationEventRender: null,
-            globalDurationEventRender: null,
+            entityRender: null,
+            sidePointEventRender: null,
+            entityPointEventRender: null,
+            entityRangeEventRender: null,
+            globalRangeEventRender: null,
             hasHorizontalLine: true,
             hasVerticalLine: true,
             canAutoFit: true,
@@ -264,7 +283,6 @@ namespace Mad {
 
 
         const dateTimeService = function () {
-
             function toMinutes(time: number) {
                 return time / (60 * 1000);
             }
@@ -371,7 +389,7 @@ namespace Mad {
          * 차트 엘리먼트를 생성한다.
          * @param container 
          */
-        function create(container: HTMLElement, data: ChartData, options: ChartOptions) {
+        function create(container: HTMLElement, data: ChartData, options: ChartOptions, dataOptions?: ChartDataOptions) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(TC_ELEMENT_HTML, 'text/html');
             const element = doc.body.firstChild;
@@ -395,7 +413,9 @@ namespace Mad {
 
             setData(data);
             setOptions(options);
+            _dataOptions = dataOptions ?? _dataOptions;
         }
+
 
         function setOptions(options: ChartOptions) {
             Object.entries(options)
@@ -423,14 +443,14 @@ namespace Mad {
                 div.innerText = _state.headerTimeFormat(time);
                 containerElement.appendChild(div);
             });
-            _state.ownerRender = options.ownerRender ?? ((owner: EventOwner, containerElement: HTMLElement) => {
+            _state.entityRender = options.entityRender ?? ((entity: Entity, containerElement: HTMLElement) => {
                 const div = document.createElement("div");
                 div.style.height = "100%";
                 div.style.width = "100%";
                 div.style.display = "flex";
                 div.style.justifyContent = "center";
                 div.style.alignItems = "center";
-                div.innerText = owner.name;
+                div.innerText = entity[_dataOptions.entityNameProp]
                 containerElement.appendChild(div);
             });
         }
@@ -586,7 +606,7 @@ namespace Mad {
             const timelineHeight = cssService.getTimelineHeight();
             const scrollWidth = _state.scrollWidth;
             const providedCanvasHeight = chartHeight - timelineHeight - scrollWidth;
-            const requiredCanvasHeight = cssService.getCellHeight() * _data.eventOwners.length;
+            const requiredCanvasHeight = cssService.getCellHeight() * _data.entities.length;
             let canvasHeight = requiredCanvasHeight;
             // 필요한 높이가 제공된 높이보다 작을 경우 높이를 맞춘다.
             if (_state.canAutoFit && requiredCanvasHeight < providedCanvasHeight) {
@@ -611,10 +631,10 @@ namespace Mad {
                 _entityListBoxElement.appendChild(containerEl);
                 containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
 
-                const owner = _data.eventOwners[i];
-                if (owner == null)
+                const entity = _data.entities[i];
+                if (entity == null)
                     continue;
-                _state.ownerRender(owner, containerEl);
+                _state.entityRender(entity, containerEl);
             }
         }
 
@@ -627,8 +647,8 @@ namespace Mad {
             if (_state.hasVerticalLine)
                 _renderSideCanvasVerticalLine();
 
-            if (_data.sideTimeEvents != null && _data.sideTimeEvents.length > 0) {
-                for (const event of _data.sideTimeEvents) {
+            if (_data.sidePointEvents != null && _data.sidePointEvents.length > 0) {
+                for (const event of _data.sidePointEvents) {
                     _renderSideTimeEvent(event);
                 }
             }
@@ -648,11 +668,12 @@ namespace Mad {
             }
         }
 
-        function _renderSideTimeEvent(event: TimeEvent) {
+        function _renderSideTimeEvent(event: PointEvent) {
             const containerElement = document.createElement("div");
             _timelineCanvasElement.appendChild(containerElement);
 
-            const time = dateTimeService.toMinutes(event.time.valueOf() - _state.chartRenderStartTime.valueOf());
+            const eventTime = event[_dataOptions.pointEventTimeProp] as Date;
+            const time = dateTimeService.toMinutes(eventTime.valueOf() - _state.chartRenderStartTime.valueOf());
             const center = time * _state.cellWidth / _state.cellMinutes;
             const top = _state.timelineCanvasHeight - _state.timelineCanvasContentHeight / 2 - 1;
             const width = _state.timelineCanvasContentHeight;
@@ -661,8 +682,8 @@ namespace Mad {
             containerElement.style.top = `${top}px`;
             containerElement.classList.add(CLS_TIMELINE_CANVAS_ITEM);
 
-            if (_state.sideTimeEventRender != null)
-                _state.sideTimeEventRender(event, _timelineCanvasElement, containerElement);
+            if (_state.sidePointEventRender != null)
+                _state.sidePointEventRender(event, _timelineCanvasElement, containerElement);
         }
 
         /**
@@ -677,14 +698,14 @@ namespace Mad {
                 drawVertialLines();
 
             let rowIndex = 0;
-            for (const owner of _data.eventOwners) {
+            for (const owner of _data.entities) {
                 _renderOwnerEvents(owner, rowIndex);
                 rowIndex++;
             }
 
-            if (_data.globalDurationEvents != null && _data.globalDurationEvents.length > 0) {
-                for (const event of _data.globalDurationEvents) {
-                    _renderGlobalDurationEvent(event);
+            if (_data.globalRangeEvents != null && _data.globalRangeEvents.length > 0) {
+                for (const event of _data.globalRangeEvents) {
+                    _renderGlobalRangeEvent(event);
                 }
             }
 
@@ -720,27 +741,25 @@ namespace Mad {
             }
         }
 
-
-
-
-        function _renderOwnerEvents(owner: EventOwner, rowIndex: number) {
+        function _renderOwnerEvents(owner: Entity, rowIndex: number) {
             if (owner.pointEvents != null && owner.pointEvents.length > 0) {
                 for (const event of owner.pointEvents) {
-                    _renderOwnerTimeEvent(event, rowIndex);
+                    _renderOwnerPointEvent(event, rowIndex);
                 }
             }
             if (owner.rangeEvents != null && owner.rangeEvents.length > 0) {
                 for (const event of owner.rangeEvents) {
-                    _renderOwnerDurationEvent(event, rowIndex);
+                    _renderOwnerRangeEvent(event, rowIndex);
                 }
             }
         }
 
-        function _renderOwnerTimeEvent(event: TimeEvent, rowIndex: number) {
+        function _renderOwnerPointEvent(event: PointEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
             _mainCanvasElement.appendChild(containerElement);
 
-            const time = dateTimeService.toMinutes(event.time.valueOf() - _state.chartRenderStartTime.valueOf());
+            const eventTime = event[_dataOptions.pointEventTimeProp] as Date;
+            const time = dateTimeService.toMinutes(eventTime.valueOf() - _state.chartRenderStartTime.valueOf());
             const center = time * _state.cellWidth / _state.cellMinutes;
             const top = (_state.cellHeight * rowIndex) + ((_state.cellHeight - _state.cellContentHeight) / 2) - 1;
             const width = _state.cellContentHeight;
@@ -751,17 +770,18 @@ namespace Mad {
             containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
 
-            if (_state.ownerTimeEventRender != null)
-                _state.ownerTimeEventRender(event, _mainCanvasElement, containerElement);
+            if (_state.entityPointEventRender != null)
+                _state.entityPointEventRender(event, _mainCanvasElement, containerElement);
         }
 
-        function _renderOwnerDurationEvent(event: DurationEvent, rowIndex: number) {
+        function _renderOwnerRangeEvent(event: RangeEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
-
             _mainCanvasElement.appendChild(containerElement);
 
-            const startTime = dateTimeService.toMinutes(event.start.valueOf() - _state.chartRenderStartTime.valueOf());
-            const duration = dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf());
+            const eventStartTime = event[_dataOptions.rangeEventStartTimeProp] as Date;
+            const eventEndTime = event[_dataOptions.rangeEventEndTimeProp] as Date;
+            const startTime = dateTimeService.toMinutes(eventStartTime.valueOf() - _state.chartRenderStartTime.valueOf());
+            const duration = dateTimeService.toMinutes(eventEndTime.valueOf() - eventStartTime.valueOf());
             const left = startTime * _state.cellWidth / _state.cellMinutes;
             const width = duration * _state.cellWidth / _state.cellMinutes;
             const top = (_state.cellHeight * rowIndex)
@@ -774,18 +794,20 @@ namespace Mad {
             containerElement.style.zIndex = `${Z_INDEX_ENTITY_RANGE_EVENT} `;
             containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
-            if (_state.ownerDurationEventRender != null)
-                _state.ownerDurationEventRender(event, _mainCanvasElement, containerElement);
+            if (_state.entityRangeEventRender != null)
+                _state.entityRangeEventRender(event, _mainCanvasElement, containerElement);
         }
 
 
 
-        function _renderGlobalDurationEvent(event: DurationEvent) {
+        function _renderGlobalRangeEvent(event: RangeEvent) {
             const containerElement = document.createElement("div");
             _mainCanvasElement.appendChild(containerElement);
 
-            const startTime = dateTimeService.toMinutes(event.start.valueOf() - _state.chartRenderStartTime.valueOf());
-            const duration = dateTimeService.toMinutes(event.end.valueOf() - event.start.valueOf());
+            const eventStartTime = event[_dataOptions.rangeEventStartTimeProp] as Date;
+            const eventEndTime = event[_dataOptions.rangeEventEndTimeProp] as Date;
+            const startTime = dateTimeService.toMinutes(eventStartTime.valueOf() - _state.chartRenderStartTime.valueOf());
+            const duration = dateTimeService.toMinutes(eventEndTime.valueOf() - eventStartTime.valueOf());
             const left = startTime * _state.cellWidth / _state.cellMinutes;
             const width = duration * _state.cellWidth / _state.cellMinutes;
 
@@ -796,8 +818,8 @@ namespace Mad {
             containerElement.style.zIndex = `${Z_INDEX_GLOBAL_RANGE_EVENT} `;
             containerElement.classList.add(CLS_MAIN_CANVAS_ITEM);
 
-            if (_state.globalDurationEventRender != null)
-                _state.globalDurationEventRender(event, _mainCanvasElement, containerElement);
+            if (_state.globalRangeEventRender != null)
+                _state.globalRangeEventRender(event, _mainCanvasElement, containerElement);
         }
 
         /**
