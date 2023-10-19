@@ -57,7 +57,8 @@ namespace Mad {
         hasVerticalLine?: boolean;
         canAutoFit?: boolean;
         headerTimeFormat?: (time: Date) => string;
-        headerCellRender?: (time: Date, containerElement: HTMLElement) => void;
+        headerCellRender?: (time: Date, containerEl: HTMLElement) => void;
+        ownerRender?: (owner: EventOwner, containerEl: HTMLElement) => void;
         sideTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
         ownerTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
         ownerDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
@@ -84,6 +85,8 @@ namespace Mad {
         minCellHeight: number;
         maxCellWidth: number;
         maxCellHeight: number;
+        chartHeight: number;
+        chartWidth: number;
         cellContentHeightRatio: number;
         cellContentHeight: number;
         headerCellCount: number;
@@ -93,6 +96,7 @@ namespace Mad {
         canAutoFit: boolean;
         headerTimeFormat: (time: Date) => string;
         headerCellRender: (time: Date, containerElement: HTMLElement) => void;
+        ownerRender: (owner: EventOwner, containerEl: HTMLElement) => void;
         sideTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
         ownerTimeEventRender: (event: TimeEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
         ownerDurationEventRender: (event: DurationEvent, canvasEl: HTMLElement, containerEl: HTMLElement) => void;
@@ -213,10 +217,13 @@ namespace Mad {
             minCellHeight: 40,
             maxCellWidth: 40 * 3,
             maxCellHeight: 40 * 3,
+            chartHeight: 0,
+            chartWidth: 0,
             cellContentHeightRatio: 0.8,
             maxResizeScale: 3,
             headerTimeFormat: null,
             headerCellRender: null,
+            ownerRender: null,
             sideTimeEventRender: null,
             ownerTimeEventRender: null,
             ownerDurationEventRender: null,
@@ -231,7 +238,6 @@ namespace Mad {
             headerCellCount: 0,
             cellContentHeight: 0,
             timelineCanvasContentHeight: 0,
-
         }
 
         /* Html Elements */
@@ -371,8 +377,8 @@ namespace Mad {
             _mainCanvasElement = container.getElementsByClassName(CLS_MAIN_CANVAS)[0] as HTMLElement;
 
             // 컨테이너 크기에 맞춰 차트 크기를 조정한다.
-            cssService.setChartWidth(container.clientWidth);
-            cssService.setChartHeight(container.clientHeight);
+            _state.chartWidth = container.clientWidth;
+            _state.chartHeight = container.clientHeight;
 
             setData(data);
             setOptions(options);
@@ -404,6 +410,16 @@ namespace Mad {
                 div.innerText = _state.headerTimeFormat(time);
                 containerElement.appendChild(div);
             });
+            _state.ownerRender = options.ownerRender ?? ((owner: EventOwner, containerElement: HTMLElement) => {
+                const div = document.createElement("div");
+                div.style.height = "100%";
+                div.style.width = "100%";
+                div.style.display = "flex";
+                div.style.justifyContent = "center";
+                div.style.alignItems = "center";
+                div.innerText = owner.name;
+                containerElement.appendChild(div);
+            });
         }
 
         function setData(data: ChartData) {
@@ -414,7 +430,8 @@ namespace Mad {
          * 차트를 그린다.
          */
         function render() {
-            initLayout();
+            cssService.setChartWidth(_state.chartWidth);
+            cssService.setChartHeight(_state.chartHeight);
 
             cssService.setTimeLineTitleHeight(_state.timelineTitleHeight);
             cssService.setTimelineHeaderHeight(_state.timelineHeaderHeight);
@@ -424,6 +441,9 @@ namespace Mad {
             cssService.setCellHeight(_state.cellHeight);
             cssService.setTimelineCanvasContentHeight(_state.timelineCanvasContentHeight);
             cssService.setCellContentHeight(_state.cellContentHeight);
+
+            initLayout();
+
 
             // render texts
             _mainTitleElement.innerText = _state.mainTitle;
@@ -546,8 +566,7 @@ namespace Mad {
              * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
              * entity list는 main canvas 수직스크롤과 동기화한다.
              */
-            const canvasWidth = cssService.getCellWidth() * _state.headerCellCount;
-
+            const canvasWidth = _state.cellWidth * _state.headerCellCount;
             const chartHeight = cssService.getChartHeight();
             const timelineHeight = cssService.getTimelineHeight();
             const scrollWidth = cssService.getScrollWidth();
@@ -573,14 +592,14 @@ namespace Mad {
             const cellHeight = _state.cellHeight;
             const lineCount = Math.floor(canvasHeight / cellHeight);
             for (let i = 0; i < lineCount; i++) {
-                const div = document.createElement("div");
-                _entityListBoxElement.appendChild(div);
-                div.classList.add(CLS_ENTITY_LIST_ITEM);
+                const containerEl = document.createElement("div");
+                _entityListBoxElement.appendChild(containerEl);
+                containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
 
-                const eventOwner = _data.eventOwners[i];
-                if (eventOwner == null)
+                const owner = _data.eventOwners[i];
+                if (owner == null)
                     continue;
-                div.innerText = eventOwner.name;
+                _state.ownerRender(owner, containerEl);
             }
         }
 

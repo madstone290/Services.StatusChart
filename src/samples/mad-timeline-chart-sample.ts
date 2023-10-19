@@ -4,7 +4,7 @@ namespace Samples {
     export const eventOwners: any[] = [
         {
             id: 1,
-            name: "H34A2900001",
+            name: "H34A2900001H34A2H34A2900001H34A2900001900001",
             barcodeNumber: "H34A2900001",
             productNumber: "00123H1",
             pointEvents: [
