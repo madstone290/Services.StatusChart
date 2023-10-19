@@ -80,6 +80,7 @@ namespace Mad {
         timelineCanvasHeight: number;
         timelineCanvasContentHeightRatio: number;
         timelineCanvasContentHeight: number;
+        scrollWidth: number;
         cellMinutes: number;
         cellWidth: number;
         cellHeight: number;
@@ -209,6 +210,7 @@ namespace Mad {
             mainTitle: "",
             subTitle: "",
             leftPanelWidth: 200,
+            scrollWidth: 15,
             timelineTitleHeight: 40,
             timelineHeaderHeight: 40,
             timelineCanvasHeight: 40,
@@ -332,7 +334,7 @@ namespace Mad {
             function getCellContentHeight() { return parseInt(getVariable(VAR_CELL_CONTENT_HEIGHT)); }
             function setCellContentHeight(height: number) { setVariable(VAR_CELL_CONTENT_HEIGHT, `${height}px`); }
 
-            function getScrollWidth() { return parseInt(getVariable(VAR_SCROLL_WIDTH)); }
+            function setScrollWidth(width: number) { setVariable(VAR_SCROLL_WIDTH, `${width}px`); }
 
             return {
                 getVariable,
@@ -361,7 +363,7 @@ namespace Mad {
                 getCellContentHeight,
                 setCellContentHeight,
 
-                getScrollWidth
+                setScrollWidth
             }
         }();
 
@@ -443,9 +445,7 @@ namespace Mad {
         function render() {
             cssService.setChartWidth(_state.chartWidth);
             cssService.setChartHeight(_state.chartHeight);
-
             cssService.setLeftPanelWidth(_state.leftPanelWidth);
-
             cssService.setTimeLineTitleHeight(_state.timelineTitleHeight);
             cssService.setTimelineHeaderHeight(_state.timelineHeaderHeight);
             cssService.setTimelineCanvasHeight(_state.timelineCanvasHeight);
@@ -454,6 +454,8 @@ namespace Mad {
             cssService.setCellHeight(_state.cellHeight);
             cssService.setTimelineCanvasContentHeight(_state.timelineCanvasContentHeight);
             cssService.setCellContentHeight(_state.cellContentHeight);
+
+            cssService.setScrollWidth(_state.scrollWidth);
 
             initLayout();
 
@@ -582,7 +584,7 @@ namespace Mad {
             const canvasWidth = _state.cellWidth * _state.headerCellCount;
             const chartHeight = cssService.getChartHeight();
             const timelineHeight = cssService.getTimelineHeight();
-            const scrollWidth = cssService.getScrollWidth();
+            const scrollWidth = _state.scrollWidth;
             const providedCanvasHeight = chartHeight - timelineHeight - scrollWidth;
             const requiredCanvasHeight = cssService.getCellHeight() * _data.eventOwners.length;
             let canvasHeight = requiredCanvasHeight;
@@ -591,8 +593,8 @@ namespace Mad {
                 cssService.setChartHeight(timelineHeight + scrollWidth + canvasHeight);
             }
 
-            _timelineHeaderElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
-            _timelineCanvasElement.style.width = `${canvasWidth + cssService.getScrollWidth()}px`;
+            _timelineHeaderElement.style.width = `${canvasWidth + _state.scrollWidth}px`;
+            _timelineCanvasElement.style.width = `${canvasWidth + _state.scrollWidth}px`;
             _mainCanvasElement.style.width = `${canvasWidth}px`;
             _mainCanvasElement.style.height = `${canvasHeight}px`;
         }
