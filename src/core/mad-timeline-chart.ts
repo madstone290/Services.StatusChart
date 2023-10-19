@@ -463,6 +463,28 @@ namespace Mad {
          * 차트를 그린다.
          */
         function render() {
+            // init layout (calc & apply size)
+            // render texts
+            // render header
+            // add event listeners
+            // render side canvas
+            // render entity list(main canvas)
+
+            _initLayout();
+            _renderHeader();
+            _addEventListeners();
+
+            _resetCanvasSize();
+
+            _renderSideCanvas();
+            _renderSidePointEvents();
+
+            _renderMainCanvas();
+            _renderEntityList();
+            _renderGlobalRangeEvents();
+        }
+
+        function _initLayout() {
             cssService.setChartWidth(_state.chartWidth);
             cssService.setChartHeight(_state.chartHeight);
             cssService.setLeftPanelWidth(_state.leftPanelWidth);
@@ -477,29 +499,17 @@ namespace Mad {
 
             cssService.setScrollWidth(_state.scrollWidth);
 
-            initLayout();
-
-
-            // render texts
             _mainTitleElement.innerText = _state.mainTitle;
             _subTitleElement.innerText = _state.subTitle;
             _timelineTitleElement.innerText = _state.headerTitle;
-
-            _renderSideCanvas();
-            _renderOwnerList();
-            renderMainCanvas();
         }
 
-        /**
-         * 설정값에 맞춰 레이아웃을 초기화한다.
-         */
-        function initLayout() {
+        function _renderHeader() {
             let time = _state.chartRenderStartTime;
             let end = _state.chartRenderEndTime;
             let headerCellCount = 0;
 
             while (time < end) {
-
                 const containerElement = document.createElement("div");
                 _timelineHeaderElement.appendChild(containerElement);
                 containerElement.classList.add(CLS_TIMELINE_HEADER_ITEM);
@@ -509,18 +519,16 @@ namespace Mad {
                 headerCellCount++;
             }
             _state.headerCellCount = headerCellCount;
+        }
 
-            resetCanvasSize();
-
+        function _addEventListeners() {
             _mainCanvasBoxElement.addEventListener("scroll", (e) => {
                 _timelineHeaderBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
                 _timelineCanvasBoxElement.scrollLeft = _mainCanvasBoxElement.scrollLeft;
             });
-
             _mainCanvasBoxElement.addEventListener("scroll", (e) => {
                 _entityListBoxElement.scrollTop = _mainCanvasBoxElement.scrollTop;
             });
-
             _mainCanvasElement.addEventListener("mousemove", (e) => {
                 if (e.buttons === 1) {
                     _mainCanvasBoxElement.scrollLeft -= e.movementX;
@@ -560,7 +568,6 @@ namespace Mad {
             document.body.addEventListener("keyup", (e) => {
                 document.body.style.cursor = "default";
             });
-
         }
 
         /**
@@ -595,7 +602,7 @@ namespace Mad {
         /**
          * 캔버스 크기를 재조정한다.
          */
-        function resetCanvasSize() {
+        function _resetCanvasSize() {
             /**
              * main canvas에만 스크롤을 표시한다.
              * timeline header와 timeline canvas는 main canvas 수평스크롤과 동기화한다.
@@ -620,38 +627,12 @@ namespace Mad {
         }
 
         /**
-         * 엔티티 리스트를 그린다.
-         */
-        function _renderOwnerList() {
-            const canvasHeight = _mainCanvasElement.scrollHeight;
-            const cellHeight = _state.cellHeight;
-            const lineCount = Math.floor(canvasHeight / cellHeight);
-            for (let i = 0; i < lineCount; i++) {
-                const containerEl = document.createElement("div");
-                _entityListBoxElement.appendChild(containerEl);
-                containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
-
-                const entity = _data.entities[i];
-                if (entity == null)
-                    continue;
-                _state.entityRender(entity, containerEl);
-            }
-        }
-
-        /**
          * 보조 캔버스를 그린다.
          */
         function _renderSideCanvas() {
             _timelineCanvasElement.replaceChildren();
-
             if (_state.hasVerticalLine)
                 _renderSideCanvasVerticalLine();
-
-            if (_data.sidePointEvents != null && _data.sidePointEvents.length > 0) {
-                for (const event of _data.sidePointEvents) {
-                    _renderSideTimeEvent(event);
-                }
-            }
         }
         function _renderSideCanvasVerticalLine() {
             const canvasWidth = _timelineCanvasElement.scrollWidth;
@@ -668,7 +649,14 @@ namespace Mad {
             }
         }
 
-        function _renderSideTimeEvent(event: PointEvent) {
+        function _renderSidePointEvents() {
+            if (_data.sidePointEvents != null && _data.sidePointEvents.length > 0) {
+                for (const event of _data.sidePointEvents) {
+                    _renderSidePointEvent(event);
+                }
+            }
+        }
+        function _renderSidePointEvent(event: PointEvent) {
             const containerElement = document.createElement("div");
             _timelineCanvasElement.appendChild(containerElement);
 
@@ -686,32 +674,14 @@ namespace Mad {
                 _state.sidePointEventRender(event, _timelineCanvasElement, containerElement);
         }
 
-        /**
-         * 메인 캔버스를 그린다.
-         */
-        function renderMainCanvas() {
+        function _renderMainCanvas() {
             _mainCanvasElement.replaceChildren();
-
             if (_state.hasHorizontalLine)
-                drawHorizontalLines();
+                _renderMainCanvasHLine();
             if (_state.hasVerticalLine)
-                drawVertialLines();
-
-            let rowIndex = 0;
-            for (const owner of _data.entities) {
-                _renderOwnerEvents(owner, rowIndex);
-                rowIndex++;
-            }
-
-            if (_data.globalRangeEvents != null && _data.globalRangeEvents.length > 0) {
-                for (const event of _data.globalRangeEvents) {
-                    _renderGlobalRangeEvent(event);
-                }
-            }
-
+                _renderMainCanvasVLine();
         }
-
-        function drawVertialLines() {
+        function _renderMainCanvasVLine() {
             const canvasWidth = _mainCanvasElement.scrollWidth;
             const cellWidth = cssService.getCellWidth();
             const lineCount = Math.floor(canvasWidth / cellWidth);
@@ -726,8 +696,7 @@ namespace Mad {
                 _mainCanvasElement.appendChild(line);
             }
         }
-
-        function drawHorizontalLines() {
+        function _renderMainCanvasHLine() {
             const canvasHeight = _mainCanvasElement.scrollHeight;
             const cellHeight = cssService.getCellHeight();
             const lineCount = Math.floor(canvasHeight / cellHeight);
@@ -741,20 +710,42 @@ namespace Mad {
             }
         }
 
-        function _renderOwnerEvents(owner: Entity, rowIndex: number) {
-            if (owner.pointEvents != null && owner.pointEvents.length > 0) {
-                for (const event of owner.pointEvents) {
-                    _renderOwnerPointEvent(event, rowIndex);
+
+        /**
+         * 엔티티 리스트를 그린다.
+         */
+        function _renderEntityList() {
+            const canvasHeight = _mainCanvasElement.scrollHeight;
+            const cellHeight = _state.cellHeight;
+            const lineCount = Math.floor(canvasHeight / cellHeight);
+            for (let i = 0; i < lineCount; i++) {
+                const containerEl = document.createElement("div");
+                _entityListBoxElement.appendChild(containerEl);
+                containerEl.classList.add(CLS_ENTITY_LIST_ITEM);
+
+                const entity = _data.entities[i];
+                if (entity == null)
+                    continue;
+                _state.entityRender(entity, containerEl);
+                _renderEntityEvents(entity, i);
+            }
+        }
+
+
+        function _renderEntityEvents(entity: Entity, rowIndex: number) {
+            if (entity.pointEvents != null && entity.pointEvents.length > 0) {
+                for (const event of entity.pointEvents) {
+                    _renderEntityPointEvent(event, rowIndex);
                 }
             }
-            if (owner.rangeEvents != null && owner.rangeEvents.length > 0) {
-                for (const event of owner.rangeEvents) {
-                    _renderOwnerRangeEvent(event, rowIndex);
+            if (entity.rangeEvents != null && entity.rangeEvents.length > 0) {
+                for (const event of entity.rangeEvents) {
+                    _renderEntityRangeEvent(event, rowIndex);
                 }
             }
         }
 
-        function _renderOwnerPointEvent(event: PointEvent, rowIndex: number) {
+        function _renderEntityPointEvent(event: PointEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
             _mainCanvasElement.appendChild(containerElement);
 
@@ -774,7 +765,7 @@ namespace Mad {
                 _state.entityPointEventRender(event, _mainCanvasElement, containerElement);
         }
 
-        function _renderOwnerRangeEvent(event: RangeEvent, rowIndex: number) {
+        function _renderEntityRangeEvent(event: RangeEvent, rowIndex: number) {
             const containerElement = document.createElement("div");
             _mainCanvasElement.appendChild(containerElement);
 
@@ -798,7 +789,13 @@ namespace Mad {
                 _state.entityRangeEventRender(event, _mainCanvasElement, containerElement);
         }
 
-
+        function _renderGlobalRangeEvents() {
+            if (_data.globalRangeEvents != null && _data.globalRangeEvents.length > 0) {
+                for (const event of _data.globalRangeEvents) {
+                    _renderGlobalRangeEvent(event);
+                }
+            }
+        }
 
         function _renderGlobalRangeEvent(event: RangeEvent) {
             const containerElement = document.createElement("div");
@@ -861,9 +858,9 @@ namespace Mad {
             cssService.setCellHeight(_state.cellHeight);
             cssService.setCellContentHeight(_state.cellContentHeight);
 
-            resetCanvasSize();
+            _resetCanvasSize();
             _renderSideCanvas();
-            renderMainCanvas();
+            _renderMainCanvas();
 
             // keep scroll position
             _mainCanvasBoxElement.scrollLeft = scrollLeft;
